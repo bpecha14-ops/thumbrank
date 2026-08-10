@@ -333,7 +333,12 @@ export default function Home() {
             </div>
             <span className="text-sm font-semibold text-white">ThumbRank</span>
           </div>
-          <p className="text-xs text-neutral-500">© {new Date().getFullYear()} ThumbRank. All processing happens in your browser.</p>
+          <div className="flex gap-4 text-xs text-neutral-500">
+            <a href="/terms" className="hover:text-neutral-300">Terms</a>
+            <a href="/privacy" className="hover:text-neutral-300">Privacy</a>
+            <a href="/refund" className="hover:text-neutral-300">Refund</a>
+          </div>
+          <p className="text-xs text-neutral-500">© {new Date().getFullYear()} ThumbRank</p>
         </div>
       </footer>
     </div>
