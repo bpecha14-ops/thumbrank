@@ -95,11 +95,11 @@ const faqs = [
   },
   {
     q: 'How does the free plan work?',
-    a: 'Free users get 3 previews per month. Each time you render a YouTube search mockup, it counts as one preview. The counter resets every 30 days.',
+    a: 'Free users get 3 previews per day. Each time you render a YouTube search mockup, it counts as one preview. The counter resets every 24 hours.',
   },
   {
     q: 'How do I upgrade to Pro?',
-    a: 'Click "Upgrade to Pro" to visit our Gumroad page. After purchasing, Gumroad gives you a license key. Enter it on the Redeem Key page and your account is instantly upgraded to Pro.',
+    a: 'Click "Upgrade to Pro" to visit our Paddle page. After purchasing, Paddle gives you a license key. Enter it on the Redeem Key page and your account is instantly upgraded to Pro.',
   },
   {
     q: 'Do you store my thumbnail images?',
@@ -243,7 +243,7 @@ export default function Home() {
             </div>
             <ul className="mt-6 space-y-3 text-sm">
               {[
-                '3 previews per month',
+                '3 previews per day',
                 'YouTube search mockup',
                 '2 competitor slots',
                 'PNG export',
@@ -267,7 +267,7 @@ export default function Home() {
             <h3 className="text-xl font-semibold text-white">Pro</h3>
             <p className="mt-1 text-sm text-neutral-400">For serious creators</p>
             <div className="mt-6">
-              <span className="text-4xl font-bold text-white">$12</span>
+              <span className="text-4xl font-bold text-white">$15</span>
               <span className="text-neutral-400">/month</span>
             </div>
             <ul className="mt-6 space-y-3 text-sm">
@@ -288,7 +288,7 @@ export default function Home() {
                 Upgrade to Pro
               </Button>
             </Link>
-            <p className="mt-3 text-center text-xs text-neutral-500">Pay via Gumroad · Instant license key</p>
+            <p className="mt-3 text-center text-xs text-neutral-500">Pay via Paddle · Instant license key</p>
           </div>
         </div>
       </section>
@@ -326,21 +326,21 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="border-t border-white/5 bg-[#080808]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-10 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <div className="flex h-6 w-6 items-center justify-center rounded bg-gradient-to-br from-violet-500 to-purple-600">
-              <span className="text-xs">T</span>
-            </div>
-            <span className="text-sm font-semibold text-white">ThumbRank</span>
-          </div>
-          <div className="flex gap-4 text-xs text-neutral-500">
-            <a href="/terms" className="hover:text-neutral-300">Terms</a>
-            <a href="/privacy" className="hover:text-neutral-300">Privacy</a>
-            <a href="/refund" className="hover:text-neutral-300">Refund</a>
-          </div>
-          <p className="text-xs text-neutral-500">© {new Date().getFullYear()} ThumbRank</p>
-        </div>
-      </footer>
+  <div className="mx-auto max-w-7xl px-4 sm:px-6 py-10 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div className="flex items-center gap-2">
+      <div className="flex h-6 w-6 items-center justify-center rounded bg-gradient-to-br from-violet-500 to-purple-600">
+        <span className="text-xs">T</span>
+      </div>
+      <span className="text-sm font-semibold text-white">ThumbRank</span>
+    </div>
+    <div className="flex gap-4 text-xs text-neutral-500">
+      <a href="/terms" className="hover:text-neutral-300">Terms</a>
+      <a href="/privacy" className="hover:text-neutral-300">Privacy</a>
+      <a href="/refund" className="hover:text-neutral-300">Refund</a>
+    </div>
+    <p className="text-xs text-neutral-500">© {new Date().getFullYear()} ThumbRank</p>
+  </div>
+</footer>
     </div>
   );
 }

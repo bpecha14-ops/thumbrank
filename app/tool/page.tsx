@@ -19,11 +19,13 @@ export default function ToolPage() {
   const { user, profile, loading, isPro, refreshProfile } = useAuth();
   const mockupRef = useRef<HTMLDivElement>(null);
 
+  // Form state
   const [keyword, setKeyword] = useState('');
   const [userThumb, setUserThumb] = useState<string | null>(null);
   const [comp1Thumb, setComp1Thumb] = useState<string | null>(null);
   const [comp2Thumb, setComp2Thumb] = useState<string | null>(null);
 
+  // Video metadata
   const [userTitle, setUserTitle] = useState('Your Amazing YouTube Video Title Here');
   const [userChannel, setUserChannel] = useState('Your Channel');
   const [userViews, setUserViews] = useState('1.2M');
@@ -42,6 +44,7 @@ export default function ToolPage() {
   const [comp2Date, setComp2Date] = useState('2 weeks ago');
   const [comp2Duration, setComp2Duration] = useState('10:12');
 
+  // State
   const [rendering, setRendering] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -50,19 +53,35 @@ export default function ToolPage() {
   const [canPreview, setCanPreview] = useState(true);
   const [remaining, setRemaining] = useState<number | null>(null);
 
+  // Check preview allowance when auth loads
   useEffect(() => {
     if (loading) return;
-    if (!user) { setCanPreview(true); setRemaining(null); return; }
-    if (isPro) { setCanPreview(true); setRemaining(null); return; }
+    if (!user) {
+      setCanPreview(true);
+      setRemaining(null);
+      return;
+    }
+    if (isPro) {
+      setCanPreview(true);
+      setRemaining(null);
+      return;
+    }
     getSupabase()
       .rpc('can_preview')
       .then(({ data }: any) => {
-        if (data) { setCanPreview(data.allowed); setRemaining(data.remaining); }
+        if (data) {
+          setCanPreview(data.allowed);
+          setRemaining(data.remaining);
+        }
       });
   }, [user, isPro, loading]);
 
+  // Compute CTR score when user thumbnail changes (Pro only)
   useEffect(() => {
-    if (!isPro || !userThumb) { setCtrScore(null); return; }
+    if (!isPro || !userThumb) {
+      setCtrScore(null);
+      return;
+    }
     setScoring(true);
     let cancelled = false;
     calculateCtrScore(userThumb)
@@ -73,27 +92,61 @@ export default function ToolPage() {
   }, [isPro, userThumb]);
 
   const videos: MockupVideo[] = [
-    { thumbnailUrl: userThumb, title: userTitle, channelName: userChannel, channelVerified: true, viewCount: userViews, uploadDate: userDate, duration: userDuration, isUser: true },
-    { thumbnailUrl: comp1Thumb, title: comp1Title, channelName: comp1Channel, channelVerified: true, viewCount: comp1Views, uploadDate: comp1Date, duration: comp1Duration },
-    { thumbnailUrl: comp2Thumb, title: comp2Title, channelName: comp2Channel, channelVerified: true, viewCount: comp2Views, uploadDate: comp2Date, duration: comp2Duration },
+    {
+      thumbnailUrl: userThumb,
+      title: userTitle,
+      channelName: userChannel,
+      channelVerified: true,
+      viewCount: userViews,
+      uploadDate: userDate,
+      duration: userDuration,
+      isUser: true,
+    },
+    {
+      thumbnailUrl: comp1Thumb,
+      title: comp1Title,
+      channelName: comp1Channel,
+      channelVerified: true,
+      viewCount: comp1Views,
+      uploadDate: comp1Date,
+      duration: comp1Duration,
+    },
+    {
+      thumbnailUrl: comp2Thumb,
+      title: comp2Title,
+      channelName: comp2Channel,
+      channelVerified: true,
+      viewCount: comp2Views,
+      uploadDate: comp2Date,
+      duration: comp2Duration,
+    },
   ];
 
   const handleRender = useCallback(async () => {
-    if (!userThumb) { setError('Please upload your thumbnail first.'); return; }
+    if (!userThumb) {
+      setError('Please upload your thumbnail first.');
+      return;
+    }
     setError(null);
     setRendering(true);
+
     if (user && !isPro) {
       const supabase = getSupabase();
       const { data: canData }: any = await supabase.rpc('can_preview');
       if (canData && !canData.allowed) {
-        setCanPreview(false); setRemaining(0); setRendering(false);
+        setCanPreview(false);
+        setRemaining(0);
+        setRendering(false);
         setError('You have used all 3 free previews this month. Upgrade to Pro for unlimited previews.');
         return;
       }
       const { data: recData }: any = await supabase.rpc('record_preview');
-      if (recData) { setRemaining(recData.remaining); }
+      if (recData) {
+        setRemaining(recData.remaining);
+      }
       await refreshProfile();
     }
+
     setTimeout(() => setRendering(false), 600);
   }, [userThumb, user, isPro, refreshProfile]);
 
@@ -102,7 +155,11 @@ export default function ToolPage() {
     setExporting(true);
     setError(null);
     try {
-      const dataUrl = await toPng(mockupRef.current, { cacheBust: true, pixelRatio: 2, backgroundColor: '#0f0f0f' });
+      const dataUrl = await toPng(mockupRef.current, {
+        cacheBust: true,
+        pixelRatio: 2,
+        backgroundColor: '#0f0f0f',
+      });
       const link = document.createElement('a');
       link.download = `thumbrank-${keyword || 'preview'}-${Date.now()}.png`;
       link.href = dataUrl;
@@ -119,43 +176,74 @@ export default function ToolPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
       <SiteNav />
+
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8">
         <div className="mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-white">Thumbnail Preview Tool</h1>
-          <p className="mt-2 text-sm text-neutral-400">Upload your thumbnail, add competitors, and see how you look in a real YouTube search page.</p>
+          <p className="mt-2 text-sm text-neutral-400">
+            Upload your thumbnail, add competitors, and see how you look in a real YouTube search page.
+          </p>
         </div>
 
+        {/* Free limit banner */}
         {user && !isPro && canPreview && remaining !== null && (
           <div className="mb-6 flex items-center gap-3 rounded-lg border border-violet-500/20 bg-violet-500/5 px-4 py-3 text-sm">
             <Sparkles className="h-4 w-4 text-violet-400 shrink-0" />
-            <span className="text-neutral-300">You have <span className="text-white font-medium">{remaining}</span> free preview{remaining !== 1 ? 's' : ''} left this month.</span>
-            <Link href="/redeem" className="ml-auto text-violet-400 hover:text-violet-300 font-medium">Upgrade to Pro →</Link>
+            <span className="text-neutral-300">
+              You have <span className="text-white font-medium">{remaining}</span> free preview{remaining !== 1 ? 's' : ''} left this month.
+            </span>
+            <Link href="/redeem" className="ml-auto text-violet-400 hover:text-violet-300 font-medium">
+              Upgrade to Pro →
+            </Link>
           </div>
         )}
 
         {showLimitBanner && (
           <div className="mb-6 flex items-center gap-3 rounded-lg border border-red-500/20 bg-red-500/5 px-4 py-3 text-sm">
             <AlertCircle className="h-4 w-4 text-red-400 shrink-0" />
-            <span className="text-neutral-300">You have used all 3 free previews this month.</span>
-            <Link href="/redeem" className="ml-auto"><Button size="sm" className="bg-violet-600 hover:bg-violet-500 text-white">Upgrade to Pro</Button></Link>
+            <span className="text-neutral-300">
+              You have used all 3 free previews this month.
+            </span>
+            <Link href="/redeem" className="ml-auto">
+              <Button size="sm" className="bg-violet-600 hover:bg-violet-500 text-white">Upgrade to Pro</Button>
+            </Link>
           </div>
         )}
 
         <div className="grid lg:grid-cols-2 gap-8">
+          {/* Left: inputs */}
           <div className="space-y-6">
             <div className="rounded-2xl border border-white/10 bg-[#111] p-6 space-y-5">
               <h2 className="text-sm font-semibold text-white">Your Thumbnail</h2>
               <ThumbnailUpload label="Your thumbnail" dataUrl={userThumb} onChange={setUserThumb} />
+
               <div className="space-y-3">
                 <div>
                   <Label className="text-neutral-400 text-xs">Search keyword</Label>
-                  <Input value={keyword} onChange={(e) => setKeyword(e.target.value)} placeholder="e.g. how to grow on youtube" className="mt-1 bg-[#0a0a0a] border-white/10 text-white placeholder:text-neutral-600" />
+                  <Input
+                    value={keyword}
+                    onChange={(e) => setKeyword(e.target.value)}
+                    placeholder="e.g. how to grow on youtube"
+                    className="mt-1 bg-[#0a0a0a] border-white/10 text-white placeholder:text-neutral-600"
+                  />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
-                  <div><Label className="text-neutral-400 text-xs">Video title</Label><Input value={userTitle} onChange={(e) => setUserTitle(e.target.value)} className="mt-1 bg-[#0a0a0a] border-white/10 text-white" /></div>
-                  <div><Label className="text-neutral-400 text-xs">Channel name</Label><Input value={userChannel} onChange={(e) => setUserChannel(e.target.value)} className="mt-1 bg-[#0a0a0a] border-white/10 text-white" /></div>
-                  <div><Label className="text-neutral-400 text-xs">View count</Label><Input value={userViews} onChange={(e) => setUserViews(e.target.value)} className="mt-1 bg-[#0a0a0a] border-white/10 text-white" /></div>
-                  <div><Label className="text-neutral-400 text-xs">Upload date</Label><Input value={userDate} onChange={(e) => setUserDate(e.target.value)} className="mt-1 bg-[#0a0a0a] border-white/10 text-white" /></div>
+                  <div>
+                    <Label className="text-neutral-400 text-xs">Video title</Label>
+                    <Input value={userTitle} onChange={(e) => setUserTitle(e.target.value)} className="mt-1 bg-[#0a0a0a] border-white/10 text-white" />
+                  </div>
+                  <div>
+                    <Label className="text-neutral-400 text-xs">Channel name</Label>
+                    <Input value={userChannel} onChange={(e) => setUserChannel(e.target.value)} className="mt-1 bg-[#0a0a0a] border-white/10 text-white" />
+                  </div>
+                  <div>
+                    <Label className="text-neutral-400 text-xs">View count</Label>
+                    <Input value={userViews} onChange={(e) => setUserViews(e.target.value)} className="mt-1 bg-[#0a0a0a] border-white/10 text-white" />
+                  </div>
+                  <div>
+                    <Label className="text-neutral-400 text-xs">Upload date</Label>
+                    <Input value={userDate} onChange={(e) => setUserDate(e.target.value)} className="mt-1 bg-[#0a0a0a] border-white/10 text-white" />
+                  </div>
                 </div>
               </div>
             </div>
@@ -183,13 +271,23 @@ export default function ToolPage() {
             </div>
           </div>
 
+          {/* Right: preview + CTR */}
           <div className="space-y-6 lg:sticky lg:top-20 lg:self-start">
             <div className="flex items-center gap-3">
-              <Button onClick={handleRender} disabled={!userThumb || rendering || showLimitBanner} className="bg-violet-600 hover:bg-violet-500 text-white">
+              <Button
+                onClick={handleRender}
+                disabled={!userThumb || rendering || showLimitBanner}
+                className="bg-violet-600 hover:bg-violet-500 text-white"
+              >
                 {rendering ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
                 Render preview
               </Button>
-              <Button onClick={handleExport} disabled={!userThumb || exporting} variant="outline" className="border-white/10 text-white hover:bg-white/5">
+              <Button
+                onClick={handleExport}
+                disabled={!userThumb || exporting}
+                variant="outline"
+                className="border-white/10 text-white hover:bg-white/5"
+              >
                 {exporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
                 Export PNG
               </Button>
@@ -201,14 +299,20 @@ export default function ToolPage() {
               </div>
             )}
 
+            {/* Mockup */}
             <div className="rounded-2xl border border-white/10 overflow-hidden shadow-xl">
               {rendering ? (
-                <div className="flex items-center justify-center h-96 bg-[#0f0f0f]"><Loader2 className="h-8 w-8 animate-spin text-violet-500" /></div>
+                <div className="flex items-center justify-center h-96 bg-[#0f0f0f]">
+                  <Loader2 className="h-8 w-8 animate-spin text-violet-500" />
+                </div>
               ) : (
-                <div ref={mockupRef}><YouTubeMockup keyword={keyword} videos={videos} /></div>
+                <div ref={mockupRef}>
+                  <YouTubeMockup keyword={keyword} videos={videos} />
+                </div>
               )}
             </div>
 
+            {/* CTR Score (Pro only) */}
             {isPro && userThumb && (
               <div>
                 {scoring ? (
@@ -222,25 +326,39 @@ export default function ToolPage() {
               </div>
             )}
 
+            {/* Pro upsell for free users */}
             {user && !isPro && (
               <div className="rounded-xl border border-violet-500/20 bg-gradient-to-b from-violet-600/10 to-[#111] p-5">
                 <div className="flex items-center gap-2 mb-2">
                   <Lock className="h-4 w-4 text-violet-400" />
                   <h3 className="text-sm font-semibold text-white">Unlock CTR Score & A/B Testing</h3>
                 </div>
-                <p className="text-xs text-neutral-400 mb-4">Get an instant 0-100 score for your thumbnail and test multiple variants side-by-side.</p>
-                <Link href="/redeem"><Button size="sm" className="w-full bg-violet-600 hover:bg-violet-500 text-white">Upgrade to Pro — $12/month</Button></Link>
+                <p className="text-xs text-neutral-400 mb-4">
+                  Get an instant 0-100 score for your thumbnail and test multiple variants side-by-side.
+                </p>
+                <Link href="/redeem">
+                  <Button size="sm" className="w-full bg-violet-600 hover:bg-violet-500 text-white">
+                    Upgrade to Pro — $15/month
+                  </Button>
+                </Link>
               </div>
             )}
 
+            {/* Sign-in prompt for anonymous users */}
             {!user && !loading && (
               <div className="rounded-xl border border-white/10 bg-[#111] p-5">
                 <div className="flex items-center gap-2 mb-2">
                   <Check className="h-4 w-4 text-violet-400" />
                   <h3 className="text-sm font-semibold text-white">You're using the free tool</h3>
                 </div>
-                <p className="text-xs text-neutral-400 mb-4">Sign up to track your 3 free monthly previews and unlock A/B testing, CTR scores, and unlimited previews with Pro.</p>
-                <Link href="/login?mode=signup"><Button size="sm" variant="outline" className="w-full border-white/10 text-white hover:bg-white/5">Create a free account</Button></Link>
+                <p className="text-xs text-neutral-400 mb-4">
+                  Sign up to track your 3 free monthly previews and unlock A/B testing, CTR scores, and unlimited previews with Pro.
+                </p>
+                <Link href="/login?mode=signup">
+                  <Button size="sm" variant="outline" className="w-full border-white/10 text-white hover:bg-white/5">
+                    Create a free account
+                  </Button>
+                </Link>
               </div>
             )}
           </div>
