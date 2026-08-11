@@ -1,25 +1,15 @@
-export default function RefundPage() {
+export default function Page() {
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white px-4 py-16">
-      <main className="mx-auto max-w-3xl">
-        <h1 className="text-3xl font-bold mb-8">Refund Policy</h1>
-        <div className="space-y-6 text-neutral-300 text-sm leading-relaxed">
-          <p className="text-base text-white">30-day money-back guarantee. Contact us within 30 days for full refund.</p>
-          <section>
-            <h2 className="text-lg font-semibold text-white mb-2">1. Eligibility</h2>
-            <p>Purchases are eligible for a full refund when requested within 30 days of the original purchase date.</p>
-          </section>
-          <section>
-            <h2 className="text-lg font-semibold text-white mb-2">2. How to request</h2>
-            <p>Contact us within 30 days of purchase and include the email address used for the purchase and your license or order details so we can locate the transaction.</p>
-          </section>
-          <section>
-            <h2 className="text-lg font-semibold text-white mb-2">3. Processing time</h2>
-            <p>Approved refunds are sent back through the original payment method. Please allow 3–5 business days for processing, plus any additional time required by your payment provider.</p>
-          </section>
-          <p className="text-neutral-500 pt-4">Last updated: August 2026</p>
-        </div>
-      </main>
+    <div className="min-h-screen bg-black text-white p-8 max-w-4xl mx-auto">
+      <h1 className="text-3xl font-bold mb-6">Refund Policy</h1>
+      <p className="text-gray-400">Last updated: August 2026</p>
+      <div className="mt-6 space-y-4 text-gray-300">
+        <p>By using ThumbRank, you agree to this refund policy.</p>
+        <p>Purchases are eligible for a full refund when requested within 30 days of the original purchase date.</p>
+        <p>To request a refund, contact us within 30 days and include the email address used for the purchase and your order details.</p>
+        <p>Approved refunds are returned through the original payment method within 3-5 business days.</p>
+        <p>Contact: support@thumbrank.com</p>
+      </div>
     </div>
   );
 }
