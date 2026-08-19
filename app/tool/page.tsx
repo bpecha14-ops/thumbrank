@@ -6,6 +6,8 @@ import { toPng } from "html-to-image";
 import { createClient } from "@supabase/supabase-js";
 import { SiteNav } from "@/components/site-nav";
 import ExitIntentPopup from "@/components/exit-intent-popup";
+import ComparisonPanel from "@/components/comparison-panel";
+
 const readFile = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -14,7 +16,6 @@ const readFile = (file: File): Promise<string> => {
     reader.readAsDataURL(file);
   });
 };
-
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -81,7 +82,7 @@ function analyzeThumbnail(imageUrl: string): Promise<AiAnalysis> {
         if (score >= 85) {
           recs.push("Excellent contrast and color balance!");
         } else {
-          recs.push("Try adding a human face — thumbnails with faces get +40% CTR.");
+          recs.push("Try adding a human face — faces create stronger visual connection.");
         }
       }
 
@@ -124,54 +125,58 @@ export default function ToolPage() {
   const [aiRecs, setAiRecs] = useState<string[]>([]);
   const [analyzing, setAnalyzing] = useState(false);
 
+  // NEW: Competitor scores
+  const [comp1Score, setComp1Score] = useState<number | null>(null);
+  const [comp1Recs, setComp1Recs] = useState<string[]>([]);
+  const [comp2Score, setComp2Score] = useState<number | null>(null);
+  const [comp2Recs, setComp2Recs] = useState<string[]>([]);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const comp1InputRef = useRef<HTMLInputElement>(null);
   const comp2InputRef = useRef<HTMLInputElement>(null);
   const mockupRef = useRef<HTMLDivElement>(null);
 
-useEffect(() => {
-  const checkPro = async () => {
-    const proEmail = localStorage.getItem("tr_pro_email");
-    
-    if (proEmail) {
-      const { data, error } = await supabase
-        .from("subscriptions")
-        .select("*")
-        .eq("email", proEmail.toLowerCase())
-        .eq("status", "active")
-        .single();
-        
-   if (data && !error) {
-        setIsPro(true);
-        return;
-      } else {
-        localStorage.removeItem("thumbrank_pro");
-        localStorage.removeItem("tr_pro_email");
-      }
-    }
-    
-       // Fallback: legacy license key check
-    const proFlag = localStorage.getItem("thumbrank_pro");
-    const licenseKey = localStorage.getItem("tr_license_key");
-    if (proFlag === "true" && licenseKey) {
-      const { data } = await supabase
-        .from("licenses")
-        .select("*")
-        .eq("key", licenseKey)
-        .eq("status", "active")
-        .single();
-      if (data) {
-        setIsPro(true);
-        setUser({ license: data });
-      } else {
-        localStorage.removeItem("thumbrank_pro");
-        localStorage.removeItem("tr_license_key");
-      }
-    }
-  };
-  checkPro();
-}, []);
+  useEffect(() => {
+    const checkPro = async () => {
+      const proEmail = localStorage.getItem("tr_pro_email");
 
+      if (proEmail) {
+        const { data, error } = await supabase
+          .from("subscriptions")
+          .select("*")
+          .eq("email", proEmail.toLowerCase())
+          .eq("status", "active")
+          .single();
+
+        if (data && !error) {
+          setIsPro(true);
+          return;
+        } else {
+          localStorage.removeItem("thumbrank_pro");
+          localStorage.removeItem("tr_pro_email");
+        }
+      }
+
+      const proFlag = localStorage.getItem("thumbrank_pro");
+      const licenseKey = localStorage.getItem("tr_license_key");
+      if (proFlag === "true" && licenseKey) {
+        const { data } = await supabase
+          .from("licenses")
+          .select("*")
+          .eq("key", licenseKey)
+          .eq("status", "active")
+          .single();
+        if (data) {
+          setIsPro(true);
+          setUser({ license: data });
+        } else {
+          localStorage.removeItem("thumbrank_pro");
+          localStorage.removeItem("tr_license_key");
+        }
+      }
+    };
+    checkPro();
+  }, []);
 
   const handleOwnImage = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -193,13 +198,13 @@ useEffect(() => {
   const handleComp1Image = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !file.type.startsWith("image/")) return;
-    try { setComp1Image(await readFile(file)); } catch { /* ignore */ }
+    try { setComp1Image(await readFile(file)); setComp1Score(null); } catch { /* ignore */ }
   }, []);
 
   const handleComp2Image = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !file.type.startsWith("image/")) return;
-    try { setComp2Image(await readFile(file)); } catch { /* ignore */ }
+    try { setComp2Image(await readFile(file)); setComp2Score(null); } catch { /* ignore */ }
   }, []);
 
   const handleDrop = useCallback(async (e: React.DragEvent) => {
@@ -225,7 +230,6 @@ useEffect(() => {
       setError("Please upload a thumbnail first.");
       return;
     }
-        // Check preview limit for free users
     if (!isPro) {
       const PREVIEW_KEY = "tr_preview_count";
       const PREVIEW_DATE = "tr_preview_date";
@@ -244,17 +248,33 @@ useEffect(() => {
     }
     setLoading(true);
     setAnalyzing(true);
+
     try {
-      const result = await analyzeThumbnail(image);
-      setAiScore(result.score);
-      setAiRecs(result.recommendations);
+      // Analyze all three thumbnails
+      const promises: Promise<AiAnalysis>[] = [analyzeThumbnail(image)];
+      if (comp1Image) promises.push(analyzeThumbnail(comp1Image));
+      if (comp2Image) promises.push(analyzeThumbnail(comp2Image));
+
+      const results = await Promise.all(promises);
+
+      setAiScore(results[0].score);
+      setAiRecs(results[0].recommendations);
+
+      if (results[1]) {
+        setComp1Score(results[1].score);
+        setComp1Recs(results[1].recommendations);
+      }
+      if (results[2]) {
+        setComp2Score(results[2].score);
+        setComp2Recs(results[2].recommendations);
+      }
     } catch {
       setAiScore(null);
       setAiRecs([]);
     }
     setLoading(false);
     setAnalyzing(false);
-  }, [image]);
+  }, [image, comp1Image, comp2Image, isPro]);
 
   const handleExport = useCallback(async () => {
     if (!mockupRef.current) return;
@@ -316,7 +336,7 @@ useEffect(() => {
 
   const renderVideoCard = (
     thumb: string | null, title: string, views: string, date: string,
-    channel: string, duration: string, isOwn = false
+    channel: string, duration: string, isOwn = false, score: number | null = null
   ) => (
     <div className={`flex gap-3 p-3 rounded-xl ${isOwn ? "border-2 border-purple-500 bg-[#1a1a2e]" : "bg-[#0f0f0f]"}`}>
       <div className="relative w-40 h-[90px] bg-gray-800 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center">
@@ -339,18 +359,20 @@ useEffect(() => {
           <span className="text-gray-500">✓</span>
         </div>
         <p className="text-xs text-gray-500 mt-1 line-clamp-2">{title} — watch this video to learn more.</p>
+        {score !== null && (
+          <div className={`mt-1 text-xs font-bold ${scoreColor(score)}`}>Quality Score: {score}</div>
+        )}
       </div>
     </div>
   );
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white relative overflow-x-hidden">
-      {/* Background effects */}
+      {/* REMOVED grid background — cleaner professional look */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-purple-900/25 rounded-full blur-[140px]" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[700px] h-[700px] bg-blue-900/20 rounded-full blur-[160px]" />
         <div className="absolute top-[40%] left-[50%] w-[400px] h-[400px] bg-pink-900/15 rounded-full blur-[120px]" />
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:72px_72px]" />
       </div>
 
       <div className="relative z-10">
@@ -375,20 +397,19 @@ useEffect(() => {
                 >
                   <input ref={fileInputRef} type="file" accept="image/*" onChange={handleOwnImage} className="hidden" />
                   {image ? (
-<div className="relative inline-block">
-  <img src={image} alt="Your thumbnail" className="max-h-40 mx-auto rounded-lg" />
-  <button
-    onClick={() => {
-      setImage(null);
-      setAiScore(null);
-     
-    }}
-    className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-sm font-bold leading-none"
-    aria-label="Remove image"
-  >
-    ×
-  </button>
-</div>
+                    <div className="relative inline-block">
+                      <img src={image} alt="Your thumbnail" className="max-h-40 mx-auto rounded-lg" />
+                      <button
+                        onClick={() => {
+                          setImage(null);
+                          setAiScore(null);
+                        }}
+                        className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-sm font-bold leading-none"
+                        aria-label="Remove image"
+                      >
+                        ×
+                      </button>
+                    </div>
                   ) : (
                     <div>
                       <p className="text-gray-400 mb-1">Drag & drop your thumbnail here</p>
@@ -431,20 +452,18 @@ useEffect(() => {
                 <h3 className="font-semibold mb-3">Competitor 1</h3>
                 <div onClick={() => comp1InputRef.current?.click()} className="border-2 border-dashed border-gray-700 rounded-lg p-4 text-center cursor-pointer hover:border-purple-500 transition-colors min-h-[100px] flex items-center justify-center mb-3 bg-[#0f0f0f]/50">
                   <input ref={comp1InputRef} type="file" accept="image/*" onChange={handleComp1Image} className="hidden" />
-                 {comp1Image ? (
-  <div className="relative inline-block">
-    <img src={comp1Image} alt="Competitor 1" className="max-h-24 mx-auto rounded" />
-    <button
-      onClick={() => {
-        setComp1Image(null);
-      }}
-      className="absolute top-2 right-2 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-sm font-bold leading-none"
-      aria-label="Remove image"
-    >
-      ×
-    </button>
-  </div>
-) : <p className="text-gray-500 text-sm">Click or drag to upload<br/><span className="text-xs text-gray-600">PNG/JPG · max 5MB</span></p>}
+                  {comp1Image ? (
+                    <div className="relative inline-block">
+                      <img src={comp1Image} alt="Competitor 1" className="max-h-24 mx-auto rounded" />
+                      <button
+                        onClick={() => { setComp1Image(null); setComp1Score(null); }}
+                        className="absolute top-2 right-2 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-sm font-bold leading-none"
+                        aria-label="Remove image"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ) : <p className="text-gray-500 text-sm">Click or drag to upload<br/><span className="text-xs text-gray-600">PNG/JPG · max 5MB</span></p>}
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <input type="text" value={comp1Title} onChange={(e) => setComp1Title(e.target.value)} placeholder="Title" className="w-full px-3 py-2 rounded bg-[#1a1a1a]/80 border border-gray-700 text-white text-sm focus:outline-none focus:border-purple-500" />
@@ -460,19 +479,17 @@ useEffect(() => {
                 <div onClick={() => comp2InputRef.current?.click()} className="border-2 border-dashed border-gray-700 rounded-lg p-4 text-center cursor-pointer hover:border-purple-500 transition-colors min-h-[100px] flex items-center justify-center mb-3 bg-[#0f0f0f]/50">
                   <input ref={comp2InputRef} type="file" accept="image/*" onChange={handleComp2Image} className="hidden" />
                   {comp2Image ? (
-  <div className="relative inline-block">
-    <img src={comp2Image} alt="Competitor 2" className="max-h-24 mx-auto rounded" />
-    <button
-      onClick={() => {
-        setComp2Image(null);
-      }}
-      className="absolute top-2 right-2 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-sm font-bold leading-none"
-      aria-label="Remove image"
-    >
-      ×
-    </button>
-  </div>
-) : <p className="text-gray-500 text-sm">Click or drag to upload<br/><span className="text-xs text-gray-600">PNG/JPG · max 5MB</span></p>}
+                    <div className="relative inline-block">
+                      <img src={comp2Image} alt="Competitor 2" className="max-h-24 mx-auto rounded" />
+                      <button
+                        onClick={() => { setComp2Image(null); setComp2Score(null); }}
+                        className="absolute top-2 right-2 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-sm font-bold leading-none"
+                        aria-label="Remove image"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ) : <p className="text-gray-500 text-sm">Click or drag to upload<br/><span className="text-xs text-gray-600">PNG/JPG · max 5MB</span></p>}
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <input type="text" value={comp2Title} onChange={(e) => setComp2Title(e.target.value)} placeholder="Title" className="w-full px-3 py-2 rounded bg-[#1a1a1a]/80 border border-gray-700 text-white text-sm focus:outline-none focus:border-purple-500" />
@@ -508,46 +525,28 @@ useEffect(() => {
                 </div>
               )}
               {!isPro && (
-  <div className="bg-[#1a1a1a] border border-gray-700 rounded-lg p-4 space-y-3">
-    <p className="text-sm text-gray-300 font-medium">
-      Already paid? Activate Pro:
-    </p>
-    <div className="flex gap-2">
-      <input
-        type="email"
-        id="activateEmail"
-        placeholder="Enter email used for payment"
-        className="flex-1 px-3 py-2 rounded bg-[#111] border border-gray-700 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-purple-500"
-      />
-      <button
-        onClick={async () => {
-          const email = (document.getElementById("activateEmail") as HTMLInputElement)?.value;
-          if (!email) return;
-          
-          const { data } = await supabase
-            .from("subscriptions")
-            .select("*")
-            .eq("email", email.toLowerCase())
-            .eq("status", "active")
-            .single();
-            
-          if (data) {
-            localStorage.setItem("thumbrank_pro", "true");
-            localStorage.setItem("tr_pro_email", email.toLowerCase());
-            setIsPro(true);
-            setError(null);
-            alert("Pro activated! Refresh the page if needed.");
-          } else {
-            setError("No active subscription found for this email.");
-          }
-        }}
-        className="bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-4 py-2 rounded transition-colors"
-      >
-        Activate
-      </button>
-    </div>
-  </div>
-)}
+                <div className="bg-[#1a1a1a] border border-gray-700 rounded-lg p-4 space-y-3">
+                  <p className="text-sm text-gray-300 font-medium">Already paid? Activate Pro:</p>
+                  <div className="flex gap-2">
+                    <input type="email" id="activateEmail" placeholder="Enter email used for payment" className="flex-1 px-3 py-2 rounded bg-[#111] border border-gray-700 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-purple-500" />
+                    <button onClick={async () => {
+                      const email = (document.getElementById("activateEmail") as HTMLInputElement)?.value;
+                      if (!email) return;
+                      const { data } = await supabase.from("subscriptions").select("*").eq("email", email.toLowerCase()).eq("status", "active").single();
+                      if (data) {
+                        localStorage.setItem("thumbrank_pro", "true");
+                        localStorage.setItem("tr_pro_email", email.toLowerCase());
+                        setIsPro(true);
+                        setError(null);
+                        alert("Pro activated! Refresh the page if needed.");
+                      } else {
+                        setError("No active subscription found for this email.");
+                      }
+                    }} className="bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-4 py-2 rounded transition-colors">Activate</button>
+                  </div>
+                </div>
+              )}
+
               {/* YouTube Mockup */}
               <div ref={mockupRef} className="bg-[#0f0f0f] rounded-xl overflow-hidden border border-gray-800">
                 <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-800">
@@ -568,13 +567,22 @@ useEffect(() => {
                   ))}
                 </div>
                 <div className="p-4 space-y-3">
-                  {renderVideoCard(image, videoTitle, viewCount, uploadDate, channelName, "12:45", true)}
-                  {renderVideoCard(comp1Image, comp1Title, comp1Views, comp1Date, comp1Channel, comp1Duration)}
-                  {renderVideoCard(comp2Image, comp2Title, comp2Views, comp2Date, comp2Channel, comp2Duration)}
+                  {renderVideoCard(image, videoTitle, viewCount, uploadDate, channelName, "12:45", true, aiScore)}
+                  {renderVideoCard(comp1Image, comp1Title, comp1Views, comp1Date, comp1Channel, comp1Duration, false, comp1Score)}
+                  {renderVideoCard(comp2Image, comp2Title, comp2Views, comp2Date, comp2Channel, comp2Duration, false, comp2Score)}
                 </div>
               </div>
 
-              {/* AI Score Panel */}
+              {/* NEW: Comparison Panel */}
+              {(aiScore !== null) && (comp1Score !== null || comp2Score !== null) && (
+                <ComparisonPanel
+                  main={image ? { score: aiScore, thumbnail: image, title: videoTitle } : null}
+                  comp1={comp1Image && comp1Score !== null ? { score: comp1Score, thumbnail: comp1Image, title: comp1Title } : null}
+                  comp2={comp2Image && comp2Score !== null ? { score: comp2Score, thumbnail: comp2Image, title: comp2Title } : null}
+                />
+              )}
+
+              {/* AI Score Panel — RENAMED to Thumbnail Quality Score */}
               {aiScore !== null && (
                 <div className="bg-[#111]/80 backdrop-blur-sm rounded-xl p-5 border border-gray-800">
                   <div className="flex items-center gap-4 mb-4">
@@ -586,7 +594,7 @@ useEffect(() => {
                       <span className={`absolute inset-0 flex items-center justify-center text-lg font-bold ${scoreColor(aiScore)}`}>{aiScore}</span>
                     </div>
                     <div>
-                      <h3 className="font-bold text-white">AI CTR Score</h3>
+                      <h3 className="font-bold text-white">Thumbnail Quality Score</h3>
                       <p className="text-sm text-gray-400">
                         {aiScore >= 80 ? "Strong thumbnail — likely to get clicks!" :
                          aiScore >= 50 ? "Decent, but improvements can boost CTR." :
@@ -628,7 +636,7 @@ useEffect(() => {
               </details>
               <details className="bg-[#111]/60 backdrop-blur-sm rounded-lg p-4 border border-gray-800">
                 <summary className="font-semibold cursor-pointer">What do I get with Pro?</summary>
-                <p className="text-gray-400 mt-2 text-sm">Unlimited previews, watermark-free PNG exports, AI CTR score, and early access to new features.</p>
+                <p className="text-gray-400 mt-2 text-sm">Unlimited previews, watermark-free PNG exports, Thumbnail Quality Score, and early access to new features.</p>
               </details>
             </div>
           </div>
