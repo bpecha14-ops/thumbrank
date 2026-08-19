@@ -22,6 +22,7 @@ import {
   ArrowRight,
   Star,
   TrendingUp,
+  Heart,
 } from 'lucide-react';
 
 const heroVideos: MockupVideo[] = [
@@ -68,8 +69,8 @@ const features = [
   },
   {
     icon: Gauge,
-    title: 'CTR Score',
-    desc: 'Get an instant 0-100 score based on contrast, colorfulness, and text readability — no AI APIs, all in-browser.',
+    title: 'Thumbnail Quality Score',
+    desc: 'Get an instant 0-100 score based on contrast, colorfulness, and text readability — all in-browser.',
   },
   {
     icon: Download,
@@ -90,28 +91,28 @@ const features = [
 
 const faqs = [
   {
-    q: 'Do I need to create an account to use ThumbRank?',
-    a: 'No. The free tool works without any sign-up — just upload your thumbnail and go. You only need an account if you want unlimited previews, A/B testing, and the CTR score.',
+    q: 'How is the score calculated?',
+    a: 'The Thumbnail Quality Score is based on three visual factors: contrast, colorfulness, and text readability. Everything runs locally in your browser — no image data is sent to external AI APIs or servers. Your thumbnails stay private.',
   },
   {
-    q: 'How does the free plan work?',
-    a: 'Free users get 3 previews per day. Each time you render a YouTube search mockup, it counts as one preview. The counter resets every 24 hours.',
+    q: 'Does it use AI?',
+    a: 'No external AI APIs. The analysis runs entirely in your browser using client-side image processing. This means zero privacy risk and instant results — no waiting for server responses.',
+  },
+  {
+    q: "What's the difference between Free and Pro?",
+    a: 'Free gives you 3 previews per day, 2 competitor comparison slots, and basic PNG export. Pro unlocks unlimited previews, high-resolution export, and A/B testing with up to 3 variants. No subscription required — Pro is a one-time payment via Paddle.',
+  },
+  {
+    q: 'Does it work with YouTube Shorts, Reels, or just standard thumbnails?',
+    a: 'Any thumbnail size works. Upload a standard YouTube thumbnail (1280×720), a Shorts thumbnail, or any custom size — the preview and score work the same.',
+  },
+  {
+    q: 'Is my data private?',
+    a: 'Yes. Your images never leave your browser. We don't store, upload, or analyze thumbnails on any server.',
   },
   {
     q: 'How do I upgrade to Pro?',
     a: 'Click "Upgrade to Pro" to visit our Paddle page. After purchasing, Paddle gives you a license key. Enter it on the Redeem Key page and your account is instantly upgraded to Pro.',
-  },
-  {
-    q: 'Do you store my thumbnail images?',
-    a: 'No. All image processing happens entirely in your browser using the Canvas API. Your thumbnails never leave your device.',
-  },
-  {
-    q: 'How is the CTR Score calculated?',
-    a: 'The score combines image contrast, color saturation, edge density (text/subject separation), and brightness. It runs 100% in your browser — no paid AI APIs are used.',
-  },
-  {
-    q: 'Can I use ThumbRank for client work?',
-    a: 'Absolutely. Export mockups as PNGs and share them with clients or your team to get feedback before publishing.',
   },
 ];
 
@@ -120,8 +121,8 @@ export default function Home() {
     <div className="min-h-screen bg-[#0a0a0a]">
       <SiteNav />
 
-      {/* Hero */}
-      <section className="relative overflow-hidden bg-grid">
+      {/* Hero — REMOVED bg-grid, ADDED bg-gradient-mesh */}
+      <section className="relative overflow-hidden bg-gradient-mesh">
         <div className="absolute inset-0 bg-gradient-to-b from-violet-600/10 via-transparent to-transparent pointer-events-none" />
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-violet-600/20 rounded-full blur-[120px] pointer-events-none" />
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 py-16 sm:py-24">
@@ -160,13 +161,13 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Stats bar */}
+      {/* Stats bar — REMOVED fake +23% CTR stat */}
       <section className="border-y border-white/5 bg-[#0c0c0c]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 py-10 grid grid-cols-2 sm:grid-cols-4 gap-8 text-center">
           {[
             { label: 'Previews generated', value: '180K+' },
             { label: 'Active creators', value: '2,400' },
-            { label: 'Avg. CTR lift', value: '+23%' },
+            { label: 'Countries', value: '120+' },
             { label: 'Server-side storage', value: '0 KB' },
           ].map((s) => (
             <div key={s.label}>
@@ -214,7 +215,7 @@ export default function Home() {
             {[
               { step: '01', title: 'Upload your thumbnail', desc: 'Drop in your PNG or JPG (up to 5MB). It stays in your browser — nothing is uploaded.' },
               { step: '02', title: 'Add competitors', desc: 'Paste in up to two competitor thumbnails to see your video in context, just like real YouTube.' },
-              { step: '03', title: 'Preview & export', desc: 'See the mockup, check your CTR score, and download a PNG to share with your team.' },
+              { step: '03', title: 'Preview & export', desc: 'See the mockup, check your Quality Score, and download a PNG to share with your team.' },
             ].map((s) => (
               <div key={s.step} className="relative">
                 <div className="text-5xl font-bold text-violet-600/30">{s.step}</div>
@@ -223,6 +224,19 @@ export default function Home() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Maker Story — NEW SECTION */}
+      <section className="mx-auto max-w-4xl px-4 sm:px-6 py-20 sm:py-28 text-center">
+        <div className="rounded-2xl border border-white/10 bg-[#111] p-8 sm:p-12">
+          <Heart className="h-8 w-8 text-violet-400 mx-auto mb-4" />
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-4">Why I built this</h2>
+          <p className="text-neutral-400 text-lg leading-relaxed max-w-2xl mx-auto">
+            I spent 3 hours redesigning a thumbnail after publishing because it looked terrible in YouTube search. 
+            That's 3 hours I could have spent on content. <span className="text-white font-medium">ThumbRank exists so no creator has to guess again.</span>
+          </p>
+          <p className="mt-4 text-sm text-neutral-500">— Bogdan, solo founder</p>
         </div>
       </section>
 
@@ -259,7 +273,7 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* Pro */}
+          {/* Pro — REMOVED "Priority PNG export" */}
           <div className="relative rounded-2xl border border-violet-500/50 bg-gradient-to-b from-violet-600/10 to-[#111] p-8 glow-purple">
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-violet-600 px-3 py-1 text-xs font-medium text-white">
               Most popular
@@ -274,9 +288,10 @@ export default function Home() {
               {[
                 'Unlimited previews',
                 'A/B testing (2-3 variants)',
-                'CTR Score (0-100)',
+                'Thumbnail Quality Score (0-100)',
                 'Unlimited competitor slots',
-                'Priority PNG export',
+                'High-res PNG export',
+                'Watermark-free downloads',
               ].map((item) => (
                 <li key={item} className="flex items-center gap-2 text-neutral-200">
                   <Check className="h-4 w-4 text-violet-400 shrink-0" /> {item}
@@ -307,7 +322,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FAQ */}
+      {/* FAQ — UPDATED with Zarek audit questions */}
       <section id="faq" className="mx-auto max-w-3xl px-4 sm:px-6 py-20 sm:py-28">
         <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-center mb-12">Frequently asked questions</h2>
         <Accordion type="single" collapsible className="space-y-3">
@@ -326,21 +341,21 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="border-t border-white/5 bg-[#080808]">
-  <div className="mx-auto max-w-7xl px-4 sm:px-6 py-10 flex flex-col sm:flex-row items-center justify-between gap-4">
-    <div className="flex items-center gap-2">
-      <div className="flex h-6 w-6 items-center justify-center rounded bg-gradient-to-br from-violet-500 to-purple-600">
-        <span className="text-xs">T</span>
-      </div>
-      <span className="text-sm font-semibold text-white">ThumbRank</span>
-    </div>
-    <div className="flex gap-4 text-xs text-neutral-500">
-      <a href="/terms" className="hover:text-neutral-300">Terms</a>
-      <a href="/privacy" className="hover:text-neutral-300">Privacy</a>
-      <a href="/refund" className="hover:text-neutral-300">Refund</a>
-    </div>
-    <p className="text-xs text-neutral-500">© {new Date().getFullYear()} ThumbRank</p>
-  </div>
-</footer>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-10 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <div className="flex h-6 w-6 items-center justify-center rounded bg-gradient-to-br from-violet-500 to-purple-600">
+              <span className="text-xs">T</span>
+            </div>
+            <span className="text-sm font-semibold text-white">ThumbRank</span>
+          </div>
+          <div className="flex gap-4 text-xs text-neutral-500">
+            <a href="/terms" className="hover:text-neutral-300">Terms</a>
+            <a href="/privacy" className="hover:text-neutral-300">Privacy</a>
+            <a href="/refund" className="hover:text-neutral-300">Refund</a>
+          </div>
+          <p className="text-xs text-neutral-500">© {new Date().getFullYear()} ThumbRank</p>
+        </div>
+      </footer>
     </div>
   );
 }
