@@ -50,11 +50,13 @@
   -webkit-text-fill-color: transparent;
 }
 
-.bg-grid {
-  background-image:
-    linear-gradient(to right, rgba(139, 92, 246, 0.06) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(139, 92, 246, 0.06) 1px, transparent 1px);
-  background-size: 48px 48px;
+/* REMOVED: bg-grid class — no more AI-looking grid */
+/* Use bg-gradient-mesh instead for professional look */
+.bg-gradient-mesh {
+  background: 
+    radial-gradient(ellipse 80% 50% at 20% 40%, rgba(139, 92, 246, 0.08), transparent),
+    radial-gradient(ellipse 60% 40% at 80% 60%, rgba(124, 58, 237, 0.06), transparent),
+    radial-gradient(ellipse 50% 50% at 50% 50%, rgba(167, 139, 250, 0.04), transparent);
 }
 
 /* Smooth scrollbar */
@@ -86,4 +88,22 @@
 }
 .animate-fade-in-up {
   animation: fade-in-up 0.5s ease-out forwards;
+}
+
+/* Comparison panel animations */
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.animate-slide-in-right {
+  animation: slide-in-right 0.4s ease-out forwards;
+}
+
+/* Winner badge pulse */
+@keyframes winner-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+}
+.winner-pulse {
+  animation: winner-pulse 2s infinite;
 }
