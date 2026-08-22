@@ -27,70 +27,20 @@ interface AiAnalysis {
   recommendations: string[];
 }
 
-function analyzeThumbnail(imageUrl: string): Promise<AiAnalysis> {
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d")!;
-      const w = 320;
-      const h = (img.height / img.width) * w;
-      canvas.width = w;
-      canvas.height = h;
-      ctx.drawImage(img, 0, 0, w, h);
-
-      const data = ctx.getImageData(0, 0, w, h).data;
-      let totalR = 0, totalG = 0, totalB = 0, totalLuma = 0;
-      let minLuma = 255, maxLuma = 0;
-      const pixels = w * h;
-
-      for (let i = 0; i < data.length; i += 4) {
-        const r = data[i], g = data[i + 1], b = data[i + 2];
-        const luma = 0.299 * r + 0.587 * g + 0.114 * b;
-        totalR += r; totalG += g; totalB += b; totalLuma += luma;
-        if (luma < minLuma) minLuma = luma;
-        if (luma > maxLuma) maxLuma = luma;
-      }
-
-      const avgLuma = totalLuma / pixels;
-      const contrast = maxLuma - minLuma;
-      const saturation =
-        pixels > 0
-          ? (Math.abs(totalR - totalG) + Math.abs(totalR - totalB) + Math.abs(totalG - totalB)) / (3 * pixels)
-          : 0;
-
-      let score = 50;
-      score += Math.min(25, (contrast / 255) * 40);
-      score += Math.min(15, (saturation / 255) * 30);
-      if (avgLuma > 80 && avgLuma < 200) score += 10;
-      score = Math.round(Math.min(100, Math.max(0, score)));
-
-      const recs: string[] = [];
-      if (contrast < 60) {
-        recs.push("Increase contrast — your thumbnail blends into the background.");
-      }
-      if (avgLuma > 200) {
-        recs.push("Too bright — reduce highlights so text stays readable.");
-      } else if (avgLuma < 50) {
-        recs.push("Too dark — details get lost on mobile screens.");
-      }
-      if (saturation < 30) {
-        recs.push("Add bolder colors — muted thumbnails get skipped in search.");
-      }
-      if (recs.length === 0) {
-        if (score >= 85) {
-          recs.push("Excellent contrast and color balance!");
-        } else {
-          recs.push("Try adding a human face — faces create stronger visual connection.");
-        }
-      }
-
-      resolve({ score, recommendations: recs.slice(0, 3) });
-    };
-    img.onerror = () => resolve({ score: 0, recommendations: ["Unable to analyze image."] });
-    img.src = imageUrl;
+async function analyzeThumbnail(imageUrl: string): Promise<AiAnalysis> {
+  const response = await fetch("/api/analyze", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ image: imageUrl }),
   });
+  
+  if (!response.ok) {
+    const error = await response.json();
+    console.error("API error:", error);
+    return { score: 0, recommendations: ["Analysis failed. Please try again."] };
+  }
+  
+  return response.json();
 }
 
 export default function ToolPage() {
