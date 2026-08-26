@@ -5,10 +5,11 @@ export interface CtrBreakdown {
   brightness: number;
   clutter: number;
   variance: number;
+  colorfulness: number;
+  edgeDensity: number;
 }
 
 export function analyzeThumbnail(imageData: ImageData): CtrBreakdown {
-  // Stub — реальная логика в tool/page.tsx (Canvas fallback)
   return {
     score: 50,
     contrast: 50,
@@ -16,5 +17,7 @@ export function analyzeThumbnail(imageData: ImageData): CtrBreakdown {
     brightness: 50,
     clutter: 50,
     variance: 50,
+    colorfulness: 50,
+    edgeDensity: 50,
   };
 }
