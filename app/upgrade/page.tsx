@@ -2,8 +2,8 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Sparkles, Check, ArrowLeft, Zap } from "lucide-react";
-const PADDLE_CLIENT_TOKEN = "live_4d1fad2bccb272396ab44e6f949"
+import { Sparkles, Check, ArrowLeft } from "lucide-react";
+
 const PRICE_MONTHLY = "pri_01m1288thzjkq2ektkvvblj0gp"
 const PRICE_YEARLY = "pri_01m128f8qzsdwphbxcqg35785e"
 
@@ -43,28 +43,8 @@ function Navbar() {
 }
 
 export default function UpgradePage() {
-const [billing, setBilling] = useState<"monthly" | "yearly">("yearly");
-  const [paddleLoaded, setPaddleLoaded] = useState(false);
-
-useEffect(() => {
-  if (window.Paddle) {
-    window.Paddle.Initialize({ token: PADDLE_CLIENT_TOKEN });
-    setPaddleLoaded(true);
-    return;
-  }
-  const script = document.createElement("script");
-  script.src = "https://cdn.paddle.com/paddle/v2/paddle.js";
-  script.async = true;
-  script.onload = () => {
-    if (window.Paddle) {
-      window.Paddle.Initialize({ token: PADDLE_CLIENT_TOKEN });
-      setPaddleLoaded(true);
-    }
-  };
-  document.body.appendChild(script);
-}, []);
+  const [billing, setBilling] = useState<"monthly" | "yearly">("yearly");
    
-  
   const freeFeatures = [
     "3 previews per day",
     "Basic AI Thumbnail Score",
@@ -95,27 +75,25 @@ useEffect(() => {
           </p>
         </div>
 
-       {/* Toggle */}
-<div className="flex items-center justify-center gap-3 mb-10">
-  <button
-    onClick={() => setBilling("yearly")}
-    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${billing === "yearly" ? "bg-white text-black" : "bg-white/5 text-white/60 hover:bg-white/10"}`}
-  >
-    Yearly
-  </button>
-  <button
-    onClick={() => setBilling("monthly")}
-    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${billing === "monthly" ? "bg-white text-black" : "bg-white/5 text-white/60 hover:bg-white/10"}`}
-  >
-    Monthly
-  </button>
-  {billing === "yearly" && (
-    <span className="text-xs text-emerald-400 font-medium">BEST VALUE</span>
-  )}
-</div>
+        <div className="flex items-center justify-center gap-3 mb-10">
+          <button
+            onClick={() => setBilling("yearly")}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${billing === "yearly" ? "bg-white text-black" : "bg-white/5 text-white/60 hover:bg-white/10"}`}
+          >
+            Yearly
+          </button>
+          <button
+            onClick={() => setBilling("monthly")}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${billing === "monthly" ? "bg-white text-black" : "bg-white/5 text-white/60 hover:bg-white/10"}`}
+          >
+            Monthly
+          </button>
+          {billing === "yearly" && (
+            <span className="text-xs text-emerald-400 font-medium">BEST VALUE</span>
+          )}
+        </div>
 
         <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-          {/* Free */}
           <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-8">
             <h3 className="text-lg font-semibold text-white mb-2">Free</h3>
             <div className="text-4xl font-bold text-white mb-1">$0</div>
@@ -132,24 +110,23 @@ useEffect(() => {
             </Link>
           </div>
 
-          {/* Pro */}
           <div className="relative rounded-2xl border border-purple-500/30 bg-gradient-to-b from-purple-500/10 to-transparent p-8">
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-xs font-semibold text-white">
               Most popular
             </div>
             <h3 className="text-lg font-semibold text-white mb-2">Pro</h3>
-           <div className="flex items-baseline gap-1 mb-1">
-  <span className="text-4xl font-bold text-white">{billing === "monthly" ? "$20" : "$16"}</span>
-  <span className="text-sm text-white/40">/month</span>
-</div>
-{billing === "yearly" && (
-  <span className="inline-block text-xs text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-full mb-2">
-    Save $48/year
-  </span>
-)}
-<div className="text-sm text-white/40 mb-6">
-  {billing === "yearly" ? "Billed yearly" : "Cancel anytime"}
-</div>
+            <div className="flex items-baseline gap-1 mb-1">
+              <span className="text-4xl font-bold text-white">{billing === "monthly" ? "$20" : "$16"}</span>
+              <span className="text-sm text-white/40">/month</span>
+            </div>
+            {billing === "yearly" && (
+              <span className="inline-block text-xs text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-full mb-2">
+                Save $48/year
+              </span>
+            )}
+            <div className="text-sm text-white/40 mb-6">
+              {billing === "yearly" ? "Billed yearly" : "Cancel anytime"}
+            </div>
             <ul className="space-y-3 mb-8">
               {proFeatures.map((f, i) => (
                 <li key={i} className="flex items-center gap-2 text-sm text-white/80">
@@ -158,15 +135,14 @@ useEffect(() => {
               ))}
             </ul>
             <button
-161  onClick={() => {
-162    const priceId = billing === "monthly" ? PRICE_MONTHLY : PRICE_YEARLY;
-163    window.open(`https://pay.paddle.com/checkout/${priceId}`, '_blank');
-164  }}
-  
-  className="block w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold text-center hover:opacity-90 transition-all shadow-lg shadow-purple-900/20 disabled:opacity-50 disabled:cursor-not-allowed"
->
-  {billing === "monthly" ? "Get Pro — $20/month" : "Get Pro — $16/month"}
-</button>
+              onClick={() => {
+                const priceId = billing === "monthly" ? PRICE_MONTHLY : PRICE_YEARLY;
+                window.open(`https://pay.paddle.com/checkout/${priceId}`, '_blank');
+              }}
+              className="block w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold text-center hover:opacity-90 transition-all shadow-lg shadow-purple-900/20"
+            >
+              {billing === "monthly" ? "Get Pro — $20/month" : "Get Pro — $16/month"}
+            </button>
           </div>
         </div>
 
