@@ -1,11 +1,21 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Sparkles, Check, ArrowLeft } from "lucide-react";
 
-const PRICE_MONTHLY = "pri_01m1288thzjkq2ektkvvblj0gp"
-const PRICE_YEARLY = "pri_01m128f8qzsdwphbxcqg35785e"
+
+const PADDLE_CLIENT_TOKEN = "live_4d1fad2bccb272396ab44e6f949";
+
+const PRICE_MONTHLY = "pri_01m1288thzjkq2ektkvvblj0gp";
+const PRICE_YEARLY = "pri_01m128f8qzsdwphbxcqg35785e";
+
+// Для TypeScript — чтобы не ругался на window.Paddle
+declare global {
+  interface Window {
+    Paddle?: any;
+  }
+}
 
 function AuroraBg() {
   return (
@@ -44,7 +54,27 @@ function Navbar() {
 
 export default function UpgradePage() {
   const [billing, setBilling] = useState<"monthly" | "yearly">("yearly");
-   
+  const [paddleLoaded, setPaddleLoaded] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.Paddle) {
+      window.Paddle.Initialize({ token: PADDLE_CLIENT_TOKEN });
+      setPaddleLoaded(true);
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = "https://cdn.paddle.com/paddle/v2/paddle.js";
+    script.async = true;
+    script.onload = () => {
+      if (window.Paddle) {
+        window.Paddle.Initialize({ token: PADDLE_CLIENT_TOKEN });
+        setPaddleLoaded(true);
+      }
+    };
+    document.body.appendChild(script);
+  }, []);
+
   const freeFeatures = [
     "3 previews per day",
     "Basic AI Thumbnail Score",
@@ -136,10 +166,14 @@ export default function UpgradePage() {
             </ul>
             <button
               onClick={() => {
+                if (!window.Paddle) return;
                 const priceId = billing === "monthly" ? PRICE_MONTHLY : PRICE_YEARLY;
-                window.open(`https://pay.paddle.com/checkout/${priceId}`, '_blank');
+                window.Paddle.Checkout.open({
+                  items: [{ priceId, quantity: 1 }]
+                });
               }}
-              className="block w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold text-center hover:opacity-90 transition-all shadow-lg shadow-purple-900/20"
+              disabled={!paddleLoaded}
+              className="block w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold text-center hover:opacity-90 transition-all shadow-lg shadow-purple-900/20 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {billing === "monthly" ? "Get Pro — $20/month" : "Get Pro — $16/month"}
             </button>
