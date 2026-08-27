@@ -207,11 +207,11 @@ function MockupSection() {
 }
 
 function StatsSection() {
-  const stats = [
-    { label: "Previews generated", value: "180K+", icon: Eye },
-    { label: "Active creators", value: "2,400", icon: Users },
-    { label: "Countries", value: "90+", icon: TrendingUp },
-    { label: "Server-side storage", value: "0 KB", icon: Lock },
+   const stats = [
+    { label: "AI-powered analysis", value: "100%", icon: Eye },
+    { label: "Privacy first", value: "0 KB", icon: Lock },
+    { label: "YouTube creators", value: "For", icon: Users },
+    { label: "Real competitor preview", value: "Live", icon: TrendingUp },
   ];
   return (
     <section className="py-12 border-y border-white/5">
@@ -347,8 +347,8 @@ function PricingSection() {
               Most popular
             </div>
             <h3 className="text-lg font-semibold text-white mb-2">Pro</h3>
-            <div className="text-4xl font-bold text-white mb-1">$15</div>
-            <div className="text-sm text-white/40 mb-6">Upgrade today</div>
+            <div className="text-4xl font-bold text-white mb-1">$20</div>
+<div className="text-sm text-white/40 mb-6">/month — cancel anytime</div>
             <ul className="space-y-3 mb-8">
               {["Unlimited previews", "Full AI Thumbnail Score + breakdown", "2 competitor slots", "PNG export — no watermark", "Priority support"].map((f, i) => (
                 <li key={i} className="flex items-center gap-2 text-sm text-white/80">
@@ -409,7 +409,7 @@ function FAQSection() {
     { q: "What's the difference between Free and Pro?", a: "Free gives you 3 previews per day with basic scoring and watermarked exports. Pro unlocks unlimited previews, full competitor comparison, detailed breakdowns, and clean exports." },
     { q: "Can I compare my thumbnail with competitors?", a: "Yes. Upload up to 2 competitor thumbnails alongside yours, render a realistic YouTube search results page, and see which one wins the scroll." },
     { q: "Does this work on mobile?", a: "The preview tool works best on desktop, but the rendered mockups show exactly how your thumbnail will look on a mobile screen — which is the whole point." },
-    { q: "Is the Pro plan really one-time?", a: "Yes. $15. No subscriptions, no hidden fees, no recurring charges. Pay once, use forever." },
+   { q: "Can I cancel anytime?", a: "Yes. Monthly subscription, cancel whenever you want. No hidden fees, no lock-in." },
   ];
   return (
     <section id="faq" className="py-24 border-y border-white/5">
