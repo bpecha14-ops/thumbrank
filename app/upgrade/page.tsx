@@ -40,8 +40,8 @@ function Navbar() {
 }
 
 export default function UpgradePage() {
-  const [billing, setBilling] = useState<"monthly" | "lifetime">("lifetime");
-
+const [billing, setBilling] = useState<"monthly" | "yearly">("yearly");
+  
   const freeFeatures = [
     "3 previews per day",
     "Basic AI Thumbnail Score",
@@ -72,21 +72,24 @@ export default function UpgradePage() {
           </p>
         </div>
 
-        {/* Toggle */}
-        <div className="flex items-center justify-center gap-3 mb-10">
-          <button
-            onClick={() => setBilling("lifetime")}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${billing === "lifetime" ? "bg-white text-black" : "bg-white/5 text-white/60 hover:bg-white/10"}`}
-          >
-            Lifetime
-          </button>
-          <button
-            onClick={() => setBilling("monthly")}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${billing === "monthly" ? "bg-white text-black" : "bg-white/5 text-white/60 hover:bg-white/10"}`}
-          >
-            Monthly
-          </button>
-        </div>
+       {/* Toggle */}
+<div className="flex items-center justify-center gap-3 mb-10">
+  <button
+    onClick={() => setBilling("yearly")}
+    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${billing === "yearly" ? "bg-white text-black" : "bg-white/5 text-white/60 hover:bg-white/10"}`}
+  >
+    Yearly
+  </button>
+  <button
+    onClick={() => setBilling("monthly")}
+    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${billing === "monthly" ? "bg-white text-black" : "bg-white/5 text-white/60 hover:bg-white/10"}`}
+  >
+    Monthly
+  </button>
+  {billing === "yearly" && (
+    <span className="text-xs text-emerald-400 font-medium">BEST VALUE</span>
+  )}
+</div>
 
         <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
           {/* Free */}
@@ -112,13 +115,18 @@ export default function UpgradePage() {
               Most popular
             </div>
             <h3 className="text-lg font-semibold text-white mb-2">Pro</h3>
-            <div className="flex items-baseline gap-1 mb-1">
-              <span className="text-4xl font-bold text-white">{billing === "lifetime" ? "$15" : "$9"}</span>
-              <span className="text-sm text-white/40">{billing === "lifetime" ? "one-time" : "/month"}</span>
-            </div>
-            <div className="text-sm text-white/40 mb-6">
-              {billing === "lifetime" ? "Pay once, use forever" : "Cancel anytime"}
-            </div>
+           <div className="flex items-baseline gap-1 mb-1">
+  <span className="text-4xl font-bold text-white">{billing === "monthly" ? "$20" : "$16"}</span>
+  <span className="text-sm text-white/40">/month</span>
+</div>
+{billing === "yearly" && (
+  <span className="inline-block text-xs text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-full mb-2">
+    Save $48/year
+  </span>
+)}
+<div className="text-sm text-white/40 mb-6">
+  {billing === "yearly" ? "Billed yearly" : "Cancel anytime"}
+</div>
             <ul className="space-y-3 mb-8">
               {proFeatures.map((f, i) => (
                 <li key={i} className="flex items-center gap-2 text-sm text-white/80">
@@ -127,7 +135,7 @@ export default function UpgradePage() {
               ))}
             </ul>
             <button className="block w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold text-center hover:opacity-90 transition-all shadow-lg shadow-purple-900/20">
-              {billing === "lifetime" ? "Get Pro — $15 one-time" : "Get Pro — $9/month"}
+             {billing === "monthly" ? "Get Pro — $20/month" : "Get Pro — $16/month"}
             </button>
           </div>
         </div>
