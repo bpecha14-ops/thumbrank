@@ -76,9 +76,9 @@ function ExitIntentPopup({ onClose }: { onClose: () => void }) {
           <Crown className="w-6 h-6 text-white" />
         </div>
         <h3 className="text-xl font-bold text-white mb-2">Wait — unlock unlimited previews</h3>
-        <p className="text-sm text-white/50 mb-4">Upgrade to Pro for $15 and get unlimited previews, no watermarks, and full competitor comparison.</p>
+        <p className="text-sm text-white/50 mb-4">Upgrade to Pro for $20 and get unlimited previews, no watermarks, and full competitor comparison.</p>
         <Link href="/upgrade" className="block w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold text-center hover:opacity-90 transition-all">
-          Upgrade to Pro — $15
+          Upgrade to Pro — $20
         </Link>
         <button onClick={onClose} className="block w-full mt-2 py-2 text-sm text-white/40 hover:text-white transition-colors">
           No thanks, I&apos;ll stick with free
@@ -491,7 +491,7 @@ export default function ToolPage() {
                 <p className="text-sm text-red-200 font-medium mb-1">You&apos;ve used all 3 free previews today.</p>
                 <p className="text-xs text-red-300/70 mb-3">Upgrade to Pro for unlimited previews and full competitor analysis.</p>
                 <button onClick={() => window.location.href = "/upgrade"} className="px-5 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-semibold hover:opacity-90 transition-all">
-                  Upgrade to Pro — $15
+                  Upgrade to Pro — $20
                 </button>
               </div>
             )}
