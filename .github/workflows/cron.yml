@@ -14,11 +14,9 @@ jobs:
     steps:
       - name: Trigger competitor scan
         env:
-          APP_URL: ${{ secrets.APP_URL }}
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
         run: |
-          echo "DEBUG APP_URL=$APP_URL"
-          curl -v -X POST "${APP_URL}/api/cron/dispatch" \
+          curl -v -X POST "https://thumbrankpro.com/api/cron/dispatch" \
             -H "Content-Type: application/json" \
             -H "x-cron-secret: ${CRON_SECRET}" \
             -d '{"job":"competitor-scan"}'
@@ -29,11 +27,9 @@ jobs:
     steps:
       - name: Trigger digest
         env:
-          APP_URL: ${{ secrets.APP_URL }}
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
         run: |
-          echo "DEBUG APP_URL=$APP_URL"
-          curl -v -X POST "${APP_URL}/api/cron/dispatch" \
+          curl -v -X POST "https://thumbrankpro.com/api/cron/dispatch" \
             -H "Content-Type: application/json" \
             -H "x-cron-secret: ${CRON_SECRET}" \
             -d '{"job":"digest"}'
@@ -44,11 +40,9 @@ jobs:
     steps:
       - name: Trigger CTR check
         env:
-          APP_URL: ${{ secrets.APP_URL }}
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
         run: |
-          echo "DEBUG APP_URL=$APP_URL"
-          curl -v -X POST "${APP_URL}/api/cron/dispatch" \
+          curl -v -X POST "https://thumbrankpro.com/api/cron/dispatch" \
             -H "Content-Type: application/json" \
             -H "x-cron-secret: ${CRON_SECRET}" \
             -d '{"job":"ctr-check"}'
