@@ -457,13 +457,13 @@ function Footer() {
           </div>
           <span className="font-bold text-white text-sm">ThumbRank</span>
         </div>
-        <div className="flex items-center gap-6 text-sm text-white/40">
-          <Link href="/tool" className="hover:text-white transition-colors">Free Tool</Link>
-          <Link href="/#pricing" className="hover:text-white transition-colors">Pricing</Link>
-          <Link href="/#faq" className="hover:text-white transition-colors">FAQ</Link>
-        </div>
-        <div className="text-xs text-white/20">© 2026 ThumbRank. All rights reserved.</div>
-      </div>
+          <div className="flex items-center gap-6 text-sm text-white/40">
+    <Link href="/tool" className="hover:text-white transition-colors">Free Tool</Link>
+    <Link href="#pricing" className="hover:text-white transition-colors">Pricing</Link>
+    <Link href="#faq" className="hover:text-white transition-colors">FAQ</Link>
+    <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
+    <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
+  </div>
     </footer>
   );
 }
