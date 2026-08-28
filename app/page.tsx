@@ -348,7 +348,7 @@ function PricingSection() {
             </div>
             <h3 className="text-lg font-semibold text-white mb-2">Pro</h3>
             <div className="text-4xl font-bold text-white mb-1">$20</div>
-<div className="text-sm text-white/40 mb-6">/month — cancel anytime</div>
+            <div className="text-sm text-white/40 mb-6">/month — cancel anytime</div>
             <ul className="space-y-3 mb-8">
               {["Unlimited previews", "Full AI Thumbnail Score + breakdown", "2 competitor slots", "PNG export — no watermark", "Priority support"].map((f, i) => (
                 <li key={i} className="flex items-center gap-2 text-sm text-white/80">
@@ -457,15 +457,14 @@ function Footer() {
           </div>
           <span className="font-bold text-white text-sm">ThumbRank</span>
         </div>
-               <div className="flex items-center gap-6 text-sm text-white/40">
-        <Link href="/tool" className="hover:text-white transition-colors">Free Tool</Link>
-        <Link href="#pricing" className="hover:text-white transition-colors">Pricing</Link>
-        <Link href="#faq" className="hover:text-white transition-colors">FAQ</Link>
-        <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
-        <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
+        <div className="flex items-center gap-6 text-sm text-white/40">
+          <Link href="/tool" className="hover:text-white transition-colors">Free Tool</Link>
+          <Link href="#pricing" className="hover:text-white transition-colors">Pricing</Link>
+          <Link href="#faq" className="hover:text-white transition-colors">FAQ</Link>
+          <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
+          <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
+        </div>
       </div>
-              </div>
-      </footer>
     </footer>
   );
 }
