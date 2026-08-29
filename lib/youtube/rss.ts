@@ -9,7 +9,9 @@ export interface RssVideo {
 
 export async function fetchChannelVideos(channelId: string): Promise<RssVideo[]> {
   const rssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`
-  const res = await fetch(rssUrl)
+  const res = await fetch(rssUrl, {
+    headers: { 'User-Agent': 'ThumbRank/1.0' },
+  })
   if (!res.ok) throw new Error(`RSS fetch failed: ${res.status}`)
   const xml = await res.text()
   
