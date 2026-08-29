@@ -81,6 +81,7 @@ function Navbar() {
           <Link href="/#pricing" className="hover:text-white transition-colors">Pricing</Link>
           <Link href="/#faq" className="hover:text-white transition-colors">FAQ</Link>
           <Link href="/tool" className="hover:text-white transition-colors">Free Tool</Link>
+          <Link href="/digest" className="hover:text-white transition-colors">Digest</Link>
         </div>
         <div className="flex items-center gap-3">
           <Link href="/tool" className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 text-white text-sm font-medium hover:bg-white/5 transition-all">Try Free</Link>
