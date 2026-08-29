@@ -39,7 +39,7 @@ export async function sendDigest(userEmail: string, videos: any[]) {
         'Authorization': `Bearer ${resendKey}`
       },
       body: JSON.stringify({
-        from: 'ThumbRank <onboarding@resend.dev>',
+        from: 'ThumbRank <digest@thumbrankpro.com>',
         to: userEmail,
         subject: `Morning Briefing: ${videos.length} new video${videos.length > 1 ? 's' : ''} from your competitors`,
         html
