@@ -76,7 +76,7 @@ function Navbar() {
           </div>
           <span className="font-bold text-white text-lg tracking-tight">ThumbRank</span>
         </Link>
-        <div className="hidden md:flex items-center gap-8 text-sm text-white/60">
+        <div className="flex flex-wrap items-center gap-3 md:gap-8 text-xs md:text-sm text-white/60">
           <Link href="/#features" className="hover:text-white transition-colors">Features</Link>
           <Link href="/#pricing" className="hover:text-white transition-colors">Pricing</Link>
           <Link href="/#faq" className="hover:text-white transition-colors">FAQ</Link>
