@@ -4,9 +4,11 @@ import { fetchChannelVideos } from '@/lib/youtube/rss'
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY
 
 export async function runCompetitorScan() {
+  console.log('SCAN: starting')
   const supabase = createClient()
   
   const { data: competitors, error } = await supabase.from('competitors').select('*')
+  console.log('SCAN: competitors count =', competitors?.length, 'error =', error?.message)
   if (error) throw error
   if (!competitors || competitors.length === 0) {
     return { ok: true, job: 'competitor-scan', scanned: 0, newVideos: 0 }
@@ -21,23 +23,32 @@ export async function runCompetitorScan() {
   }> = []
 
   for (const competitor of competitors) {
-    const rssVideos = await fetchChannelVideos(competitor.channel_id)
-    const { data: existing } = await supabase
-      .from('competitor_videos')
-      .select('video_id')
-      .eq('competitor_id', competitor.id)
-    
-    const existingIds = new Set(existing?.map(v => v.video_id) || [])
-    const newVideos = rssVideos.filter(v => !existingIds.has(v.videoId))
-    
-    for (const v of newVideos) {
-      allNewVideos.push({
-        competitorId: competitor.id,
-        videoId: v.videoId,
-        title: v.title,
-        publishedAt: v.publishedAt,
-        thumbnailUrl: v.thumbnailUrl,
-      })
+    console.log('SCAN: processing competitor', competitor.channel_id)
+    try {
+      const rssVideos = await fetchChannelVideos(competitor.channel_id)
+      console.log('SCAN: RSS returned', rssVideos.length, 'videos')
+      
+      const { data: existing } = await supabase
+        .from('competitor_videos')
+        .select('video_id')
+        .eq('competitor_id', competitor.id)
+      
+      const existingIds = new Set(existing?.map(v => v.video_id) || [])
+      const newVideos = rssVideos.filter(v => !existingIds.has(v.videoId))
+      console.log('SCAN: new videos for this competitor =', newVideos.length)
+      
+      for (const v of newVideos) {
+        allNewVideos.push({
+          competitorId: competitor.id,
+          videoId: v.videoId,
+          title: v.title,
+          publishedAt: v.publishedAt,
+          thumbnailUrl: v.thumbnailUrl,
+        })
+      }
+    } catch (err: any) {
+      console.error('SCAN: RSS error for', competitor.channel_id, err.message)
+      continue
     }
   }
 
@@ -45,12 +56,20 @@ export async function runCompetitorScan() {
     return { ok: true, job: 'competitor-scan', scanned: competitors.length, newVideos: 0 }
   }
 
+  console.log('SCAN: total new videos =', allNewVideos.length)
+
   const viewCounts: Record<string, number> = {}
   const videoIdList = allNewVideos.map(v => v.videoId)
-  for (let i = 0; i < videoIdList.length; i += 50) {
-    const batch = videoIdList.slice(i, i + 50)
-    const batchCounts = await fetchViewCounts(batch)
-    Object.assign(viewCounts, batchCounts)
+  
+  try {
+    for (let i = 0; i < videoIdList.length; i += 50) {
+      const batch = videoIdList.slice(i, i + 50)
+      console.log('SCAN: fetching view counts for batch', i, 'size', batch.length)
+      const batchCounts = await fetchViewCounts(batch)
+      Object.assign(viewCounts, batchCounts)
+    }
+  } catch (err: any) {
+    console.error('SCAN: YouTube API error', err.message)
   }
 
   const byCompetitor = new Map<string, typeof allNewVideos>()
@@ -66,63 +85,72 @@ export async function runCompetitorScan() {
     const competitor = competitors.find(c => c.id === competitorId)
     if (!competitor) continue
 
-    const { data: history } = await supabase
-      .from('competitor_videos')
-      .select('view_count')
-      .eq('competitor_id', competitorId)
-      .order('created_at', { ascending: false })
-      .limit(10)
+    try {
+      const { data: history } = await supabase
+        .from('competitor_videos')
+        .select('view_count')
+        .eq('competitor_id', competitorId)
+        .order('created_at', { ascending: false })
+        .limit(10)
 
-    const historyViews = (history?.map(v => v.view_count) || []).filter((v): v is number => v > 0)
-    const newViews = videos.map(v => viewCounts[v.videoId] || 0).filter(v => v > 0)
-    const avgViews = median([...historyViews, ...newViews])
+      const historyViews = (history?.map(v => v.view_count) || []).filter((v): v is number => v > 0)
+      const newViews = videos.map(v => viewCounts[v.videoId] || 0).filter(v => v > 0)
+      const avgViews = median([...historyViews, ...newViews])
 
-    for (const v of videos) {
-      const viewCount = viewCounts[v.videoId] || 0
-      const outlierMultiplier = avgViews > 0 ? viewCount / avgViews : null
+      for (const v of videos) {
+        const viewCount = viewCounts[v.videoId] || 0
+        const outlierMultiplier = avgViews > 0 ? viewCount / avgViews : null
 
-      await supabase.from('competitor_videos').insert({
-        competitor_id: competitorId,
-        video_id: v.videoId,
-        title: v.title,
-        thumbnail_url: v.thumbnailUrl,
-        published_at: v.publishedAt,
-        view_count: viewCount,
-        outlier_multiplier: outlierMultiplier,
-      })
-      totalNew++
+        await supabase.from('competitor_videos').insert({
+          competitor_id: competitorId,
+          video_id: v.videoId,
+          title: v.title,
+          thumbnail_url: v.thumbnailUrl,
+          published_at: v.publishedAt,
+          view_count: viewCount,
+          outlier_multiplier: outlierMultiplier,
+        })
+        totalNew++
 
-      if (outlierMultiplier && outlierMultiplier >= 1.5 && aiBreakdownCount < 5) {
-        try {
-          const breakdown = await analyzeThumbnail(v.thumbnailUrl, v.title)
-          await supabase
-            .from('competitor_videos')
-            .update({ ai_breakdown: breakdown })
-            .eq('video_id', v.videoId)
-            .eq('competitor_id', competitorId)
-          aiBreakdownCount++
-        } catch (err) {
-          console.error('AI breakdown failed:', err)
+        if (outlierMultiplier && outlierMultiplier >= 1.5 && aiBreakdownCount < 5) {
+          try {
+            const breakdown = await analyzeThumbnail(v.thumbnailUrl, v.title)
+            await supabase
+              .from('competitor_videos')
+              .update({ ai_breakdown: breakdown })
+              .eq('video_id', v.videoId)
+              .eq('competitor_id', competitorId)
+            aiBreakdownCount++
+          } catch (err) {
+            console.error('AI breakdown failed:', err)
+          }
         }
       }
-    }
 
-    await supabase
-      .from('competitors')
-      .update({ avg_views: Math.round(avgViews) })
-      .eq('id', competitorId)
+      await supabase
+        .from('competitors')
+        .update({ avg_views: Math.round(avgViews) })
+        .eq('id', competitorId)
+    } catch (err: any) {
+      console.error('SCAN: DB error for competitor', competitorId, err.message)
+    }
   }
 
   return { ok: true, job: 'competitor-scan', scanned: competitors.length, newVideos: totalNew, aiBreakdowns: aiBreakdownCount }
 }
 
 async function fetchViewCounts(videoIds: string[]): Promise<Record<string, number>> {
-  if (!YOUTUBE_API_KEY || videoIds.length === 0) return {}
+  if (!YOUTUBE_API_KEY || videoIds.length === 0) {
+    console.log('SCAN: no YOUTUBE_API_KEY or empty batch')
+    return {}
+  }
   const ids = videoIds.join(',')
   const url = `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${ids}&key=${YOUTUBE_API_KEY}`
-  const res = await fetch(url)
+  console.log('SCAN: YouTube API URL =', url.replace(YOUTUBE_API_KEY, '***'))
+  const res = await fetch(url, { headers: { 'User-Agent': 'ThumbRank/1.0' } })
   if (!res.ok) {
-    console.error('YouTube API error:', res.status, await res.text())
+    const text = await res.text()
+    console.error('SCAN: YouTube API error status', res.status, text)
     return {}
   }
   const data = await res.json()
