@@ -1,3 +1,5 @@
+export const runtime = 'nodejs';
+
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
@@ -7,16 +9,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
     }
 
-    const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) {
-      return NextResponse.json({ error: 'OpenAI key missing in env' }, { status: 500 });
-    }
-
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
         model: 'gpt-4o',
@@ -28,17 +25,17 @@ export async function POST(req: NextRequest) {
           ],
         }],
         max_tokens: 200,
+        response_format: { type: 'json_object' },
       }),
     });
 
     if (!res.ok) {
       const err = await res.text();
-      return NextResponse.json({ error: `OpenAI ${res.status}: ${err}` }, { status: 500 });
+      return NextResponse.json({ error: `OpenAI ${res.status}` }, { status: 500 });
     }
 
     const data = await res.json();
-    const content = data.choices?.[0]?.message?.content || '{}';
-    const result = JSON.parse(content.replace(/```/g, '').trim()) || {};
+    const result = JSON.parse(data.choices?.[0]?.message?.content || '{}');
     const score = typeof result.combo_score === 'number' ? result.combo_score : 50;
 
     return NextResponse.json({
