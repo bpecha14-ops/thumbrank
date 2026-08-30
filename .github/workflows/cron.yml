@@ -2,9 +2,10 @@ name: Cron Jobs
 
 on:
   schedule:
-    - cron: '0 5 * * *'
-    - cron: '30 5 * * *'
-    - cron: '0 */6 * * *'
+    - cron: '0 5 * * *'      # 05:00 UTC — competitor scan
+    - cron: '30 5 * * *'     # 05:30 UTC — digest
+    - cron: '0 */6 * * *'    # every 6 hours — CTR check
+    - cron: '30 4 * * *'     # 04:30 UTC — outlier scan
   workflow_dispatch:
 
 jobs:
@@ -46,3 +47,16 @@ jobs:
             -H "Content-Type: application/json" \
             -H "x-cron-secret: ${CRON_SECRET}" \
             -d '{"job":"ctr-check"}'
+
+  outlier-scan:
+    if: github.event.schedule == '30 4 * * *' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger outlier scan
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          curl -v -X POST "https://thumbrankpro.com/api/cron/dispatch" \
+            -H "Content-Type: application/json" \
+            -H "x-cron-secret: ${CRON_SECRET}" \
+            -d '{"job":"outlier-scan"}'
