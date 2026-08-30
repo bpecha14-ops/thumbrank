@@ -6,7 +6,7 @@ import { AuthProvider } from '@/lib/auth-context';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://thumbrank.app'),
+    metadataBase: new URL('https://thumbrankpro.com'),
   title: 'ThumbRank — Preview Your YouTube Thumbnails Before You Publish',
   description:
     'ThumbRank lets creators preview how their YouTube thumbnail looks in a real search results mockup. Test against competitors, run A/B tests, and get a CTR score — all in your browser.',
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
       'See your thumbnail in a realistic YouTube search mockup. A/B test variants, get a CTR score, and export as PNG.',
     images: [
       {
-        url: 'https://bolt.new/static/og_default.png',
+        url: 'https://thumbrankpro.com/og-image.png',
       },
     ],
   },
@@ -24,7 +24,10 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     images: [
       {
-        url: 'https://bolt.new/static/og_default.png',
+        url: 'https://thumbrankpro.com/og-image.png',
+      },
+    ],
+  },
       },
     ],
   },
