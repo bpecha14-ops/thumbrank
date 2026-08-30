@@ -1,5 +1,3 @@
-export const runtime = 'nodejs';
-
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
@@ -8,6 +6,8 @@ export async function POST(req: NextRequest) {
     if (!imageUrl || !title) {
       return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
     }
+
+    console.log('API_KEY_PRESENT:', !!process.env.OPENAI_API_KEY);
 
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -25,25 +25,36 @@ export async function POST(req: NextRequest) {
           ],
         }],
         max_tokens: 200,
-        response_format: { type: 'json_object' },
       }),
     });
 
     if (!res.ok) {
-      const err = await res.text();
-      return NextResponse.json({ error: `OpenAI ${res.status}` }, { status: 500 });
+      const errText = await res.text();
+      console.error('OPENAI_ERROR:', res.status, errText);
+      return NextResponse.json({ error: `OpenAI ${res.status}: ${errText}` }, { status: 500 });
     }
 
     const data = await res.json();
-    const result = JSON.parse(data.choices?.[0]?.message?.content || '{}');
+    const content = data.choices?.[0]?.message?.content || '{}';
+    console.log('OPENAI_RAW:', content);
+    
+    let result: any = {};
+    try {
+      result = JSON.parse(content.replace(/```json/g, '').replace(/```/g, '').trim());
+    } catch (e) {
+      console.error('PARSE_ERROR:', e);
+      result = {};
+    }
+
     const score = typeof result.combo_score === 'number' ? result.combo_score : 50;
 
     return NextResponse.json({
       combo_score: score,
       verdict: score >= 70 ? 'publish' : 'rework',
-      one_fix: result.one_fix || 'Improve title-thumbnail alignment.',
+      one_fix: result.one_fix || 'Improve alignment.',
     });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    console.error('FATAL:', err);
+    return NextResponse.json({ error: err.message, stack: err.stack }, { status: 500 });
   }
 }
