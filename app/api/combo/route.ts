@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
         messages: [{
           role: 'user',
           content: [
-            { type: 'text', text: `Analyze this YouTube thumbnail + title as one package. Title: "${title}". Niche: ${niche}. Return ONLY valid JSON with no markdown: {"combo_score": number 0-100, "verdict": "publish" or "rework", "story_fit": string, "curiosity_gap": string, "one_fix": string}. Score >= 70 = publish.` },
+            { type: 'text', text: `Analyze this YouTube thumbnail + title as one package. Title: "${title}". Niche: ${niche}. Return ONLY valid JSON: {"combo_score": number 0-100, "verdict": "publish" or "rework", "story_fit": string, "curiosity_gap": string, "one_fix": string}. Score >= 70 = publish.` },
             { type: 'image_url', image_url: { url: imageUrl } },
           ],
         }],
