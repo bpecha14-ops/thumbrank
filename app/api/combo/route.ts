@@ -2,54 +2,51 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
   try {
-    const { imageUrl, title, niche = 'general' } = await req.json();
+    const { imageUrl, title } = await req.json();
     if (!imageUrl || !title) {
-      return NextResponse.json({ error: 'Image and title required' }, { status: 400 });
+      return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
+    }
+
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json({ error: 'OpenAI key missing in env' }, { status: 500 });
     }
 
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+        'Authorization': `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
         model: 'gpt-4o',
         messages: [{
           role: 'user',
           content: [
-            { type: 'text', text: `Analyze this YouTube thumbnail + title as one package. Title: "${title}". Niche: ${niche}. Return ONLY valid JSON: {"combo_score": number 0-100, "verdict": "publish" or "rework", "story_fit": string, "curiosity_gap": string, "one_fix": string}. Score >= 70 = publish.` },
+            { type: 'text', text: `Analyze this YouTube thumbnail + title as one package. Title: "${title}". Return ONLY JSON: {"combo_score": number 0-100, "verdict": "publish" or "rework", "one_fix": string}.` },
             { type: 'image_url', image_url: { url: imageUrl } },
           ],
         }],
-        max_tokens: 300,
+        max_tokens: 200,
       }),
     });
 
-    if (!res.ok) throw new Error(`OpenAI error: ${res.status}`);
-    const data = await res.json();
-    let content = data.choices?.[0]?.message?.content || '{}';
-    content = content.replace(/```json/g, '').replace(/```/g, '').trim();
-    
-    let result: any = {};
-    try {
-      result = JSON.parse(content);
-    } catch {
-      const match = content.match(/\{[\s\S]*\}/);
-      if (match) result = JSON.parse(match[0]);
+    if (!res.ok) {
+      const err = await res.text();
+      return NextResponse.json({ error: `OpenAI ${res.status}: ${err}` }, { status: 500 });
     }
 
-    const score = typeof result.combo_score === 'number' ? Math.max(0, Math.min(100, result.combo_score)) : 50;
-    
+    const data = await res.json();
+    const content = data.choices?.[0]?.message?.content || '{}';
+    const result = JSON.parse(content.replace(/```/g, '').trim()) || {};
+    const score = typeof result.combo_score === 'number' ? result.combo_score : 50;
+
     return NextResponse.json({
       combo_score: score,
       verdict: score >= 70 ? 'publish' : 'rework',
-      story_fit: result.story_fit || 'Title and thumbnail alignment needs review.',
-      curiosity_gap: result.curiosity_gap || 'Curiosity gap unclear.',
-      one_fix: result.one_fix || 'Improve contrast between subject and background.',
+      one_fix: result.one_fix || 'Improve title-thumbnail alignment.',
     });
   } catch (err: any) {
-    console.error('Combo API error:', err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
