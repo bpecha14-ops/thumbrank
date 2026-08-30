@@ -2,11 +2,13 @@ import { NextRequest, NextResponse } from 'next/server'
 import { runCompetitorScan } from '@/lib/jobs/competitor-scan'
 import { runDigest } from '@/lib/jobs/digest'
 import { runCtrCheck } from '@/lib/jobs/ctr-check'
+import { runOutlierScan } from '@/lib/jobs/outlier-scan'
 
 const JOBS: Record<string, () => Promise<any>> = {
   'competitor-scan': runCompetitorScan,
   'digest': runDigest,
   'ctr-check': runCtrCheck,
+    'outlier-scan': runOutlierScan,
 }
 
 export async function POST(request: NextRequest) {
