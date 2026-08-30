@@ -250,6 +250,9 @@ export default function ToolPage() {
   const [activateEmail, setActivateEmail] = useState("");
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
   const [showExit, setShowExit] = useState(false);
+    const [videoTitle, setVideoTitle] = useState('');
+  const [comboLoading, setComboLoading] = useState(false);
+  const [comboResult, setComboResult] = useState<any>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const comp1InputRef = useRef<HTMLInputElement>(null);
@@ -300,6 +303,23 @@ export default function ToolPage() {
     else { setComp1Score(null); setComp1Recs([]); }
     if (comp2Image) { const c2 = await analyzeThumbnail(comp2Image); setComp2Score(c2.score); setComp2Recs(c2.recs); }
     else { setComp2Score(null); setComp2Recs([]); }
+  };
+    const checkCombo = async () => {
+    if (!yourImage || !videoTitle) return;
+    setComboLoading(true);
+    try {
+      const res = await fetch('/api/combo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageUrl: yourImage, title: videoTitle, niche: 'general' }),
+      });
+      const data = await res.json();
+      setComboResult(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setComboLoading(false);
+    }
   };
 
   const handleExport = async () => {
@@ -476,6 +496,39 @@ export default function ToolPage() {
                 <Download className="w-4 h-4" /> Export PNG
               </button>
             </div>
+                      {/* Combo Gate */}
+          {yourImage && (
+            <div className="mt-4 space-y-3">
+              <input
+                type="text"
+                value={videoTitle}
+                onChange={(e) => setVideoTitle(e.target.value)}
+                placeholder="Video title"
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-white/30 text-sm"
+              />
+              <p className={`text-xs ${videoTitle.length > 60 ? 'text-red-400' : 'text-white/40'}`}>
+                {videoTitle.length}/60 {videoTitle.length > 60 ? '— will be cut in search' : ''}
+              </p>
+              <button
+                onClick={checkCombo}
+                disabled={!videoTitle || comboLoading}
+                className="w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium hover:opacity-90 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {comboLoading ? 'Analyzing...' : 'Check Packaging'}
+              </button>
+              {comboResult && (
+                <div className={`p-4 rounded-xl border ${comboResult.verdict === 'publish' ? 'border-green-500/30 bg-green-500/10' : 'border-red-500/30 bg-red-500/10'}`}>
+                  <div className="text-lg font-bold mb-1">
+                    {comboResult.verdict === 'publish' ? '✅ READY TO PUBLISH' : '❌ REWORK'}
+                  </div>
+                  <div className="text-sm text-white/70 mb-2">Score: {comboResult.combo_score}/100</div>
+                  {comboResult.verdict !== 'publish' && (
+                    <div className="text-sm font-medium text-white">{comboResult.one_fix}</div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
 
             {/* Free plan banner */}
             {!isPro && (
