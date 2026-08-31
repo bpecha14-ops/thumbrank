@@ -304,19 +304,24 @@ export default function ToolPage() {
     if (comp2Image) { const c2 = await analyzeThumbnail(comp2Image); setComp2Score(c2.score); setComp2Recs(c2.recs); }
     else { setComp2Score(null); setComp2Recs([]); }
   };
-    const checkCombo = async () => {
+     const checkCombo = async () => {
     if (!yourImage || !videoTitle) return;
     setComboLoading(true);
+    setComboResult(null);
     try {
       const res = await fetch('/api/combo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ imageUrl: yourImage, title: videoTitle, niche: 'general' }),
+        body: JSON.stringify({ imageUrl: yourImage, title: videoTitle }),
       });
       const data = await res.json();
-      setComboResult(data);
+      if (data.error) {
+        setComboResult({ error: data.error });
+      } else {
+        setComboResult(data);
+      }
     } catch (err) {
-      console.error(err);
+      setComboResult({ error: 'Network error' });
     } finally {
       setComboLoading(false);
     }
@@ -510,24 +515,25 @@ export default function ToolPage() {
                 {videoTitle.length}/60 {videoTitle.length > 60 ? '— will be cut in search' : ''}
               </p>
               <button
-                onClick={checkCombo}
-                disabled={!videoTitle || comboLoading}
-                className="w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium hover:opacity-90 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                {comboLoading ? 'Analyzing...' : 'Check Packaging'}
-              </button>
-              {comboResult && (
-                <div className={`p-4 rounded-xl border ${comboResult.verdict === 'publish' ? 'border-green-500/30 bg-green-500/10' : 'border-red-500/30 bg-red-500/10'}`}>
-                  <div className="text-lg font-bold mb-1">
-                    {comboResult.verdict === 'publish' ? '✅ READY TO PUBLISH' : '❌ REWORK'}
-                  </div>
-                  <div className="text-sm text-white/70 mb-2">Score: {comboResult.combo_score}/100</div>
-                  {comboResult.verdict !== 'publish' && (
-                    <div className="text-sm font-medium text-white">{comboResult.one_fix}</div>
-                  )}
-                </div>
-              )}
-            </div>
+                {comboResult && (
+  <div className="mt-4">
+    {comboResult.error ? (
+      <div className="p-4 rounded-xl border border-red-500/30 bg-red-500/10 text-red-200 text-sm">
+        Error: {comboResult.error}
+      </div>
+    ) : (
+      <div className={`p-4 rounded-xl border ${comboResult.verdict === 'publish' ? 'border-green-500/30 bg-green-500/10' : 'border-red-500/30 bg-red-500/10'}`}>
+        <div className="text-lg font-bold mb-1">
+          {comboResult.verdict === 'publish' ? '✅ READY TO PUBLISH' : '❌ REWORK'}
+        </div>
+        <div className="text-sm text-white/70 mb-2">Score: {comboResult.combo_score}/100</div>
+        {comboResult.verdict !== 'publish' && (
+          <div className="text-sm font-medium text-white">{comboResult.one_fix}</div>
+        )}
+      </div>
+    )}
+  </div>
+)}
           )}
 
             {/* Free plan banner */}
