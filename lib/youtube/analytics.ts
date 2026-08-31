@@ -10,7 +10,6 @@ export async function getValidToken(userId: string): Promise<string | null> {
 
   if (error || !data) return null;
 
-  // Check if token expired
   if (new Date(data.token_expires_at) < new Date()) {
     const res = await fetch('https://oauth2.googleapis.com/token', {
       method: 'POST',
