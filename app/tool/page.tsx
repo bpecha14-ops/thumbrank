@@ -301,6 +301,12 @@ export default function ToolPage() {
     setRendered(true);
     const a = await analyzeThumbnail(yourImage);
     setAiScore(a.score); setAiRecs(a.recs);
+        // Save prediction for CTR calibration
+    fetch('/api/predictions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, predictedScore: a.score, niche: 'general' }),
+    }).catch(() => {});
     if (comp1Image) { const c1 = await analyzeThumbnail(comp1Image); setComp1Score(c1.score); setComp1Recs(c1.recs); }
     else { setComp1Score(null); setComp1Recs([]); }
     if (comp2Image) { const c2 = await analyzeThumbnail(comp2Image); setComp2Score(c2.score); setComp2Recs(c2.recs); }
