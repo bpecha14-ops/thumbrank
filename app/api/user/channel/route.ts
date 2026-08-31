@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 
-const HARDCODED_USER_ID = '00000000-0000-0000-0000-000000000000'; // TODO: real auth
+const HARDCODED_USER_ID = '00000000-0000-0000-0000-000000000000';
 
 export async function GET() {
   try {
