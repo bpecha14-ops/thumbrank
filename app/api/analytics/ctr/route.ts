@@ -1,10 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.SUPABASE_URL!
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
 
 export async function GET() {
   try {
@@ -16,7 +13,6 @@ export async function GET() {
 
     if (!conn) return NextResponse.json({ error: 'No channel connected' }, { status: 400 });
 
-    // Refresh if needed
     let accessToken = conn.access_token;
     if (new Date(conn.token_expires_at) < new Date()) {
       const refreshRes = await fetch('https://oauth2.googleapis.com/token', {
@@ -37,7 +33,6 @@ export async function GET() {
       }).eq('user_id', '00000000-0000-0000-0000-000000000000');
     }
 
-    // Get CTR data from YouTube Analytics (last 7 days)
     const endDate = new Date().toISOString().split('T')[0];
     const startDate = new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0];
 
