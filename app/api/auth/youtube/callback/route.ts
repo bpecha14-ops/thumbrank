@@ -1,5 +1,10 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 export async function GET(req: Request) {
   try {
@@ -11,7 +16,6 @@ export async function GET(req: Request) {
 
     const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL || 'https://thumbrankpro.com'}/api/auth/youtube/callback`;
 
-    // Exchange code for tokens
     const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -29,7 +33,6 @@ export async function GET(req: Request) {
       throw new Error(tokens.error_description || 'Token exchange failed');
     }
 
-    // Get channel info
     const channelRes = await fetch(
       `https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true`,
       { headers: { Authorization: `Bearer ${tokens.access_token}` } }
@@ -38,13 +41,11 @@ export async function GET(req: Request) {
     const channel = channelData.items?.[0];
 
     if (!channel) {
-      throw new Error('No YouTube channel found for this account');
+      throw new Error('No YouTube channel found');
     }
 
-    // Save to Supabase
-    const supabase = createClient();
     await supabase.from('channel_connections').upsert({
-      user_id: '00000000-0000-0000-0000-000000000000', // TODO: replace with real auth user_id
+      user_id: '00000000-0000-0000-0000-000000000000',
       channel_id: channel.id,
       channel_title: channel.snippet?.title,
       access_token: tokens.access_token,
