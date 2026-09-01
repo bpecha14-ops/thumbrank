@@ -13,6 +13,12 @@ export async function POST(req: Request) {
   }
 
   try {
+        const { getUserTier, tierGuard } = await import("@/lib/tier");
+    const tier = await getUserTier("00000000-0000-0000-0000-000000000000");
+    const guard = tierGuard(tier, "rescue_scans");
+    if (!guard.ok) {
+      return NextResponse.json({ error: "Upgrade required", upgrade: guard.upgrade }, { status: 402 });
+    }
     // 1. Get channel connection
     const { data: conn } = await supabase
       .from("channel_connections")
