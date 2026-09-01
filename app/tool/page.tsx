@@ -108,6 +108,7 @@ function Navbar() {
                     <Link href="/rescue" className="hover:text-white transition-colors">Rescue</Link>
           <Link href="/you" className="hover:text-white transition-colors">You</Link>
                     <Link href="/dashboard" className="hover:text-white transition-colors">Dashboard</Link>
+          <Link href="/competitors" className="hover:text-white transition-colors">Competitors</Link>
         </div>
         <div className="flex items-center gap-3">
           <span className="hidden sm:inline text-sm text-white/40">Log in</span>
