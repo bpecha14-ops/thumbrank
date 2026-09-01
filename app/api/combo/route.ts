@@ -1,6 +1,12 @@
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
+    const { getUserTier, tierGuard } = await import("@/lib/tier");
+  const tier = await getUserTier("00000000-0000-0000-0000-000000000000");
+  const guard = tierGuard(tier, "combo");
+  if (!guard.ok) {
+    return NextResponse.json({ error: "Upgrade required", upgrade: guard.upgrade }, { status: 402 });
+  }
   try {
     const { imageUrl, title } = await req.json();
     if (!imageUrl || !title) {
