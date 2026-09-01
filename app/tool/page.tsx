@@ -301,7 +301,7 @@ export default function ToolPage() {
     setRendered(true);
     const a = await analyzeThumbnail(yourImage);
     setAiScore(a.score); setAiRecs(a.recs);
-        // Save prediction for CTR calibration
+    // Save prediction for CTR calibration
     fetch('/api/predictions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -314,7 +314,7 @@ export default function ToolPage() {
   };
 
   const checkCombo = async () => {
-    if (!yourImage || !videoTitle) return;
+    if (!yourImage || !videoTitle || limitReached) return;
     setComboLoading(true);
     setComboResult(null);
     try {
@@ -512,7 +512,7 @@ export default function ToolPage() {
             </div>
 
             {/* Combo Gate */}
-            {yourImage && (
+            {yourImage && !limitReached && (
               <div className="mt-4 space-y-3">
                 <input
                   type="text"
@@ -550,6 +550,17 @@ export default function ToolPage() {
                     )}
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* Combo Gate blocked when limit reached */}
+            {limitReached && yourImage && (
+              <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-4 text-center">
+                <p className="text-sm text-red-200 font-medium mb-1">Free limit reached</p>
+                <p className="text-xs text-red-300/70 mb-3">Check Packaging requires Pro.</p>
+                <button onClick={() => window.location.href = "/upgrade"} className="px-5 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-semibold hover:opacity-90 transition-all">
+                  Upgrade to Pro — $20
+                </button>
               </div>
             )}
 
