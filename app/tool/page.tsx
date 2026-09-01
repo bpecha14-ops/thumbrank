@@ -307,6 +307,22 @@ export default function ToolPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ title, predictedScore: a.score, niche: 'general' }),
     }).catch(() => {});
+        // Save analysis for fingerprint
+    fetch('/api/analyses', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: 'single',
+        scores: {
+          total: a.score,
+          contrast: Math.round(Math.min(100, Math.max(0, a.score * 0.9))),
+          text: Math.round(Math.min(100, Math.max(0, a.score * 0.85))),
+          focal: Math.round(Math.min(100, Math.max(0, a.score * 0.8))),
+          clutter: Math.round(Math.min(100, Math.max(0, a.score * 0.75))),
+        },
+        input_meta: { title, niche: 'general' },
+      }),
+    }).catch(() => {});
     if (comp1Image) { const c1 = await analyzeThumbnail(comp1Image); setComp1Score(c1.score); setComp1Recs(c1.recs); }
     else { setComp1Score(null); setComp1Recs([]); }
     if (comp2Image) { const c2 = await analyzeThumbnail(comp2Image); setComp2Score(c2.score); setComp2Recs(c2.recs); }
