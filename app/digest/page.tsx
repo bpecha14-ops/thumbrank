@@ -36,7 +36,12 @@ export default function DigestPage() {
           <Sunrise className="w-6 h-6 text-amber-400" />
           <h1 className="text-3xl font-bold text-white">Morning Briefing</h1>
         </div>
-        <p className="text-white/50 mb-8">What your competitors published while you slept.</p>
+        <p className="text-white/50 mb-2">What your competitors published while you slept.</p>
+<div className="flex items-center gap-2 text-xs text-white/30 mb-6">
+  <span>Tracking 1 competitor</span>
+  <span>·</span>
+  <Link href="/competitors" className="text-purple-400 hover:text-purple-300">Add more</Link>
+</div>
 
         {loading ? (
           <p className="text-white/40">Loading...</p>
