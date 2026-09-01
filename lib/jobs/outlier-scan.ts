@@ -13,7 +13,7 @@ export async function runOutlierScan() {
     try {
       // 1. Search videos by niche (last 7 days, order by viewCount)
       const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
-      const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&order=viewCount&publishedAfter=${weekAgo}&q=${encodeURIComponent(niche)}&maxResults=10&key=${YOUTUBE_API_KEY}`
+     const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&order=viewCount&publishedAfter=${weekAgo}&q=${encodeURIComponent(niche)}&maxResults=10&key=${YOUTUBE_API_KEY}&relevanceLanguage=en&regionCode=US`
       const searchRes = await fetch(searchUrl, { headers: { 'User-Agent': 'ThumbRank/1.0' } })
       if (!searchRes.ok) {
         console.error('OUTLIER: search error', niche, searchRes.status)
