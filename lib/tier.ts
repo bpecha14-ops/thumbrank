@@ -25,3 +25,13 @@ export function tierGuard(tier: Tier, feature: string): { ok: boolean; upgrade?:
   if (typeof limit === "number" && limit === 0) return { ok: false, upgrade: "pro" };
   return { ok: true };
 }
+
+export async function getUserTier(userId: string): Promise<Tier> {
+  const { createClient } = await import("@supabase/supabase-js");
+  const supabase = createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+  const { data } = await supabase.from("profiles").select("tier").eq("id", userId).single();
+  return (data?.tier as Tier) || "free";
+}
