@@ -179,6 +179,28 @@ export default function UpgradePage() {
             </button>
           </div>
         </div>
+                {/* Creator OS */}
+        <div className="relative rounded-2xl border border-purple-500/30 bg-white/[0.03] p-6">
+          <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-xs font-bold text-white">
+            BEST VALUE
+          </div>
+          <h3 className="text-xl font-bold text-white mb-2">Creator OS</h3>
+          <div className="flex items-baseline gap-1 mb-4">
+            <span className="text-4xl font-bold text-white">$49</span>
+            <span className="text-white/40">/month</span>
+          </div>
+          <ul className="space-y-2 text-sm text-white/60 mb-6">
+            <li className="flex items-center gap-2"><span className="text-emerald-400">✓</span> Everything in Pro</li>
+            <li className="flex items-center gap-2"><span className="text-emerald-400">✓</span> CTR Calibration & Prediction Loop</li>
+            <li className="flex items-center gap-2"><span className="text-emerald-400">✓</span> CTR Drop Alarm (48h alerts)</li>
+            <li className="flex items-center gap-2"><span className="text-emerald-400">✓</span> Weekly Rescue Scanner</li>
+            <li className="flex items-center gap-2"><span className="text-emerald-400">✓</span> Packaging Fingerprint + History</li>
+            <li className="flex items-center gap-2"><span className="text-emerald-400">✓</span> 10 Competitor Channels</li>
+          </ul>
+          <button className="w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold hover:opacity-90 transition-all">
+            Upgrade to Creator OS
+          </button>
+        </div>
 
         <div className="text-center mt-10">
           <Link href="/tool" className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white transition-colors">
