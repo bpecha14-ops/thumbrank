@@ -3,13 +3,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,'use client';
 
-import Link from 'next/link';
-import { useState, useEffect } from 'react';
-import { useAuth } from '@/lib/auth-context';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
