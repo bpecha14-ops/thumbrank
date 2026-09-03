@@ -2,8 +2,6 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { AuthProvider } from '@/lib/auth-context';
-import { NebulaBackground } from '@/components/NebulaBackground';
-import { ScrollProgress } from '@/components/scroll-progress';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -11,7 +9,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://thumbrank.app'),
+  metadataBase: new URL('https://thumbrankpro.com'),
   title: 'ThumbRank — Preview Your YouTube Thumbnails Before You Publish',
   description:
     'ThumbRank lets creators preview how their YouTube thumbnail looks in a real search results mockup. Test against competitors, run A/B tests, and get a CTR score — all in your browser.',
@@ -60,8 +58,6 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.className} bg-[#1C1428] text-white antialiased`}>
-        <NebulaBackground />
-        <ScrollProgress />
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
