@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import {
   Sparkles, ArrowRight, Zap, Check, ChevronDown, Mail,
@@ -17,7 +17,7 @@ function useTilt() {
     const rect = ref.current.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width - 0.5;
     const y = (e.clientY - rect.top) / rect.height - 0.5;
-    setStyle({ transform: `perspective(1000px) rotateX(${y * -6}deg) rotateY(${x * 6}deg) scale3d(1.02,1.02,1.02)`, transition: "transform 0.1s ease-out" });
+    setStyle({ transform: `perspective(1000px) rotateX(${y * -10}deg) rotateY(${x * 10}deg) scale3d(1.02,1.02,1.02)`, transition: "transform 0.1s ease-out" });
   };
   const onLeave = () => setStyle({ transform: "perspective(1000px) rotateX(0) rotateY(0) scale3d(1,1,1)", transition: "transform 0.4s ease-out" });
   return { ref, style, onMove, onLeave };
@@ -551,7 +551,7 @@ function PricingSection() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
   const freePrice = usePriceCountUp(0, inView);
-  const proPrice = usePriceCountUp(15, inView);
+  const proPrice = usePriceCountUp(20, inView);
   return (
     <section id="pricing" className="py-24">
       <div className="section-divider" />
@@ -586,7 +586,7 @@ function PricingSection() {
               </div>
               <h3 className="text-lg font-semibold text-white mb-2">Pro</h3>
               <div className="text-4xl font-bold text-white mb-1">${proPrice}</div>
-              <div className="text-sm text-white/40 mb-6">Upgrade today</div>
+              <div className="text-sm text-white/40 mb-6">per month</div>
               <ul className="space-y-3 mb-8">
                 {["Unlimited previews", "Full AI Thumbnail Score + breakdown", "2 competitor slots", "PNG export — no watermark", "Priority support"].map((f, i) => (
                   <li key={i} className="flex items-center gap-2 text-sm text-white/80">
@@ -658,7 +658,7 @@ function FAQSection() {
     { q: "What's the difference between Free and Pro?", a: "Free gives you 3 previews per day with basic scoring and watermarked exports. Pro unlocks unlimited previews, full competitor comparison, detailed breakdowns, and clean exports." },
     { q: "Can I compare my thumbnail with competitors?", a: "Yes. Upload up to 2 competitor thumbnails alongside yours, render a realistic YouTube search results page, and see which one wins the scroll." },
     { q: "Does this work on mobile?", a: "The preview tool works best on desktop, but the rendered mockups show exactly how your thumbnail will look on a mobile screen — which is the whole point." },
-    { q: "Is the Pro plan really one-time?", a: "Yes. $15. No subscriptions, no hidden fees, no recurring charges. Pay once, use forever." },
+    { q: "Is the Pro plan really one-time?", a: "No. Pro is $20/month. Cancel anytime. No hidden fees." },
   ];
   return (
     <section id="faq" className="py-24">
