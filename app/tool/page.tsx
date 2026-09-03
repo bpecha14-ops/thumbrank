@@ -6,47 +6,7 @@ import {
   Sparkles, ArrowRight, Upload, X, Image as ImageIcon, Download, Zap,
   ChevronDown, GitCompareArrows, Crown, Youtube,
 } from "lucide-react";
-
-/* ─── Aurora Background ─── */
-function AuroraBg() {
-  return (
-    <div className="fixed inset-0 -z-10 overflow-hidden bg-[#030305]">
-      <div className="aurora-1 absolute -top-[40%] -left-[20%] w-[140%] h-[140%] rounded-full opacity-50 blur-[140px]" />
-      <div className="aurora-2 absolute top-[20%] -right-[20%] w-[120%] h-[120%] rounded-full opacity-35 blur-[120px]" />
-      <div className="aurora-3 absolute -bottom-[30%] left-[10%] w-[130%] h-[130%] rounded-full opacity-40 blur-[130px]" />
-      <style jsx>{`
-        .aurora-1 { background: radial-gradient(circle, #6d28d9 0%, #4c1d95 30%, transparent 70%); animation: move1 10s ease-in-out infinite alternate; }
-        .aurora-2 { background: radial-gradient(circle, #1e40af 0%, transparent 70%); animation: move2 12s ease-in-out infinite alternate; }
-        .aurora-3 { background: radial-gradient(circle, #be185d 0%, transparent 70%); animation: move3 14s ease-in-out infinite alternate; }
-        @keyframes move1 { from { transform: translate(0,0) scale(1); } to { transform: translate(80px,-60px) scale(1.15); } }
-        @keyframes move2 { from { transform: translate(0,0) scale(1); } to { transform: translate(-70px,40px) scale(1.2); } }
-        @keyframes move3 { from { transform: translate(0,0) scale(1); } to { transform: translate(60px,70px) scale(1.1); } }
-      `}</style>
-    </div>
-  );
-}
-
-function Noise() {
-  return (
-    <div className="fixed inset-0 -z-10 opacity-[0.04] pointer-events-none"
-      style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`, backgroundRepeat: "repeat", backgroundSize: "256px 256px" }}
-    />
-  );
-}
-
-function SpotlightCursor() {
-  const [pos, setPos] = useState({ x: 0, y: 0 });
-  useEffect(() => {
-    const onMove = (e: MouseEvent) => setPos({ x: e.clientX, y: e.clientY });
-    window.addEventListener("mousemove", onMove);
-    return () => window.removeEventListener("mousemove", onMove);
-  }, []);
-  return (
-    <div className="fixed inset-0 -z-10 pointer-events-none"
-      style={{ background: `radial-gradient(700px circle at ${pos.x}px ${pos.y}px, rgba(124,58,237,0.18), transparent 45%)` }}
-    />
-  );
-}
+import { SiteNav } from "@/components/site-nav";
 
 function useTilt() {
   const ref = useRef<HTMLDivElement>(null);
@@ -76,9 +36,9 @@ function ExitIntentPopup({ onClose }: { onClose: () => void }) {
           <Crown className="w-6 h-6 text-white" />
         </div>
         <h3 className="text-xl font-bold text-white mb-2">Wait — unlock unlimited previews</h3>
-        <p className="text-sm text-white/50 mb-4">Upgrade to Pro for $20 and get unlimited previews, no watermarks, and full competitor comparison.</p>
+        <p className="text-sm text-white/50 mb-4">Upgrade to Pro for $15 and get unlimited previews, no watermarks, and full competitor comparison.</p>
         <Link href="/upgrade" className="block w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold text-center hover:opacity-90 transition-all">
-          Upgrade to Pro — $20
+          Upgrade to Pro — $15
         </Link>
         <button onClick={onClose} className="block w-full mt-2 py-2 text-sm text-white/40 hover:text-white transition-colors">
           No thanks, I&apos;ll stick with free
@@ -89,36 +49,7 @@ function ExitIntentPopup({ onClose }: { onClose: () => void }) {
 }
 
 function Navbar() {
-  return (
-    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-[#030305]/70 backdrop-blur-xl">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center">
-            <Sparkles className="w-4 h-4 text-white" />
-          </div>
-          <span className="font-bold text-white text-lg tracking-tight">ThumbRank</span>
-        </Link>
-        <div className="flex flex-wrap items-center gap-3 md:gap-8 text-xs md:text-sm text-white/60">
-          <Link href="/#features" className="hover:text-white transition-colors">Features</Link>
-          <Link href="/#pricing" className="hover:text-white transition-colors">Pricing</Link>
-          <Link href="/#faq" className="hover:text-white transition-colors">FAQ</Link>
-          <Link href="/tool" className="hover:text-white transition-colors">Free Tool</Link>
-          <Link href="/digest" className="hover:text-white transition-colors">Digest</Link>
-          <Link href="/inspire" className="hover:text-white transition-colors">Inspire</Link>
-                    <Link href="/rescue" className="hover:text-white transition-colors">Rescue</Link>
-          <Link href="/you" className="hover:text-white transition-colors">You</Link>
-                    <Link href="/dashboard" className="hover:text-white transition-colors">Dashboard</Link>
-          <Link href="/competitors" className="hover:text-white transition-colors">Competitors</Link>
-        </div>
-        <div className="flex items-center gap-3">
-          <span className="hidden sm:inline text-sm text-white/40">Log in</span>
-          <Link href="/tool" className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold text-sm hover:opacity-90 transition-all">
-            Get started free
-          </Link>
-        </div>
-      </div>
-    </nav>
-  );
+  return <SiteNav />;
 }
 
 /* ─── AI Analysis (FIXED) ─── */
@@ -256,9 +187,6 @@ export default function ToolPage() {
   const [activateEmail, setActivateEmail] = useState("");
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
   const [showExit, setShowExit] = useState(false);
-  const [videoTitle, setVideoTitle] = useState('');
-  const [comboLoading, setComboLoading] = useState(false);
-  const [comboResult, setComboResult] = useState<any>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const comp1InputRef = useRef<HTMLInputElement>(null);
@@ -305,55 +233,10 @@ export default function ToolPage() {
     setRendered(true);
     const a = await analyzeThumbnail(yourImage);
     setAiScore(a.score); setAiRecs(a.recs);
-    // Save prediction for CTR calibration
-    fetch('/api/predictions', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title, predictedScore: a.score, niche: 'general' }),
-    }).catch(() => {});
-        // Save analysis for fingerprint
-    fetch('/api/analyses', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        type: 'single',
-        scores: {
-          total: a.score,
-          contrast: Math.round(Math.min(100, Math.max(0, a.score * 0.9))),
-          text: Math.round(Math.min(100, Math.max(0, a.score * 0.85))),
-          focal: Math.round(Math.min(100, Math.max(0, a.score * 0.8))),
-          clutter: Math.round(Math.min(100, Math.max(0, a.score * 0.75))),
-        },
-        input_meta: { title, niche: 'general' },
-      }),
-    }).catch(() => {});
     if (comp1Image) { const c1 = await analyzeThumbnail(comp1Image); setComp1Score(c1.score); setComp1Recs(c1.recs); }
     else { setComp1Score(null); setComp1Recs([]); }
     if (comp2Image) { const c2 = await analyzeThumbnail(comp2Image); setComp2Score(c2.score); setComp2Recs(c2.recs); }
     else { setComp2Score(null); setComp2Recs([]); }
-  };
-
-  const checkCombo = async () => {
-    if (!yourImage || !videoTitle || limitReached) return;
-    setComboLoading(true);
-    setComboResult(null);
-    try {
-      const res = await fetch('/api/combo', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ imageUrl: yourImage, title: videoTitle }),
-      });
-      const data = await res.json();
-      if (data.error) {
-        setComboResult({ error: data.error });
-      } else {
-        setComboResult(data);
-      }
-    } catch (err) {
-      setComboResult({ error: 'Network error' });
-    } finally {
-      setComboLoading(false);
-    }
   };
 
   const handleExport = async () => {
@@ -391,9 +274,6 @@ export default function ToolPage() {
 
   return (
     <main className="min-h-screen text-white selection:bg-purple-500/30">
-      <AuroraBg />
-      <Noise />
-      <SpotlightCursor />
       <Navbar />
       {showExit && <ExitIntentPopup onClose={() => { setShowExit(false); localStorage.setItem("tr_exit_closed", "1"); }} />}
 
@@ -531,59 +411,6 @@ export default function ToolPage() {
               </button>
             </div>
 
-            {/* Combo Gate */}
-            {yourImage && !limitReached && (
-              <div className="mt-4 space-y-3">
-                <input
-                  type="text"
-                  value={videoTitle}
-                  onChange={(e) => setVideoTitle(e.target.value)}
-                  placeholder="Video title"
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-white/30 text-sm"
-                />
-                <p className={`text-xs ${videoTitle.length > 60 ? 'text-red-400' : 'text-white/40'}`}>
-                  {videoTitle.length}/60 {videoTitle.length > 60 ? '— will be cut in search' : ''}
-                </p>
-                <button
-                  onClick={checkCombo}
-                  disabled={!videoTitle || comboLoading}
-                  className="w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium hover:opacity-90 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-                >
-                  {comboLoading ? 'Analyzing...' : 'Check Packaging'}
-                </button>
-                {comboResult && (
-                  <div className="mt-4">
-                    {comboResult.error ? (
-                      <div className="p-4 rounded-xl border border-red-500/30 bg-red-500/10 text-red-200 text-sm">
-                        Error: {comboResult.error}
-                      </div>
-                    ) : (
-                      <div className={`p-4 rounded-xl border ${comboResult.verdict === 'publish' ? 'border-green-500/30 bg-green-500/10' : 'border-red-500/30 bg-red-500/10'}`}>
-                        <div className="text-lg font-bold mb-1">
-                          {comboResult.verdict === 'publish' ? '✅ READY TO PUBLISH' : '❌ REWORK'}
-                        </div>
-                        <div className="text-sm text-white/70 mb-2">Score: {comboResult.combo_score}/100</div>
-                        {comboResult.verdict !== 'publish' && (
-                          <div className="text-sm font-medium text-white">{comboResult.one_fix}</div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Combo Gate blocked when limit reached */}
-            {limitReached && yourImage && (
-              <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-4 text-center">
-                <p className="text-sm text-red-200 font-medium mb-1">Free limit reached</p>
-                <p className="text-xs text-red-300/70 mb-3">Check Packaging requires Pro.</p>
-                <button onClick={() => window.location.href = "/upgrade"} className="px-5 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-semibold hover:opacity-90 transition-all">
-                  Upgrade to Pro — $20
-                </button>
-              </div>
-            )}
-
             {/* Free plan banner */}
             {!isPro && (
               <div className="rounded-xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
@@ -598,7 +425,7 @@ export default function ToolPage() {
                 <p className="text-sm text-red-200 font-medium mb-1">You&apos;ve used all 3 free previews today.</p>
                 <p className="text-xs text-red-300/70 mb-3">Upgrade to Pro for unlimited previews and full competitor analysis.</p>
                 <button onClick={() => window.location.href = "/upgrade"} className="px-5 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-semibold hover:opacity-90 transition-all">
-                  Upgrade to Pro — $20
+                  Upgrade to Pro — $15
                 </button>
               </div>
             )}
@@ -738,7 +565,8 @@ export default function ToolPage() {
           </div>
         </div>
 
-        <footer className="border-t border-white/5 mt-20 py-8">
+        <footer className="mt-20 py-8">
+          <div className="section-divider mb-8" />
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 rounded-md bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center">
@@ -747,9 +575,9 @@ export default function ToolPage() {
               <span className="font-bold text-white text-sm">ThumbRank</span>
             </div>
             <div className="flex items-center gap-6 text-sm text-white/40">
-              <Link href="/tool" className="hover:text-white transition-colors">Free Tool</Link>
-              <Link href="/" className="hover:text-white transition-colors">Pricing</Link>
-              <Link href="/" className="hover:text-white transition-colors">FAQ</Link>
+              <Link href="/tool" className="footer-link">Free Tool</Link>
+              <Link href="/" className="footer-link">Pricing</Link>
+              <Link href="/" className="footer-link">FAQ</Link>
             </div>
             <div className="text-xs text-white/20">© 2026 ThumbRank. All rights reserved.</div>
           </div>
