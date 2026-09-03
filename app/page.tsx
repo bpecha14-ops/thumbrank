@@ -9,40 +9,6 @@ import {
 import { motion, useInView, useReducedMotion, AnimatePresence } from "framer-motion";
 import { SiteNav } from "@/components/site-nav";
 
-/* ─── Spotlight Cursor ─── */
-function SpotlightCursor() {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const isTouch = window.matchMedia("(pointer: coarse)").matches;
-    if (isTouch) return;
-    let raf: number;
-    let tx = -1000, ty = -1000, cx = -1000, cy = -1000;
-    const onMove = (e: MouseEvent) => { tx = e.clientX; ty = e.clientY; };
-    const loop = () => {
-      cx += (tx - cx) * 0.12;
-      cy += (ty - cy) * 0.12;
-      if (ref.current) ref.current.style.transform = `translate(${cx - 200}px, ${cy - 200}px)`;
-      raf = requestAnimationFrame(loop);
-    };
-    window.addEventListener("mousemove", onMove);
-    raf = requestAnimationFrame(loop);
-    return () => { window.removeEventListener("mousemove", onMove); cancelAnimationFrame(raf); };
-  }, []);
-  return (
-    <div
-      ref={ref}
-      className="fixed top-0 left-0 w-[400px] h-[400px] pointer-events-none z-[1] hidden md:block"
-      style={{
-        background: "radial-gradient(circle, rgba(236,72,153,0.10) 0%, rgba(168,85,247,0.05) 40%, transparent 70%)",
-        filter: "blur(50px)",
-        borderRadius: "50%",
-        willChange: "transform",
-      }}
-    />
-  );
-}
-
-/* ─── Tilt Hook ─── */
 function useTilt() {
   const ref = useRef<HTMLDivElement>(null);
   const [style, setStyle] = useState({ transform: "", transition: "" });
@@ -66,7 +32,6 @@ function Navbar() { return <SiteNav />; }
 
 const headlineWords = ["Stop", "guessing.", "Start", "ranking."];
 
-/* ─── Hero ─── */
 function HeroSection() {
   const reduceMotion = useReducedMotion();
   const wordVariants = {
@@ -107,7 +72,6 @@ function HeroSection() {
   );
 }
 
-/* ─── Magnetic CTA ─── */
 function MagneticCTA() {
   const btnRef = useRef<HTMLAnchorElement>(null);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
@@ -129,12 +93,10 @@ function MagneticCTA() {
     <Link ref={btnRef} href="/tool" style={{ transform: `translate(${offset.x}px, ${offset.y}px)` }} className="relative inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold hover:opacity-90 transition-all shadow-lg shadow-purple-900/20 group">
       <span className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 opacity-0 group-hover:opacity-60 blur-lg transition-opacity duration-500 animate-cta-pulse" />
       <span className="relative btn-shift">Try Free — No signup <ArrowRight className="btn-arrow w-4 h-4 inline" /></span>
-      <style jsx>{`@keyframes cta-pulse { 0%,100%{opacity:0} 50%{opacity:0.4} } .animate-cta-pulse { animation: cta-pulse 2.5s ease-in-out infinite; }`}</style>
     </Link>
   );
 }
 
-/* ─── CountUp ─── */
 function useCountUp(target: number, duration = 1000, start = false) {
   const [count, setCount] = useState(0);
   const reduceMotion = useReducedMotion();
@@ -173,7 +135,6 @@ function usePriceCountUp(target: number, start: boolean) {
   return count;
 }
 
-/* ─── Mockup ─── */
 function MockupSection() {
   const { ref, style, onMove, onLeave } = useTilt();
   const reduceMotion = useReducedMotion();
@@ -186,16 +147,8 @@ function MockupSection() {
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
         <motion.div ref={inViewRef} initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, ease: "easeOut" }} className="relative">
           <div className="absolute -inset-4 rounded-3xl pointer-events-none" style={{ background: "radial-gradient(ellipse at center bottom, rgba(236,72,153,0.25), rgba(236,72,153,0.10) 40%, transparent 70%)", filter: "blur(40px)" }} />
-          {/* WRAPPER: float animation */}
           <div className={`relative ${reduceMotion ? "" : "animate-mockup-float"}`}>
-            {/* INNER: tilt on hover */}
-            <div
-              ref={ref}
-              style={reduceMotion ? undefined : style}
-              onMouseMove={reduceMotion ? undefined : onMove}
-              onMouseLeave={reduceMotion ? undefined : onLeave}
-              className="relative rounded-2xl border border-white/10 bg-[#0f0f0f] overflow-hidden shadow-2xl shadow-pink-900/10"
-            >
+            <div ref={ref} style={reduceMotion ? undefined : style} onMouseMove={reduceMotion ? undefined : onMove} onMouseLeave={reduceMotion ? undefined : onLeave} className="relative rounded-2xl border border-white/10 bg-[#0f0f0f] overflow-hidden shadow-2xl shadow-pink-900/10">
               <div className="flex items-center gap-2 px-4 py-3 border-b border-white/5">
                 <div className="w-3 h-3 rounded-full bg-red-500/80" /><div className="w-3 h-3 rounded-full bg-yellow-500/80" /><div className="w-3 h-3 rounded-full bg-green-500/80" />
                 <div className="ml-auto text-[10px] text-white/30">youtube.com/results</div>
@@ -248,7 +201,6 @@ function MockupSection() {
         </motion.div>
         <TrustChips />
       </div>
-      <style jsx>{`@keyframes mockup-float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} } .animate-mockup-float { animation: mockup-float 6s ease-in-out infinite; } @media (prefers-reduced-motion: reduce) { .animate-mockup-float { animation: none !important; } }`}</style>
     </section>
   );
 }
@@ -324,9 +276,7 @@ function TestimonialsSection() {
   );
   return (
     <section className="py-24 overflow-hidden"><div className="max-w-7xl mx-auto px-4 sm:px-6 mb-12"><h2 className="text-3xl sm:text-4xl font-bold text-white text-center mb-4">Loved by creators</h2><p className="text-white/50 text-center">Join thousands who preview before they publish.</p></div>
-      <div className="relative marquee-container"><div className="absolute left-0 top-0 bottom-0 w-24 z-10 pointer-events-none" style={{ background: "linear-gradient(to right, #1C1428, transparent)" }} /><div className="absolute right-0 top-0 bottom-0 w-24 z-10 pointer-events-none" style={{ background: "linear-gradient(to left, #1C1428, transparent)" }} /><div className="flex gap-4 animate-marquee-row1 whitespace-nowrap">{row1.map((t, i) => <Card key={`r1-${i}`} t={t} />)}</div><div className="flex gap-4 animate-marquee-row2 whitespace-nowrap mt-4">{row2.map((t, i) => <Card key={`r2-${i}`} t={t} />)}</div>
-        <style jsx>{`@keyframes marquee-row1 { from { transform: translateX(0); } to { transform: translateX(-50%); } } @keyframes marquee-row2 { from { transform: translateX(-50%); } to { transform: translateX(0); } } .animate-marquee-row1 { animation: marquee-row1 40s linear infinite; } .animate-marquee-row2 { animation: marquee-row2 40s linear infinite; } .marquee-container:hover .animate-marquee-row1, .marquee-container:hover .animate-marquee-row2 { animation-play-state: paused; } @media (prefers-reduced-motion: reduce) { .animate-marquee-row1, .animate-marquee-row2 { animation: none !important; } }`}</style>
-      </div>
+      <div className="relative marquee-container"><div className="absolute left-0 top-0 bottom-0 w-24 z-10 pointer-events-none" style={{ background: "linear-gradient(to right, #1C1428, transparent)" }} /><div className="absolute right-0 top-0 bottom-0 w-24 z-10 pointer-events-none" style={{ background: "linear-gradient(to left, #1C1428, transparent)" }} /><div className="flex gap-4 animate-marquee-row1 whitespace-nowrap">{row1.map((t, i) => <Card key={`r1-${i}`} t={t} />)}</div><div className="flex gap-4 animate-marquee-row2 whitespace-nowrap mt-4">{row2.map((t, i) => <Card key={`r2-${i}`} t={t} />)}</div></div>
     </section>
   );
 }
@@ -342,7 +292,6 @@ function PricingSection() {
         <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.02] p-8 transition-all duration-300 hover:shadow-xl hover:shadow-pink-900/10"><h3 className="text-lg font-semibold text-white mb-2">Free</h3><div className="text-4xl font-bold text-white mb-6">${freePrice}</div><ul className="space-y-3 mb-8">{["3 previews per day","Basic AI Thumbnail Score","1 competitor slot","PNG export with watermark"].map((f, i) => <li key={i} className="flex items-center gap-2 text-sm text-white/60"><Check className="w-4 h-4 text-pink-400" /> {f}</li>)}</ul><Link href="/tool" className="block w-full py-3 rounded-xl bg-white/5 border border-white/10 text-white font-medium text-center hover:bg-white/10 transition-all">Get started free</Link></TiltCard>
         <TiltCard className="relative scale-[1.02] rounded-2xl overflow-hidden"><div className="absolute inset-[-50%] animate-conic-spin" style={{ background: "conic-gradient(from 0deg, #ec4899, #f472b6, #db2777, #ec4899)" }} /><div className="relative rounded-2xl bg-[#0f0f0f] m-[2px] p-8"><div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-gradient-to-r from-pink-600 to-rose-600 text-xs font-semibold text-white">Most popular</div><h3 className="text-lg font-semibold text-white mb-2">Pro</h3><div className="text-4xl font-bold text-white mb-1">${proPrice}</div><div className="text-sm text-white/40 mb-6">per month</div><ul className="space-y-3 mb-8">{["Unlimited previews","Full AI Thumbnail Score + breakdown","2 competitor slots","PNG export — no watermark","Priority support"].map((f, i) => <li key={i} className="flex items-center gap-2 text-sm text-white/80"><Check className="w-4 h-4 text-pink-400" /> {f}</li>)}</ul><Link href="/upgrade" className="block w-full py-3 rounded-xl bg-gradient-to-r from-pink-600 to-rose-600 text-white font-semibold text-center hover:opacity-90 transition-all shadow-lg shadow-pink-900/20">Upgrade to Pro</Link></div></TiltCard>
       </div>
-      <style jsx>{`@keyframes conic-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } .animate-conic-spin { animation: conic-spin 4s linear infinite; } @media (prefers-reduced-motion: reduce) { .animate-conic-spin { animation: none !important; } }`}</style>
     </section>
   );
 }
@@ -446,7 +395,6 @@ function Footer() {
 export default function HomePage() {
   return (
     <main className="min-h-screen text-white selection:bg-pink-500/30">
-      <SpotlightCursor />
       <Navbar />
       <HeroSection />
       <MockupSection />
