@@ -38,6 +38,7 @@
     @apply bg-background text-foreground;
     background-color: #1C1428;
     color: #fafafa;
+    overflow-x: hidden;
   }
   h1, h2, h3 {
     font-weight: 680;
@@ -158,13 +159,14 @@
   transform: translateY(-2px);
 }
 
-/* === NEBULA BACKGROUND === */
+/* === PINK NEBULA BACKGROUND === */
 .nebula-blob {
-  position: absolute;
+  position: fixed;
   border-radius: 50%;
   filter: blur(140px);
   pointer-events: none;
   will-change: transform, opacity;
+  z-index: 0;
 }
 
 .nebula-1 {
@@ -172,7 +174,7 @@
   height: 700px;
   top: -10%;
   left: -5%;
-  background: radial-gradient(circle, rgba(168, 85, 247, 0.20) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(236, 72, 153, 0.22) 0%, transparent 70%);
   animation: nebula-drift-1 65s ease-in-out infinite;
 }
 
@@ -181,7 +183,7 @@
   height: 600px;
   top: 20%;
   right: -8%;
-  background: radial-gradient(circle, rgba(236, 72, 153, 0.18) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(244, 114, 182, 0.20) 0%, transparent 70%);
   animation: nebula-drift-2 80s ease-in-out infinite;
 }
 
@@ -190,7 +192,7 @@
   height: 650px;
   bottom: -10%;
   left: 30%;
-  background: radial-gradient(circle, rgba(192, 132, 252, 0.15) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(219, 39, 119, 0.18) 0%, transparent 70%);
   animation: nebula-drift-3 55s ease-in-out infinite;
 }
 
@@ -199,7 +201,7 @@
   height: 500px;
   top: 50%;
   left: 60%;
-  background: radial-gradient(circle, rgba(124, 58, 237, 0.16) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(251, 113, 133, 0.16) 0%, transparent 70%);
   animation: nebula-drift-4 90s ease-in-out infinite;
 }
 
@@ -208,7 +210,7 @@
   height: 450px;
   bottom: 10%;
   right: 20%;
-  background: radial-gradient(circle, rgba(219, 39, 119, 0.14) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(190, 24, 93, 0.15) 0%, transparent 70%);
   animation: nebula-drift-5 72s ease-in-out infinite;
 }
 
