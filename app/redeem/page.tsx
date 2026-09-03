@@ -53,7 +53,7 @@ export default function RedeemPage() {
           <h1 className="text-3xl font-bold text-white">You're already Pro!</h1>
           <p className="mt-4 text-neutral-400">You have unlimited previews, A/B testing, and CTR scores.</p>
           <Link href="/tool" className="inline-block mt-8">
-            <Button className="bg-violet-600 hover:bg-violet-500 text-white">Go to the tool</Button>
+            <Button className="bg-pink-600 hover:bg-pink-500 text-white">Go to the tool</Button>
           </Link>
         </div>
       </div>
@@ -65,13 +65,13 @@ export default function RedeemPage() {
       <div className="min-h-screen">
         <SiteNav />
         <div className="mx-auto max-w-lg px-4 sm:px-6 py-20 text-center">
-          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-violet-600/15">
-            <Lock className="h-8 w-8 text-violet-400" />
+          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-pink-600/15">
+            <Lock className="h-8 w-8 text-pink-400" />
           </div>
           <h1 className="text-3xl font-bold text-white">Sign in to redeem your key</h1>
           <p className="mt-4 text-neutral-400">You need an account to activate your Pro license key.</p>
           <Link href="/login?mode=signup" className="inline-block mt-8">
-            <Button size="lg" className="bg-violet-600 hover:bg-violet-500 text-white">Create a free account</Button>
+            <Button size="lg" className="bg-pink-600 hover:bg-pink-500 text-white">Create a free account</Button>
           </Link>
           <Link href="/login" className="block mt-4">
             <Button variant="link" className="text-neutral-400">Already have an account? Sign in →</Button>
@@ -87,8 +87,8 @@ export default function RedeemPage() {
 
       <div className="mx-auto max-w-lg px-4 sm:px-6 py-12">
         <div className="text-center mb-8">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-violet-600/15">
-            <KeyRound className="h-7 w-7 text-violet-400" />
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-pink-600/15">
+            <KeyRound className="h-7 w-7 text-pink-400" />
           </div>
           <h1 className="text-3xl font-bold text-white">Redeem your Pro key</h1>
           <p className="mt-3 text-neutral-400">Enter the license key you received from Paddle to unlock Pro.</p>
@@ -96,14 +96,14 @@ export default function RedeemPage() {
 
         <div className="rounded-2xl border border-white/10 bg-[#111]/80 backdrop-blur-sm p-6 mb-6">
           <div className="flex items-start gap-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-600/20 text-violet-400 text-sm font-bold shrink-0">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-pink-600/20 text-pink-400 text-sm font-bold shrink-0">
               1
             </div>
             <div className="flex-1">
               <h3 className="text-sm font-semibold text-white">Purchase on Paddle</h3>
               <p className="mt-1 text-xs text-neutral-400">Buy a Pro license for $20/month. Paddle will email you a license key instantly.</p>
               <a href={PADDLE_URL} target="_blank" rel="noopener noreferrer" className="inline-block mt-3">
-                <Button size="sm" className="bg-violet-600 hover:bg-violet-500 text-white">
+                <Button size="sm" className="bg-pink-600 hover:bg-pink-500 text-white">
                   Buy on Paddle <ExternalLink className="ml-2 h-3 w-3" />
                 </Button>
               </a>
@@ -113,7 +113,7 @@ export default function RedeemPage() {
 
         <form onSubmit={handleRedeem} className="rounded-2xl border border-white/10 bg-[#111]/80 backdrop-blur-sm p-6">
           <div className="flex items-start gap-4 mb-5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-600/20 text-violet-400 text-sm font-bold shrink-0">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-pink-600/20 text-pink-400 text-sm font-bold shrink-0">
               2
             </div>
             <div className="flex-1">
@@ -129,7 +129,7 @@ export default function RedeemPage() {
               value={key}
               onChange={(e) => setKey(e.target.value)}
               placeholder="XXXX-XXXX-XXXX-XXXX"
-              className="w-full rounded-md border border-white/10 bg-[#0a0a0a] px-3 py-2 text-sm text-white placeholder:text-neutral-600 font-mono outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+              className="w-full rounded-md border border-white/10 bg-[#0a0a0a] px-3 py-2 text-sm text-white placeholder:text-neutral-600 font-mono outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500"
               autoComplete="off"
             />
           </div>
@@ -148,7 +148,7 @@ export default function RedeemPage() {
           <Button
             type="submit"
             disabled={status === 'loading' || !key.trim()}
-            className="mt-5 w-full bg-violet-600 hover:bg-violet-500 text-white"
+            className="mt-5 w-full bg-pink-600 hover:bg-pink-500 text-white"
           >
             {status === 'loading' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
             Activate Pro
