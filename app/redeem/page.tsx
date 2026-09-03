@@ -5,13 +5,11 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { SiteNav } from '@/components/site-nav';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useAuth } from '@/lib/auth-context';
 import { getSupabase } from '@/lib/supabase/client';
 import { KeyRound, Loader2, Check, AlertCircle, ExternalLink, Lock, Sparkles } from 'lucide-react';
 
-const PADDLE_URL = 'https://thumbrank.paddle.com/l/pro'; // Replace with real Paddle product URL
+const PADDLE_URL = 'https://thumbrank.paddle.com/l/pro';
 
 export default function RedeemPage() {
   const { user, isPro, loading, refreshProfile } = useAuth();
@@ -44,10 +42,9 @@ export default function RedeemPage() {
     }
   }
 
-  // Already Pro
   if (!loading && isPro) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a]">
+      <div className="min-h-screen">
         <SiteNav />
         <div className="mx-auto max-w-lg px-4 sm:px-6 py-20 text-center">
           <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-green-500/15">
@@ -63,10 +60,9 @@ export default function RedeemPage() {
     );
   }
 
-  // Not signed in
   if (!loading && !user) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a]">
+      <div className="min-h-screen">
         <SiteNav />
         <div className="mx-auto max-w-lg px-4 sm:px-6 py-20 text-center">
           <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-violet-600/15">
@@ -86,7 +82,7 @@ export default function RedeemPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
+    <div className="min-h-screen">
       <SiteNav />
 
       <div className="mx-auto max-w-lg px-4 sm:px-6 py-12">
@@ -98,15 +94,14 @@ export default function RedeemPage() {
           <p className="mt-3 text-neutral-400">Enter the license key you received from Paddle to unlock Pro.</p>
         </div>
 
-        {/* Buy step */}
-        <div className="rounded-2xl border border-white/10 bg-[#111] p-6 mb-6">
+        <div className="rounded-2xl border border-white/10 bg-[#111]/80 backdrop-blur-sm p-6 mb-6">
           <div className="flex items-start gap-4">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-600/20 text-violet-400 text-sm font-bold shrink-0">
               1
             </div>
             <div className="flex-1">
               <h3 className="text-sm font-semibold text-white">Purchase on Paddle</h3>
-              <p className="mt-1 text-xs text-neutral-400">Buy a Pro license for $15/month. Paddle will email you a license key instantly.</p>
+              <p className="mt-1 text-xs text-neutral-400">Buy a Pro license for $20/month. Paddle will email you a license key instantly.</p>
               <a href={PADDLE_URL} target="_blank" rel="noopener noreferrer" className="inline-block mt-3">
                 <Button size="sm" className="bg-violet-600 hover:bg-violet-500 text-white">
                   Buy on Paddle <ExternalLink className="ml-2 h-3 w-3" />
@@ -116,8 +111,7 @@ export default function RedeemPage() {
           </div>
         </div>
 
-        {/* Redeem step */}
-        <form onSubmit={handleRedeem} className="rounded-2xl border border-white/10 bg-[#111] p-6">
+        <form onSubmit={handleRedeem} className="rounded-2xl border border-white/10 bg-[#111]/80 backdrop-blur-sm p-6">
           <div className="flex items-start gap-4 mb-5">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-600/20 text-violet-400 text-sm font-bold shrink-0">
               2
@@ -129,13 +123,13 @@ export default function RedeemPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="key" className="text-neutral-300">License key</Label>
-            <Input
+            <label htmlFor="key" className="block text-sm text-neutral-300">License key</label>
+            <input
               id="key"
               value={key}
               onChange={(e) => setKey(e.target.value)}
               placeholder="XXXX-XXXX-XXXX-XXXX"
-              className="bg-[#0a0a0a] border-white/10 text-white placeholder:text-neutral-600 font-mono"
+              className="w-full rounded-md border border-white/10 bg-[#0a0a0a] px-3 py-2 text-sm text-white placeholder:text-neutral-600 font-mono outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
               autoComplete="off"
             />
           </div>
