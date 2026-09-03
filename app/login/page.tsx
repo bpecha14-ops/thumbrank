@@ -1,25 +1,30 @@
 'use client';
-export const dynamic = 'force-dynamic';
-import { useState, useEffect } from 'react';
+
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { SiteNav } from '@/components/site-nav';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/lib/auth-context';
 import { getSupabase } from '@/lib/supabase/client';
 import { Loader2, Mail, Lock, ArrowRight, Check } from 'lucide-react';
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const mode = searchParams.get('mode') === 'signup' ? 'signup' : 'login';
-  const redirectTo = searchParams.get('redirect') || '/tool';
+  const [mode, setMode] = useState<'login' | 'signup'>('login');
+  const [redirectTo, setRedirectTo] = useState('/tool');
 
   const { user, loading: authLoading } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setMode(params.get('mode') === 'signup' ? 'signup' : 'login');
+    setRedirectTo(params.get('redirect') || '/tool');
+  }, []);
 
   useEffect(() => {
     if (!authLoading && user) {
@@ -194,5 +199,13 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-pink-400" /></div>}>
+      <LoginForm />
+    </Suspense>
   );
 }
