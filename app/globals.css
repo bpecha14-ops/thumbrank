@@ -366,3 +366,56 @@
     transition: none !important;
   }
 }
+/* === ANIMATIONS (from page.tsx) === */
+@keyframes mockup-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+.animate-mockup-float {
+  animation: mockup-float 6s ease-in-out infinite;
+}
+
+@keyframes marquee-row1 {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes marquee-row2 {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+.animate-marquee-row1 {
+  animation: marquee-row1 40s linear infinite;
+}
+.animate-marquee-row2 {
+  animation: marquee-row2 40s linear infinite;
+}
+.marquee-container:hover .animate-marquee-row1,
+.marquee-container:hover .animate-marquee-row2 {
+  animation-play-state: paused;
+}
+
+@keyframes conic-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.animate-conic-spin {
+  animation: conic-spin 4s linear infinite;
+}
+
+@keyframes cta-pulse {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 0.4; }
+}
+.animate-cta-pulse {
+  animation: cta-pulse 2.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-mockup-float,
+  .animate-marquee-row1,
+  .animate-marquee-row2,
+  .animate-conic-spin,
+  .animate-cta-pulse {
+    animation: none !important;
+  }
+}
