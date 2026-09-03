@@ -239,11 +239,10 @@ function MockupSection() {
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="relative"
         >
-          {/* Glow shadow beneath mockup */}
           <div
             className="absolute -inset-4 rounded-3xl pointer-events-none"
             style={{
-              background: "radial-gradient(ellipse at center bottom, rgba(124,58,237,0.25), rgba(236,72,153,0.10) 40%, transparent 70%)",
+              background: "radial-gradient(ellipse at center bottom, rgba(236,72,153,0.25), rgba(236,72,153,0.10) 40%, transparent 70%)",
               filter: "blur(40px)",
             }}
           />
@@ -252,7 +251,7 @@ function MockupSection() {
             style={reduceMotion ? undefined : style}
             onMouseMove={reduceMotion ? undefined : onMove}
             onMouseLeave={reduceMotion ? undefined : onLeave}
-            className={`relative rounded-2xl border border-white/10 bg-[#0f0f0f] overflow-hidden shadow-2xl shadow-purple-900/10 ${reduceMotion ? "" : "animate-mockup-float"}`}
+            className={`relative rounded-2xl border border-white/10 bg-[#0f0f0f] overflow-hidden shadow-2xl shadow-pink-900/10 ${reduceMotion ? "" : "animate-mockup-float"}`}
           >
             <div className="flex items-center gap-2 px-4 py-3 border-b border-white/5">
               <div className="w-3 h-3 rounded-full bg-red-500/80" />
@@ -275,8 +274,8 @@ function MockupSection() {
               ))}
             </div>
             <div className="p-4 space-y-3">
-              <div className="flex gap-3 rounded-xl p-3 border border-purple-500/30 bg-purple-500/5">
-                <div className="w-32 h-20 rounded-lg bg-purple-500/20 flex-shrink-0 relative overflow-hidden">
+              <div className="flex gap-3 rounded-xl p-3 border border-pink-500/30 bg-pink-500/5">
+                <div className="w-32 h-20 rounded-lg bg-pink-500/20 flex-shrink-0 relative overflow-hidden">
                   <div className="absolute inset-0 flex items-center justify-center text-white/20 text-xs">YOUR VIDEO</div>
                   <div className="absolute bottom-1 right-1 px-1 py-0.5 rounded bg-black/80 text-[9px] text-white">12:45</div>
                 </div>
@@ -285,7 +284,7 @@ function MockupSection() {
                   <div className="flex items-center gap-1 mt-1">
                     <div className="w-4 h-4 rounded-full bg-white/10" />
                     <span className="text-xs text-white/50">Your Channel</span>
-                    <span className="text-purple-400 text-xs">✓</span>
+                    <span className="text-pink-400 text-xs">✓</span>
                   </div>
                   <div className="text-xs text-white/40 mt-1">1.2M views · 3 days ago</div>
                   <div className="text-xs text-white/30 mt-1 truncate">The exact thumbnail strategy that changed everything...</div>
@@ -309,7 +308,7 @@ function MockupSection() {
                   <div className="flex items-center gap-1 mt-1">
                     <div className="w-4 h-4 rounded-full bg-white/10" />
                     <span className="text-xs text-white/50">Competitor Channel</span>
-                    <span className="text-purple-400 text-xs">✓</span>
+                    <span className="text-pink-400 text-xs">✓</span>
                   </div>
                   <div className="text-xs text-white/40 mt-1">847K views · 1 week ago</div>
                   <div className="text-xs text-white/30 mt-1 truncate">Learn the secrets behind viral thumbnails...</div>
@@ -325,7 +324,7 @@ function MockupSection() {
                   <div className="flex items-center gap-1 mt-1">
                     <div className="w-4 h-4 rounded-full bg-white/10" />
                     <span className="text-xs text-white/50">Another Channel</span>
-                    <span className="text-purple-400 text-xs">✓</span>
+                    <span className="text-pink-400 text-xs">✓</span>
                   </div>
                   <div className="text-xs text-white/40 mt-1">2.1M views · 2 weeks ago</div>
                   <div className="text-xs text-white/30 mt-1 truncate">Watch this video to learn more.</div>
@@ -408,33 +407,32 @@ function FeatureCard({ feature, index }: { feature: { title: string; desc: strin
   const reduceMotion = useReducedMotion();
 
   return (
-    <motion.div
-      ref={ref}
-      initial={reduceMotion ? undefined : { opacity: 0, y: 24 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5, delay: reduceMotion ? 0 : index * 0.1, ease: "easeOut" }}
-      className={`group relative rounded-2xl p-6 ${feature.span}`}
-    >
-      {/* Glassmorphism background */}
-      <div className="absolute inset-0 rounded-2xl bg-white/[0.03] backdrop-blur-md border border-white/10 transition-all duration-300 group-hover:border-purple-500/30 card-lift" />
-      {/* Gradient border glow on hover */}
-      <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-        style={{ background: "linear-gradient(135deg, rgba(124,58,237,0.15), rgba(236,72,153,0.10))", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor" as any, maskComposite: "exclude" as any, padding: "1px" } as React.CSSProperties}
-      />
-      {/* Gradient overlay on hover */}
-      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-      <div className="relative">
-        <motion.div
-          whileHover={reduceMotion ? undefined : { scale: 1.15, rotate: -5 }}
-          transition={{ type: "spring", stiffness: 300, damping: 10 }}
-          className="text-2xl mb-3 inline-block"
-        >
-          {feature.icon}
-        </motion.div>
-        <h3 className="text-lg font-semibold text-white mb-2">{feature.title}</h3>
-        <p className="text-sm text-white/50 leading-relaxed">{feature.desc}</p>
-      </div>
-    </motion.div>
+    <TiltCard className={`group relative rounded-2xl p-6 ${feature.span}`}>
+      <motion.div
+        ref={ref}
+        initial={reduceMotion ? undefined : { opacity: 0, y: 24 }}
+        animate={inView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.5, delay: reduceMotion ? 0 : index * 0.1, ease: "easeOut" }}
+        className="relative h-full"
+      >
+        <div className="absolute inset-0 rounded-2xl bg-white/[0.03] backdrop-blur-md border border-white/10 transition-all duration-300 group-hover:border-pink-500/40 card-lift" />
+        <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+          style={{ background: "linear-gradient(135deg, rgba(236,72,153,0.20), rgba(244,114,182,0.12))", mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor" as any, maskComposite: "exclude" as any, padding: "1px" } as React.CSSProperties}
+        />
+        <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-pink-500/10 to-rose-500/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+        <div className="relative">
+          <motion.div
+            whileHover={reduceMotion ? undefined : { scale: 1.15, rotate: -5 }}
+            transition={{ type: "spring", stiffness: 300, damping: 10 }}
+            className="text-2xl mb-3 inline-block"
+          >
+            {feature.icon}
+          </motion.div>
+          <h3 className="text-lg font-semibold text-white mb-2">{feature.title}</h3>
+          <p className="text-sm text-white/50 leading-relaxed">{feature.desc}</p>
+        </div>
+      </motion.div>
+    </TiltCard>
   );
 }
 
@@ -482,7 +480,7 @@ function MakerStory() {
                 animate={inView ? { scaleX: 1 } : {}}
                 transition={{ duration: 0.6, ease: "easeOut", delay: reduceMotion ? 0 : 0.2 }}
                 className="absolute left-0 bottom-0.5 h-[35%] w-full origin-left rounded-sm"
-                style={{ background: "linear-gradient(90deg, rgba(124,58,237,0.35), rgba(236,72,153,0.25))", zIndex: -1 }}
+                style={{ background: "linear-gradient(90deg, rgba(236,72,153,0.35), rgba(244,114,182,0.25))", zIndex: -1 }}
               />
             </span>{" "}
             Not the title. Not the tags. The thumbnail.
@@ -507,16 +505,16 @@ function TestimonialsSection() {
   const row1 = [...items, ...items];
   const row2 = [...items.slice().reverse(), ...items.slice().reverse()];
   const Card = ({ t, id }: { t: typeof items[0]; id: string }) => (
-    <div className="inline-block w-[320px] flex-shrink-0 rounded-xl border border-white/10 bg-white/[0.03] p-5 whitespace-normal">
+    <TiltCard className="inline-block w-[320px] flex-shrink-0 rounded-xl border border-white/10 bg-white/[0.03] p-5 whitespace-normal transition-all duration-300 hover:border-pink-500/30 hover:shadow-[0_0_30px_rgba(236,72,153,0.15)]">
       <div className="flex items-center gap-3 mb-3">
-        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-xs font-bold">{t.name[0]}</div>
+        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center text-white text-xs font-bold">{t.name[0]}</div>
         <div>
           <div className="text-sm font-medium text-white">{t.name}</div>
           <div className="text-xs text-white/40">{t.role}</div>
         </div>
       </div>
       <p className="text-sm text-white/60 leading-relaxed">{t.text}</p>
-    </div>
+    </TiltCard>
   );
   return (
     <section className="py-24 overflow-hidden">
@@ -525,8 +523,8 @@ function TestimonialsSection() {
         <p className="text-white/50 text-center">Join thousands who preview before they publish.</p>
       </div>
       <div className="relative marquee-container">
-        <div className="absolute left-0 top-0 bottom-0 w-24 z-10 pointer-events-none" style={{ background: "linear-gradient(to right, #030305, transparent)" }} />
-        <div className="absolute right-0 top-0 bottom-0 w-24 z-10 pointer-events-none" style={{ background: "linear-gradient(to left, #030305, transparent)" }} />
+        <div className="absolute left-0 top-0 bottom-0 w-24 z-10 pointer-events-none" style={{ background: "linear-gradient(to right, #1C1428, transparent)" }} />
+        <div className="absolute right-0 top-0 bottom-0 w-24 z-10 pointer-events-none" style={{ background: "linear-gradient(to left, #1C1428, transparent)" }} />
         <div className="flex gap-4 animate-marquee-row1 whitespace-nowrap">
           {row1.map((t, i) => <Card key={`r1-${i}`} t={t} id={`r1-${i}`} />)}
         </div>
@@ -563,13 +561,13 @@ function PricingSection() {
           <p className="text-white/50">Start free. Upgrade when you need more.</p>
         </div>
         <div ref={ref} className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto items-start">
-          <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.02] p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-900/10">
+          <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.02] p-8 transition-all duration-300 hover:shadow-xl hover:shadow-pink-900/10">
             <h3 className="text-lg font-semibold text-white mb-2">Free</h3>
             <div className="text-4xl font-bold text-white mb-6">${freePrice}</div>
             <ul className="space-y-3 mb-8">
               {["3 previews per day", "Basic AI Thumbnail Score", "1 competitor slot", "PNG export with watermark"].map((f, i) => (
                 <li key={i} className="flex items-center gap-2 text-sm text-white/60">
-                  <Check className="w-4 h-4 text-purple-400" /> {f}
+                  <Check className="w-4 h-4 text-pink-400" /> {f}
                 </li>
               ))}
             </ul>
@@ -577,13 +575,13 @@ function PricingSection() {
               Get started free
             </Link>
           </TiltCard>
-          <div className="relative scale-[1.02] rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-purple-900/20">
+          <TiltCard className="relative scale-[1.02] rounded-2xl overflow-hidden">
             <div
               className="absolute inset-[-50%] animate-conic-spin"
-              style={{ background: "conic-gradient(from 0deg, #7c3aed, #ec4899, #3b82f6, #7c3aed)" }}
+              style={{ background: "conic-gradient(from 0deg, #ec4899, #f472b6, #db2777, #ec4899)" }}
             />
             <div className="relative rounded-2xl bg-[#0f0f0f] m-[2px] p-8">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-xs font-semibold text-white">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-gradient-to-r from-pink-600 to-rose-600 text-xs font-semibold text-white">
                 Most popular
               </div>
               <h3 className="text-lg font-semibold text-white mb-2">Pro</h3>
@@ -592,15 +590,15 @@ function PricingSection() {
               <ul className="space-y-3 mb-8">
                 {["Unlimited previews", "Full AI Thumbnail Score + breakdown", "2 competitor slots", "PNG export — no watermark", "Priority support"].map((f, i) => (
                   <li key={i} className="flex items-center gap-2 text-sm text-white/80">
-                    <Check className="w-4 h-4 text-purple-400" /> {f}
+                    <Check className="w-4 h-4 text-pink-400" /> {f}
                   </li>
                 ))}
               </ul>
-              <Link href="/upgrade" className="block w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold text-center hover:opacity-90 transition-all shadow-lg shadow-purple-900/20">
+              <Link href="/upgrade" className="block w-full py-3 rounded-xl bg-gradient-to-r from-pink-600 to-rose-600 text-white font-semibold text-center hover:opacity-90 transition-all shadow-lg shadow-pink-900/20">
                 Upgrade to Pro
               </Link>
             </div>
-          </div>
+          </TiltCard>
         </div>
       </div>
       <style jsx>{`
@@ -621,8 +619,8 @@ function EmailCapture() {
   return (
     <section className="py-16">
       <div className="max-w-xl mx-auto px-4 sm:px-6 text-center">
-        <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-8">
-          <Mail className="w-8 h-8 text-purple-400 mx-auto mb-4" />
+        <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.02] p-8 transition-all duration-300 hover:border-pink-500/30 hover:shadow-[0_0_40px_rgba(236,72,153,0.12)]">
+          <Mail className="w-8 h-8 text-pink-400 mx-auto mb-4" />
           <h3 className="text-2xl font-bold text-white mb-2">Get early access to new features</h3>
           <p className="text-white/50 mb-6 text-sm">Join creators getting thumbnail tips weekly. No spam.</p>
           <form
@@ -641,12 +639,12 @@ function EmailCapture() {
             className="flex flex-col sm:flex-row gap-3"
           >
             <input name="email" type="email" required placeholder="your@email.com"
-              className="flex-1 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-purple-500 backdrop-blur-sm" />
-            <button type="submit" className="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold hover:opacity-90 transition-all whitespace-nowrap">
+              className="flex-1 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-pink-500 backdrop-blur-sm" />
+            <button type="submit" className="px-6 py-3 rounded-xl bg-gradient-to-r from-pink-600 to-rose-600 text-white font-semibold hover:opacity-90 transition-all whitespace-nowrap">
               Subscribe
             </button>
           </form>
-        </div>
+        </TiltCard>
       </div>
     </section>
   );
@@ -716,9 +714,9 @@ function MagneticCTALarge() {
       ref={btnRef}
       href="/tool"
       style={{ transform: `translate(${offset.x}px, ${offset.y}px)` }}
-      className="relative inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold text-lg hover:opacity-90 transition-all shadow-xl shadow-purple-900/20 group"
+      className="relative inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-pink-600 to-rose-600 text-white font-semibold text-lg hover:opacity-90 transition-all shadow-xl shadow-pink-900/20 group"
     >
-      <span className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 opacity-0 group-hover:opacity-50 blur-lg transition-opacity duration-500" />
+      <span className="absolute inset-0 rounded-xl bg-gradient-to-r from-pink-500 to-rose-500 opacity-0 group-hover:opacity-50 blur-lg transition-opacity duration-500" />
       <span className="relative btn-shift">Try ThumbRank free <ArrowRight className="btn-arrow w-5 h-5 inline" /></span>
     </Link>
   );
@@ -730,7 +728,7 @@ function CTASection() {
       <div
         className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] pointer-events-none"
         style={{
-          background: "radial-gradient(ellipse at center, rgba(124,58,237,0.15), rgba(236,72,153,0.08) 40%, transparent 70%)",
+          background: "radial-gradient(ellipse at center, rgba(236,72,153,0.15), rgba(244,114,182,0.08) 40%, transparent 70%)",
           filter: "blur(60px)",
         }}
       />
@@ -777,11 +775,11 @@ function StickyCTAPill() {
           transition={reduceMotion ? { duration: 0 } : { type: "spring", stiffness: 200, damping: 26 }}
           className="fixed bottom-0 left-0 right-0 sm:bottom-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 z-40"
         >
-          <div className="flex items-center justify-center gap-3 px-4 py-3 sm:py-3 sm:rounded-full bg-[#0f0f0f]/80 backdrop-blur-xl border-t sm:border border-white/10 sm:shadow-2xl sm:shadow-purple-900/20">
+          <div className="flex items-center justify-center gap-3 px-4 py-3 sm:py-3 sm:rounded-full bg-[#0f0f0f]/80 backdrop-blur-xl border-t sm:border border-white/10 sm:shadow-2xl sm:shadow-pink-900/20">
             <span className="text-sm text-white/70 hidden sm:inline">Stop guessing. Start ranking.</span>
             <Link
               href="/tool"
-              className="inline-flex items-center gap-1 px-4 py-2 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-semibold hover:opacity-90 transition-all whitespace-nowrap"
+              className="inline-flex items-center gap-1 px-4 py-2 rounded-full bg-gradient-to-r from-pink-600 to-rose-600 text-white text-sm font-semibold hover:opacity-90 transition-all whitespace-nowrap"
             >
               Try Free <ArrowRight className="btn-arrow w-3 h-3" />
             </Link>
@@ -805,7 +803,7 @@ function Footer() {
       <div className="section-divider mb-12" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-md bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center">
+          <div className="w-6 h-6 rounded-md bg-gradient-to-br from-pink-600 to-rose-600 flex items-center justify-center">
             <Sparkles className="w-3 h-3 text-white" />
           </div>
           <span className="font-bold text-white text-sm">ThumbRank</span>
@@ -823,7 +821,7 @@ function Footer() {
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen text-white selection:bg-purple-500/30">
+    <main className="min-h-screen text-white selection:bg-pink-500/30">
       <Navbar />
       <HeroSection />
       <MockupSection />
