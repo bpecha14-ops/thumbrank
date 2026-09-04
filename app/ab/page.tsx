@@ -1,19 +1,22 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 export default function ABTestDashboard() {
-  const { id } = useParams();
+  const searchParams = useSearchParams();
+  const id = searchParams.get('id');
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`/api/ab/${id}`)
+    if (!id) return;
+    fetch(`/api/ab?id=${id}`)
       .then(r => r.json())
       .then(d => { setData(d); setLoading(false); });
   }, [id]);
 
+  if (!id) return <div className="min-h-screen bg-black text-white p-8">No test ID provided</div>;
   if (loading) return <div className="min-h-screen bg-black text-white p-8">Loading...</div>;
   if (data?.error) return <div className="min-h-screen bg-black text-red-400 p-8">{data.error}</div>;
 

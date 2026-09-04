@@ -1,32 +1,22 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
-import { nanoid } from 'nanoid';
 
-export async function POST(req: NextRequest) {
+export async function GET(req: NextRequest) {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const id = req.nextUrl.searchParams.get('id');
+  if (!id) return NextResponse.json({ error: 'Missing id' }, { status: 400 });
 
-  const { video_url, variant_a_url, variant_b_url } = await req.json();
-  if (!video_url || !variant_a_url || !variant_b_url) {
-    return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
-  }
+  const { data, error } = await supabase.from('ab_tests').select('*').eq('id', id).single();
+  if (error || !data) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
-  const shortId = nanoid(8);
-  const { data, error } = await supabase
-    .from('ab_tests')
-    .insert({ id: shortId, user_id: user.id, video_url, variant_a_url, variant_b_url })
-    .select().single();
+  const total = data.clicks_a + data.clicks_b;
+  const winner = total === 0 ? null : data.clicks_a > data.clicks_b ? 'A' : data.clicks_a < data.clicks_b ? 'B' : 'Tie';
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-
-  const base = process.env.NEXT_PUBLIC_APP_URL || 'https://thumbrankpro.com';
   return NextResponse.json({
-    test: data,
-    links: {
-      a: `${base}/ab/${shortId}?variant=a`,
-      b: `${base}/ab/${shortId}?variant=b`,
-      dashboard: `${base}/ab/${shortId}`,
-    }
+    ...data,
+    total_clicks: total,
+    winner,
+    ctr_a: total > 0 ? ((data.clicks_a / total) * 100).toFixed(1) : '0.0',
+    ctr_b: total > 0 ? ((data.clicks_b / total) * 100).toFixed(1) : '0.0',
   });
 }
