@@ -33,21 +33,15 @@ export function SiteNav() {
       <Link href="/#features" className="nav-link text-sm text-neutral-300 hover:text-white transition-colors" onClick={() => setOpen(false)}>
         Features
       </Link>
-    <Link href="/ab/create" className="text-sm font-medium text-neutral-300 hover:text-white transition-colors">
-      A/B Test
-    </Link>
+    
       <Link href="/#pricing" className="nav-link text-sm text-neutral-300 hover:text-white transition-colors" onClick={() => setOpen(false)}>
         Pricing
       </Link>
-    <Link href="/ab/create" className="text-sm font-medium text-neutral-300 hover:text-white transition-colors">
-      A/B Test
-    </Link>
+    
       <Link href="/#faq" className="nav-link text-sm text-neutral-300 hover:text-white transition-colors" onClick={() => setOpen(false)}>
         FAQ
       </Link>
-    <Link href="/ab/create" className="text-sm font-medium text-neutral-300 hover:text-white transition-colors">
-      A/B Test
-    </Link>
+    
       <Link href="/tool" className="nav-link text-sm text-neutral-300 hover:text-white transition-colors" onClick={() => setOpen(false)}>
         Free Tool
       </Link>
