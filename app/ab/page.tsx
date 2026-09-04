@@ -1,9 +1,10 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
-export default function ABTestDashboard() {
+function ABTestDashboard() {
   const searchParams = useSearchParams();
   const id = searchParams.get('id');
   const [data, setData] = useState<any>(null);
@@ -54,5 +55,13 @@ export default function ABTestDashboard() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-black text-white p-8">Loading...</div>}>
+      <ABTestDashboard />
+    </Suspense>
   );
 }
