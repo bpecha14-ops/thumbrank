@@ -29,7 +29,7 @@ export default function CreateABTest() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white p-8">
+    <div className="min-h-screen bg-[#1C1428] text-white p-8">
       <h1 className="text-3xl font-bold mb-6">Create A/B Test</h1>
 
       {!result ? (
