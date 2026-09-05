@@ -274,7 +274,7 @@ function MockupSection() {
               style={reduceMotion ? undefined : style}
               onMouseMove={reduceMotion ? undefined : onMove}
               onMouseLeave={reduceMotion ? undefined : onLeave}
-              className="relative rounded-2xl border border-white/10 bg-[#161026] overflow-hidden shadow-2xl shadow-pink-900/10"
+              className="relative rounded-2xl border border-white/10 bg-[#0f0f0f] overflow-hidden shadow-2xl shadow-pink-900/10"
             >
               <div className="flex items-center gap-2 px-4 py-3 border-b border-white/5">
                 <div className="w-3 h-3 rounded-full bg-red-500/80" />
@@ -580,7 +580,7 @@ function PricingSection() {
           </TiltCard>
           <TiltCard className="relative scale-[1.02] rounded-2xl overflow-hidden">
             <div className="absolute inset-[-50%] animate-conic-spin" style={{ background: "conic-gradient(from 0deg, #ec4899, #f472b6, #db2777, #ec4899)" }} />
-            <div className="relative rounded-2xl bg-[#161026] m-[2px] p-8">
+            <div className="relative rounded-2xl bg-[#0f0f0f] m-[2px] p-8">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-gradient-to-r from-pink-600 to-rose-600 text-xs font-semibold text-white">
                 Most popular
               </div>
@@ -805,6 +805,14 @@ function Footer() {
 export default function HomePage() {
   return (
     <main className="min-h-screen text-white selection:bg-pink-500/30">
+      <div className="nebula-blob nebula-1" />
+      <div className="nebula-blob nebula-2" />
+      <div className="nebula-blob nebula-3" />
+      <div className="nebula-blob nebula-4" />
+      <div className="nebula-blob nebula-5" />
+      <div className="orb orb-1" />
+      <div className="orb orb-2" />
+      <div className="orb orb-3" />
       <SpotlightCursor />
       <Navbar />
       <HeroSection />
