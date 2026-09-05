@@ -33,21 +33,18 @@ export function SiteNav() {
       <Link href="/#features" className="nav-link text-sm text-neutral-300 hover:text-white transition-colors" onClick={() => setOpen(false)}>
         Features
       </Link>
-    
       <Link href="/#pricing" className="nav-link text-sm text-neutral-300 hover:text-white transition-colors" onClick={() => setOpen(false)}>
         Pricing
       </Link>
-    
       <Link href="/#faq" className="nav-link text-sm text-neutral-300 hover:text-white transition-colors" onClick={() => setOpen(false)}>
         FAQ
       </Link>
-    
       <Link href="/tool" className="nav-link text-sm text-neutral-300 hover:text-white transition-colors" onClick={() => setOpen(false)}>
         Free Tool
       </Link>
-    <Link href="/ab/create" className="text-sm font-medium text-neutral-300 hover:text-white transition-colors">
-      A/B Test
-    </Link>
+      <Link href="/ab/create" className="nav-link text-sm text-neutral-300 hover:text-white transition-colors" onClick={() => setOpen(false)}>
+        A/B Test
+      </Link>
     </>
   );
 
@@ -60,9 +57,6 @@ export function SiteNav() {
           </div>
           <span className="text-lg font-bold tracking-tight">ThumbRank</span>
         </Link>
-    <Link href="/ab/create" className="text-sm font-medium text-neutral-300 hover:text-white transition-colors">
-      A/B Test
-    </Link>
 
         <nav className="hidden items-center gap-8 md:flex">{links}</nav>
 
@@ -75,9 +69,6 @@ export function SiteNav() {
                     Upgrade to Pro
                   </Button>
                 </Link>
-    <Link href="/ab/create" className="text-sm font-medium text-neutral-300 hover:text-white transition-colors">
-      A/B Test
-    </Link>
               )}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -99,21 +90,12 @@ export function SiteNav() {
                   <DropdownMenuSeparator className="bg-white/10" />
                   <DropdownMenuItem asChild className="text-neutral-200 focus:bg-white/5 focus:text-white">
                     <Link href="/dashboard"><LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard</Link>
-    <Link href="/ab/create" className="text-sm font-medium text-neutral-300 hover:text-white transition-colors">
-      A/B Test
-    </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild className="text-neutral-200 focus:bg-white/5 focus:text-white">
                     <Link href="/redeem"><KeyRound className="mr-2 h-4 w-4" /> Redeem Key</Link>
-    <Link href="/ab/create" className="text-sm font-medium text-neutral-300 hover:text-white transition-colors">
-      A/B Test
-    </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild className="text-neutral-200 focus:bg-white/5 focus:text-white">
                     <Link href="/tool"><UserIcon className="mr-2 h-4 w-4" /> Free Tool</Link>
-    <Link href="/ab/create" className="text-sm font-medium text-neutral-300 hover:text-white transition-colors">
-      A/B Test
-    </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator className="bg-white/10" />
                   <DropdownMenuItem onClick={() => signOut()} className="text-red-400 focus:bg-red-500/10 focus:text-red-400">
@@ -129,17 +111,11 @@ export function SiteNav() {
                   Log in
                 </Button>
               </Link>
-    <Link href="/ab/create" className="text-sm font-medium text-neutral-300 hover:text-white transition-colors">
-      A/B Test
-    </Link>
               <Link href="/login?mode=signup">
                 <Button size="sm" className="bg-violet-600 hover:bg-violet-500 text-white">
                   Get started free
                 </Button>
               </Link>
-    <Link href="/ab/create" className="text-sm font-medium text-neutral-300 hover:text-white transition-colors">
-      A/B Test
-    </Link>
             </>
           )}
         </div>
@@ -158,9 +134,6 @@ export function SiteNav() {
                 <Link href="/dashboard" onClick={() => setOpen(false)}>
                   <Button variant="outline" size="sm" className="w-full border-white/10 text-white">Dashboard</Button>
                 </Link>
-    <Link href="/ab/create" className="text-sm font-medium text-neutral-300 hover:text-white transition-colors">
-      A/B Test
-    </Link>
                 <Button variant="ghost" size="sm" className="text-neutral-300" onClick={() => { signOut(); setOpen(false); }}>
                   Sign out
                 </Button>
@@ -170,15 +143,9 @@ export function SiteNav() {
                 <Link href="/login" onClick={() => setOpen(false)}>
                   <Button variant="outline" size="sm" className="w-full border-white/10 text-white">Log in</Button>
                 </Link>
-    <Link href="/ab/create" className="text-sm font-medium text-neutral-300 hover:text-white transition-colors">
-      A/B Test
-    </Link>
                 <Link href="/login?mode=signup" onClick={() => setOpen(false)}>
                   <Button size="sm" className="w-full bg-violet-600 hover:bg-violet-500 text-white">Get started free</Button>
                 </Link>
-    <Link href="/ab/create" className="text-sm font-medium text-neutral-300 hover:text-white transition-colors">
-      A/B Test
-    </Link>
               </>
             )}
           </div>
