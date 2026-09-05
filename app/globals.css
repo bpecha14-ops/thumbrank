@@ -4,24 +4,24 @@
 
 @layer base {
   :root {
-    --background: 240 10% 4%;
+    --background: 0 0% 2%;
     --foreground: 0 0% 98%;
-    --card: 240 8% 6%;
+    --card: 0 0% 4%;
     --card-foreground: 0 0% 98%;
-    --popover: 240 8% 6%;
+    --popover: 0 0% 4%;
     --popover-foreground: 0 0% 98%;
     --primary: 258 90% 66%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 240 6% 12%;
+    --secondary: 0 0% 8%;
     --secondary-foreground: 0 0% 98%;
-    --muted: 240 6% 12%;
+    --muted: 0 0% 8%;
     --muted-foreground: 240 5% 65%;
     --accent: 258 90% 66%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 6% 14%;
-    --input: 240 6% 14%;
+    --border: 0 0% 12%;
+    --input: 0 0% 12%;
     --ring: 258 90% 66%;
     --radius: 0.75rem;
   }
@@ -36,7 +36,6 @@
   }
   body {
     @apply bg-background text-foreground;
-    background-color: #1C1428;
     color: #fafafa;
     overflow-x: hidden;
   }
@@ -77,14 +76,14 @@
   height: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: #1C1428;
+  background: #050505;
 }
 ::-webkit-scrollbar-thumb {
-  background: #262626;
+  background: #1a1a1a;
   border-radius: 5px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #404040;
+  background: #333333;
 }
 
 /* Fade-in animation */
@@ -116,7 +115,7 @@
 .orb-1 {
   width: 500px;
   height: 500px;
-  background: radial-gradient(circle, #7c3aed 0%, transparent 70%);
+  background: radial-gradient(circle, #4c1d95 0%, transparent 70%);
   top: -150px;
   right: -100px;
 }
@@ -124,7 +123,7 @@
 .orb-2 {
   width: 400px;
   height: 400px;
-  background: radial-gradient(circle, #db2777 0%, transparent 70%);
+  background: radial-gradient(circle, #831843 0%, transparent 70%);
   bottom: -100px;
   left: -100px;
   animation-delay: 3s;
@@ -133,7 +132,7 @@
 .orb-3 {
   width: 300px;
   height: 300px;
-  background: radial-gradient(circle, #2563eb 0%, transparent 70%);
+  background: radial-gradient(circle, #1e3a8a 0%, transparent 70%);
   top: 40%;
   left: 30%;
   animation-delay: 6s;
@@ -159,7 +158,7 @@
   transform: translateY(-2px);
 }
 
-/* === PINK NEBULA BACKGROUND === */
+/* === DARK NEBULA BACKGROUND === */
 .nebula-blob {
   position: fixed;
   border-radius: 50%;
@@ -174,7 +173,7 @@
   height: 700px;
   top: -10%;
   left: -5%;
-  background: radial-gradient(circle, rgba(236, 72, 153, 0.22) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.06) 0%, transparent 70%);
   animation: nebula-drift-1 65s ease-in-out infinite;
 }
 
@@ -183,7 +182,7 @@
   height: 600px;
   top: 20%;
   right: -8%;
-  background: radial-gradient(circle, rgba(244, 114, 182, 0.20) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.05) 0%, transparent 70%);
   animation: nebula-drift-2 80s ease-in-out infinite;
 }
 
@@ -192,7 +191,7 @@
   height: 650px;
   bottom: -10%;
   left: 30%;
-  background: radial-gradient(circle, rgba(219, 39, 119, 0.18) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.05) 0%, transparent 70%);
   animation: nebula-drift-3 55s ease-in-out infinite;
 }
 
@@ -201,7 +200,7 @@
   height: 500px;
   top: 50%;
   left: 60%;
-  background: radial-gradient(circle, rgba(251, 113, 133, 0.16) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.04) 0%, transparent 70%);
   animation: nebula-drift-4 90s ease-in-out infinite;
 }
 
@@ -210,7 +209,7 @@
   height: 450px;
   bottom: 10%;
   right: 20%;
-  background: radial-gradient(circle, rgba(190, 24, 93, 0.15) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(76, 29, 149, 0.05) 0%, transparent 70%);
   animation: nebula-drift-5 72s ease-in-out infinite;
 }
 
@@ -274,14 +273,14 @@
 
 /* === NAV SCROLL STATE === */
 .nav-scrolled {
-  background-color: rgba(28, 20, 40, 0.85) !important;
+  background-color: rgba(5, 5, 5, 0.9) !important;
   backdrop-blur: 16px;
-  border-bottom-color: rgba(236, 72, 153, 0.15) !important;
+  border-bottom-color: rgba(139, 92, 246, 0.15) !important;
   transition: background-color 0.2s ease, border-color 0.2s ease, backdrop-filter 0.2s ease;
 }
 
 .nav-top {
-  background-color: rgba(28, 20, 40, 0.3);
+  background-color: rgba(5, 5, 5, 0.5);
   backdrop-blur: 8px;
   border-bottom-color: rgba(255, 255, 255, 0.03);
   transition: background-color 0.2s ease, border-color 0.2s ease, backdrop-filter 0.2s ease;
@@ -366,6 +365,7 @@
     transition: none !important;
   }
 }
+
 /* === ANIMATIONS (from page.tsx) === */
 @keyframes mockup-float {
   0%, 100% { transform: translateY(0px); }
