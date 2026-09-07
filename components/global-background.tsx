@@ -2,8 +2,8 @@
 
 import { useEffect, useRef } from 'react';
 
-/* ─── Cursor Spotlight ─── */
-function SpotlightCursor() {
+/* ─── Cursor Glow ─── */
+function CursorGlow() {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const isTouch = window.matchMedia('(pointer: coarse)').matches;
@@ -12,9 +12,9 @@ function SpotlightCursor() {
     let tx = -1000, ty = -1000, cx = -1000, cy = -1000;
     const onMove = (e: MouseEvent) => { tx = e.clientX; ty = e.clientY; };
     const loop = () => {
-      cx += (tx - cx) * 0.08;
-      cy += (ty - cy) * 0.08;
-      if (ref.current) ref.current.style.transform = `translate(${cx - 250}px, ${cy - 250}px)`;
+      cx += (tx - cx) * 0.06;
+      cy += (ty - cy) * 0.06;
+      if (ref.current) ref.current.style.transform = `translate(${cx - 300}px, ${cy - 300}px)`;
       raf = requestAnimationFrame(loop);
     };
     window.addEventListener('mousemove', onMove);
@@ -24,10 +24,10 @@ function SpotlightCursor() {
   return (
     <div
       ref={ref}
-      className="fixed top-0 left-0 w-[500px] h-[500px] pointer-events-none z-[5] hidden md:block"
+      className="fixed top-0 left-0 w-[600px] h-[600px] pointer-events-none z-[3] hidden md:block"
       style={{
-        background: 'radial-gradient(circle, rgba(236,72,153,0.14) 0%, rgba(168,85,247,0.07) 40%, transparent 70%)',
-        filter: 'blur(60px)',
+        background: 'radial-gradient(circle, rgba(255,160,160,0.12) 0%, rgba(255,120,120,0.06) 30%, transparent 60%)',
+        filter: 'blur(80px)',
         borderRadius: '50%',
         willChange: 'transform',
       }}
@@ -35,43 +35,97 @@ function SpotlightCursor() {
   );
 }
 
-/* ─── Nebula Blobs ─── */
-const blobs = [
-  { style: { width: 900, height: 900, top: '-20%', left: '-15%', background: 'radial-gradient(circle, rgba(236,72,153,0.40) 0%, transparent 70%)', animation: 'nebula-drift-1 55s ease-in-out infinite' } },
-  { style: { width: 800, height: 800, top: '25%', right: '-20%', background: 'radial-gradient(circle, rgba(244,114,182,0.35) 0%, transparent 70%)', animation: 'nebula-drift-2 70s ease-in-out infinite' } },
-  { style: { width: 850, height: 850, bottom: '-25%', left: '15%', background: 'radial-gradient(circle, rgba(219,39,119,0.32) 0%, transparent 70%)', animation: 'nebula-drift-3 45s ease-in-out infinite' } },
-  { style: { width: 700, height: 700, top: '55%', left: '45%', background: 'radial-gradient(circle, rgba(251,113,133,0.28) 0%, transparent 70%)', animation: 'nebula-drift-4 80s ease-in-out infinite' } },
-  { style: { width: 650, height: 650, bottom: '0%', right: '5%', background: 'radial-gradient(circle, rgba(190,24,93,0.25) 0%, transparent 70%)', animation: 'nebula-drift-5 60s ease-in-out infinite' } },
-  { style: { width: 1000, height: 1000, top: '5%', left: '55%', background: 'radial-gradient(circle, rgba(139,92,246,0.22) 0%, transparent 70%)', animation: 'nebula-drift-6 85s ease-in-out infinite' } },
-];
+/* ─── Floating Line ─── */
+function GlowLine({ delay, top, width, opacity }: { delay: number; top: string; width: string; opacity: number }) {
+  return (
+    <div
+      className="fixed h-[1px] pointer-events-none z-[1]"
+      style={{
+        top,
+        left: '50%',
+        width,
+        transform: 'translateX(-50%)',
+        background: `linear-gradient(90deg, transparent, rgba(255,160,160,${opacity}), rgba(255,200,180,${opacity * 0.6}), transparent)`,
+        animation: `glowLineDrift 20s ease-in-out infinite`,
+        animationDelay: `${delay}s`,
+      }}
+    />
+  );
+}
 
 export default function GlobalBackground() {
   return (
     <>
-      {/* Base dark layer */}
-      <div className="fixed inset-0 bg-[#0a0a12] -z-50" />
-      
-      {/* Nebula blobs */}
-      {blobs.map((b, i) => (
-        <div
-          key={i}
-          className="fixed rounded-full pointer-events-none will-change-transform z-0"
-          style={{ ...b.style, filter: 'blur(140px)' }}
-        />
-      ))}
-      
-      {/* Noise grain */}
+      {/* Deep dark base */}
+      <div className="fixed inset-0 bg-[#050508] -z-50" />
+
+      {/* Aurora Blob 1 — Coral (top-right) */}
       <div
-        className="fixed inset-0 pointer-events-none z-[2] opacity-[0.04]"
+        className="fixed w-[800px] h-[800px] rounded-full pointer-events-none z-0"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`,
-          backgroundRepeat: 'repeat',
-          backgroundSize: '200px 200px',
+          top: '-15%',
+          right: '-10%',
+          background: 'radial-gradient(circle, rgba(255,120,100,0.35) 0%, rgba(255,100,100,0.15) 40%, transparent 70%)',
+          filter: 'blur(120px)',
+          animation: 'aurora1 25s ease-in-out infinite',
         }}
       />
-      
-      {/* Cursor spotlight */}
-      <SpotlightCursor />
+
+      {/* Aurora Blob 2 — Peach (bottom-left) */}
+      <div
+        className="fixed w-[700px] h-[700px] rounded-full pointer-events-none z-0"
+        style={{
+          bottom: '-20%',
+          left: '-15%',
+          background: 'radial-gradient(circle, rgba(255,180,140,0.30) 0%, rgba(255,160,120,0.12) 40%, transparent 70%)',
+          filter: 'blur(120px)',
+          animation: 'aurora2 30s ease-in-out infinite',
+        }}
+      />
+
+      {/* Aurora Blob 3 — Soft Pink (center, subtle) */}
+      <div
+        className="fixed w-[600px] h-[600px] rounded-full pointer-events-none z-0"
+        style={{
+          top: '35%',
+          left: '45%',
+          background: 'radial-gradient(circle, rgba(255,200,180,0.20) 0%, rgba(255,180,160,0.08) 40%, transparent 70%)',
+          filter: 'blur(100px)',
+          animation: 'aurora3 22s ease-in-out infinite',
+        }}
+      />
+
+      {/* Fine Grid (Linear-style) */}
+      <div
+        className="fixed inset-0 pointer-events-none z-[2] opacity-[0.07]"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(255,160,160,0.3) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,160,160,0.3) 1px, transparent 1px)
+          `,
+          backgroundSize: '60px 60px',
+          mask: 'radial-gradient(ellipse at center, black 30%, transparent 80%)',
+          WebkitMask: 'radial-gradient(ellipse at center, black 30%, transparent 80%)',
+        }}
+      />
+
+      {/* Horizontal Glow Lines */}
+      <GlowLine delay={0} top="25%" width="80%" opacity={0.15} />
+      <GlowLine delay={7} top="65%" width="60%" opacity={0.1} />
+      <GlowLine delay={14} top="85%" width="90%" opacity={0.08} />
+
+      {/* Noise Grain */}
+      <div
+        className="fixed inset-0 pointer-events-none z-[4] opacity-[0.035]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`,
+          backgroundRepeat: 'repeat',
+          backgroundSize: '150px 150px',
+        }}
+      />
+
+      {/* Cursor Glow */}
+      <CursorGlow />
     </>
   );
 }
