@@ -2,31 +2,37 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { getSupabaseClient } from '@/lib/supabase/client';
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = 'https://igdswmsdtbaqvlycucum.supabase.co';
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
 export default function AuthCallback() {
   const router = useRouter();
 
   useEffect(() => {
-    const supabase = getSupabaseClient();
-    if (!supabase) {
+    if (!supabaseKey) {
       router.replace('/login?error=auth_config');
       return;
     }
 
-    // Supabase v2 автоматически обнаружит ?code= или #access_token при инициализации
-    // Просто проверяем сессию после этого
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
+    // НОВЫЙ client на callback page — он автоматически увидит ?code= в URL
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    setTimeout(async () => {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      
       if (error) {
         router.replace('/login?error=' + encodeURIComponent(error.message));
         return;
       }
+      
       if (session) {
         router.replace('/tool');
       } else {
         router.replace('/login?error=no_session');
       }
-    });
+    }, 500);
   }, [router]);
 
   return (
