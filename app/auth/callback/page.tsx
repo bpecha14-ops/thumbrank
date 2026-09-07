@@ -12,7 +12,7 @@ export default function AuthCallback() {
     const handleAuth = async () => {
       const supabase = getSupabaseClient();
       if (!supabase) {
-        setTimeout(() => router.replace('/login?error=auth_config'), 1000);
+        router.replace('/login?error=auth_config');
         return;
       }
 
@@ -21,8 +21,8 @@ export default function AuthCallback() {
       if (code) {
         const { error } = await supabase.auth.exchangeCodeForSession(code);
         if (error) {
-          setMessage('Failed. Redirecting...');
-          setTimeout(() => router.replace('/login?error=' + encodeURIComponent(error.message)), 1000);
+          console.error('Exchange error:', error.message);
+          router.replace('/login?error=' + encodeURIComponent(error.message));
           return;
         }
       }
@@ -31,7 +31,7 @@ export default function AuthCallback() {
       if (session) {
         router.replace('/tool');
       } else {
-        setTimeout(() => router.replace('/login?error=no_session'), 1000);
+        router.replace('/login?error=no_session');
       }
     };
 
