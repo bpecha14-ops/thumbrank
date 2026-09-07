@@ -29,10 +29,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(session?.user ?? null);
       setLoading(false);
     });
+
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
       setLoading(false);
     });
+
     return () => { listener.subscription.unsubscribe(); };
   }, []);
 
@@ -42,7 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: { 
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: 'https://thumbrankpro.com/auth/callback',
         queryParams: {
           access_type: 'offline',
           prompt: 'select_account',
