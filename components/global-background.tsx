@@ -35,24 +35,6 @@ function CursorGlow() {
   );
 }
 
-/* ─── Floating Line ─── */
-function GlowLine({ delay, top, width, opacity }: { delay: number; top: string; width: string; opacity: number }) {
-  return (
-    <div
-      className="fixed h-[1px] pointer-events-none z-[1]"
-      style={{
-        top,
-        left: '50%',
-        width,
-        transform: 'translateX(-50%)',
-        background: `linear-gradient(90deg, transparent, rgba(255,160,160,${opacity}), rgba(255,200,180,${opacity * 0.6}), transparent)`,
-        animation: `glowLineDrift 20s ease-in-out infinite`,
-        animationDelay: `${delay}s`,
-      }}
-    />
-  );
-}
-
 export default function GlobalBackground() {
   return (
     <>
@@ -94,11 +76,6 @@ export default function GlobalBackground() {
           animation: 'aurora3 22s ease-in-out infinite',
         }}
       />
-
-      {/* Horizontal Glow Lines */}
-      <GlowLine delay={0} top="25%" width="80%" opacity={0.15} />
-      <GlowLine delay={7} top="65%" width="60%" opacity={0.1} />
-      <GlowLine delay={14} top="85%" width="90%" opacity={0.08} />
 
       {/* Noise Grain */}
       <div
