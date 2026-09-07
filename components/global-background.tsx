@@ -95,20 +95,6 @@ export default function GlobalBackground() {
         }}
       />
 
-      {/* Fine Grid (Linear-style) */}
-      <div
-        className="fixed inset-0 pointer-events-none z-[2] opacity-[0.07]"
-        style={{
-          backgroundImage: `
-            linear-gradient(rgba(255,160,160,0.3) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,160,160,0.3) 1px, transparent 1px)
-          `,
-          backgroundSize: '60px 60px',
-          mask: 'radial-gradient(ellipse at center, black 30%, transparent 80%)',
-          WebkitMask: 'radial-gradient(ellipse at center, black 30%, transparent 80%)',
-        }}
-      />
-
       {/* Horizontal Glow Lines */}
       <GlowLine delay={0} top="25%" width="80%" opacity={0.15} />
       <GlowLine delay={7} top="65%" width="60%" opacity={0.1} />
