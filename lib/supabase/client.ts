@@ -1,17 +1,18 @@
 import { createClient } from '@supabase/supabase-js';
 
-let client: ReturnType<typeof createClient> | null = null;
+let client: any = null;
 
 export function getSupabaseClient() {
-  if (!client) {
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
-    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
-    
-    if (!url || !key) {
-      throw new Error('Supabase URL/Key not found. Check Vercel env variables.');
-    }
-    
-    client = createClient(url, key);
+  if (client) return client;
+  
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+  
+  if (!url || !key) {
+    console.warn('Supabase env missing — auth disabled');
+    return null;
   }
+  
+  client = createClient(url, key);
   return client;
 }
