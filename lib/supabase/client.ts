@@ -5,11 +5,11 @@ let client: any = null;
 export function getSupabaseClient() {
   if (client) return client;
   
-  const url = 'https://igdswmsdtbaqvlycucum.supabase.co'; // ← твой URL
+  const url = 'https://igdswmsdtbaqvlycucum.supabase.co';
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
   
   if (!key) {
-    console.warn('Supabase anon key missing');
+    console.warn('Supabase key missing');
     return null;
   }
   
