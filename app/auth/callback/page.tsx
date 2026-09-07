@@ -9,34 +9,33 @@ export default function AuthCallback() {
   const [message, setMessage] = useState('Completing sign in...');
 
   useEffect(() => {
-    const supabase = getSupabaseClient();
-    if (!supabase) {
-      setMessage('Auth error');
-      setTimeout(() => router.replace('/login?error=auth_config'), 2000);
-      return;
-    }
-
-    // Supabase v2 автоматически обменивает ?code= на сессию при инициализации клиента
-    // Просто проверяем сессию каждые 500мс, пока не появится
-    let attempts = 0;
-    const check = setInterval(async () => {
-      attempts++;
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (session) {
-        clearInterval(check);
-        router.replace('/tool');
+    const handleAuth = async () => {
+      const supabase = getSupabaseClient();
+      if (!supabase) {
+        setTimeout(() => router.replace('/login?error=auth_config'), 1000);
         return;
       }
-      
-      if (attempts >= 10) {
-        clearInterval(check);
-        setMessage('Failed. Redirecting...');
-        setTimeout(() => router.replace('/login?error=timeout'), 1500);
-      }
-    }, 500);
 
-    return () => clearInterval(check);
+      const code = new URLSearchParams(window.location.search).get('code');
+
+      if (code) {
+        const { error } = await supabase.auth.exchangeCodeForSession(code);
+        if (error) {
+          setMessage('Failed. Redirecting...');
+          setTimeout(() => router.replace('/login?error=' + encodeURIComponent(error.message)), 1000);
+          return;
+        }
+      }
+
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        router.replace('/tool');
+      } else {
+        setTimeout(() => router.replace('/login?error=no_session'), 1000);
+      }
+    };
+
+    handleAuth();
   }, [router]);
 
   return (
