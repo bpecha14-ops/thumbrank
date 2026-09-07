@@ -12,10 +12,10 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Menu, X, Sparkles, LogOut, LayoutDashboard, KeyRound, User as UserIcon } from 'lucide-react';
+import { Menu, X, Sparkles, LogOut, User as UserIcon } from 'lucide-react';
 
 export function SiteNav() {
-  const { user, profile, signOut } = useAuth();
+  const { user, signOut } = useAuth();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -63,13 +63,11 @@ export function SiteNav() {
         <div className="hidden items-center gap-3 md:flex">
           {user ? (
             <>
-              {profile?.plan === 'free' && (
-                <Link href="/redeem">
-                  <Button size="sm" className="bg-violet-600 hover:bg-violet-500 text-white">
-                    Upgrade to Pro
-                  </Button>
-                </Link>
-              )}
+              <Link href="/upgrade">
+                <Button size="sm" className="bg-violet-600 hover:bg-violet-500 text-white">
+                  Upgrade to Pro
+                </Button>
+              </Link>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="flex items-center gap-2 rounded-full border border-white/10 p-1 pr-3 hover:bg-white/5 transition-colors">
@@ -83,17 +81,8 @@ export function SiteNav() {
                   <div className="px-2 py-1.5">
                     <p className="text-xs text-neutral-400">Signed in as</p>
                     <p className="truncate text-sm text-white">{user.email}</p>
-                    {profile && (
-                      <p className="mt-1 text-xs text-violet-400 capitalize">{profile.plan} plan</p>
-                    )}
                   </div>
                   <DropdownMenuSeparator className="bg-white/10" />
-                  <DropdownMenuItem asChild className="text-neutral-200 focus:bg-white/5 focus:text-white">
-                    <Link href="/dashboard"><LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild className="text-neutral-200 focus:bg-white/5 focus:text-white">
-                    <Link href="/redeem"><KeyRound className="mr-2 h-4 w-4" /> Redeem Key</Link>
-                  </DropdownMenuItem>
                   <DropdownMenuItem asChild className="text-neutral-200 focus:bg-white/5 focus:text-white">
                     <Link href="/tool"><UserIcon className="mr-2 h-4 w-4" /> Free Tool</Link>
                   </DropdownMenuItem>
@@ -131,8 +120,8 @@ export function SiteNav() {
           <div className="flex flex-col gap-2 pt-2 border-t border-white/5">
             {user ? (
               <>
-                <Link href="/dashboard" onClick={() => setOpen(false)}>
-                  <Button variant="outline" size="sm" className="w-full border-white/10 text-white">Dashboard</Button>
+                <Link href="/tool" onClick={() => setOpen(false)}>
+                  <Button variant="outline" size="sm" className="w-full border-white/10 text-white">Free Tool</Button>
                 </Link>
                 <Button variant="ghost" size="sm" className="text-neutral-300" onClick={() => { signOut(); setOpen(false); }}>
                   Sign out
