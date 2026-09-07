@@ -13,6 +13,10 @@ export function getSupabaseClient() {
     return null;
   }
   
-  client = createClient(url, key);
+  client = createClient(url, key, {
+    auth: {
+      detectSessionInUrl: false,
+    }
+  });
   return client;
 }
