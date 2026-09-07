@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { Button } from '@/components/ui/button';
 import {
@@ -12,9 +13,10 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Menu, X, Sparkles, LogOut, User as UserIcon } from 'lucide-react';
+import { Menu, X, Sparkles, LogOut, LayoutDashboard, Settings, ChevronDown } from 'lucide-react';
 
 export function SiteNav() {
+  const router = useRouter();
   const { user, signOut } = useAuth();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -28,23 +30,18 @@ export function SiteNav() {
 
   const initials = user?.email?.slice(0, 2).toUpperCase() ?? 'U';
 
+  const handleSignOut = async () => {
+    await signOut();
+    router.push('/');
+  };
+
   const links = (
     <>
-      <Link href="/#features" className="nav-link text-sm text-neutral-300 hover:text-white transition-colors" onClick={() => setOpen(false)}>
-        Features
-      </Link>
-      <Link href="/#pricing" className="nav-link text-sm text-neutral-300 hover:text-white transition-colors" onClick={() => setOpen(false)}>
-        Pricing
-      </Link>
-      <Link href="/#faq" className="nav-link text-sm text-neutral-300 hover:text-white transition-colors" onClick={() => setOpen(false)}>
-        FAQ
-      </Link>
-      <Link href="/tool" className="nav-link text-sm text-neutral-300 hover:text-white transition-colors" onClick={() => setOpen(false)}>
-        Free Tool
-      </Link>
-      <Link href="/ab/create" className="nav-link text-sm text-neutral-300 hover:text-white transition-colors" onClick={() => setOpen(false)}>
-        A/B Test
-      </Link>
+      <Link href="/#features" className="nav-link text-sm text-neutral-300 hover:text-white transition-colors" onClick={() => setOpen(false)}>Features</Link>
+      <Link href="/#pricing" className="nav-link text-sm text-neutral-300 hover:text-white transition-colors" onClick={() => setOpen(false)}>Pricing</Link>
+      <Link href="/#faq" className="nav-link text-sm text-neutral-300 hover:text-white transition-colors" onClick={() => setOpen(false)}>FAQ</Link>
+      <Link href="/tool" className="nav-link text-sm text-neutral-300 hover:text-white transition-colors" onClick={() => setOpen(false)}>Free Tool</Link>
+      <Link href="/ab/create" className="nav-link text-sm text-neutral-300 hover:text-white transition-colors" onClick={() => setOpen(false)}>A/B Test</Link>
     </>
   );
 
@@ -64,17 +61,16 @@ export function SiteNav() {
           {user ? (
             <>
               <Link href="/upgrade">
-                <Button size="sm" className="bg-violet-600 hover:bg-violet-500 text-white">
-                  Upgrade to Pro
-                </Button>
+                <Button size="sm" className="bg-violet-600 hover:bg-violet-500 text-white">Upgrade to Pro</Button>
               </Link>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-2 rounded-full border border-white/10 p-1 pr-3 hover:bg-white/5 transition-colors">
+                  <button className="group flex items-center gap-2 rounded-full border border-white/10 p-1 pr-3 hover:bg-white/5 transition-colors">
                     <Avatar className="h-7 w-7">
                       <AvatarFallback className="bg-violet-600 text-white text-xs">{initials}</AvatarFallback>
                     </Avatar>
                     <span className="text-sm text-neutral-200">{user.email?.split('@')[0]}</span>
+                    <ChevronDown className="h-4 w-4 text-neutral-400 transition-transform duration-200 group-data-[state=open]:rotate-180" />
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56 bg-[#141414] border-white/10">
@@ -83,11 +79,14 @@ export function SiteNav() {
                     <p className="truncate text-sm text-white">{user.email}</p>
                   </div>
                   <DropdownMenuSeparator className="bg-white/10" />
-                  <DropdownMenuItem asChild className="text-neutral-200 focus:bg-white/5 focus:text-white">
-                    <Link href="/tool"><UserIcon className="mr-2 h-4 w-4" /> Free Tool</Link>
+                  <DropdownMenuItem asChild className="text-neutral-200 focus:bg-white/5 focus:text-white cursor-pointer">
+                    <Link href="/app" className="flex items-center"><LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild className="text-neutral-200 focus:bg-white/5 focus:text-white cursor-pointer">
+                    <Link href="/app/settings" className="flex items-center"><Settings className="mr-2 h-4 w-4" /> Settings</Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator className="bg-white/10" />
-                  <DropdownMenuItem onClick={() => signOut()} className="text-red-400 focus:bg-red-500/10 focus:text-red-400">
+                  <DropdownMenuItem onClick={handleSignOut} className="text-red-400 focus:bg-red-500/10 focus:text-red-400 cursor-pointer">
                     <LogOut className="mr-2 h-4 w-4" /> Sign out
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -95,16 +94,8 @@ export function SiteNav() {
             </>
           ) : (
             <>
-              <Link href="/login">
-                <Button variant="ghost" size="sm" className="text-neutral-300 hover:text-white">
-                  Log in
-                </Button>
-              </Link>
-              <Link href="/login?mode=signup">
-                <Button size="sm" className="bg-violet-600 hover:bg-violet-500 text-white">
-                  Get started free
-                </Button>
-              </Link>
+              <Link href="/login"><Button variant="ghost" size="sm" className="text-neutral-300 hover:text-white">Log in</Button></Link>
+              <Link href="/login?mode=signup"><Button size="sm" className="bg-violet-600 hover:bg-violet-500 text-white">Get started free</Button></Link>
             </>
           )}
         </div>
@@ -120,21 +111,14 @@ export function SiteNav() {
           <div className="flex flex-col gap-2 pt-2 border-t border-white/5">
             {user ? (
               <>
-                <Link href="/tool" onClick={() => setOpen(false)}>
-                  <Button variant="outline" size="sm" className="w-full border-white/10 text-white">Free Tool</Button>
-                </Link>
-                <Button variant="ghost" size="sm" className="text-neutral-300" onClick={() => { signOut(); setOpen(false); }}>
-                  Sign out
-                </Button>
+                <Link href="/app" onClick={() => setOpen(false)}><Button variant="outline" size="sm" className="w-full border-white/10 text-white justify-start"><LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard</Button></Link>
+                <Link href="/app/settings" onClick={() => setOpen(false)}><Button variant="outline" size="sm" className="w-full border-white/10 text-white justify-start"><Settings className="mr-2 h-4 w-4" /> Settings</Button></Link>
+                <Button variant="ghost" size="sm" className="text-neutral-300 justify-start" onClick={() => { handleSignOut(); setOpen(false); }}><LogOut className="mr-2 h-4 w-4" /> Sign out</Button>
               </>
             ) : (
               <>
-                <Link href="/login" onClick={() => setOpen(false)}>
-                  <Button variant="outline" size="sm" className="w-full border-white/10 text-white">Log in</Button>
-                </Link>
-                <Link href="/login?mode=signup" onClick={() => setOpen(false)}>
-                  <Button size="sm" className="w-full bg-violet-600 hover:bg-violet-500 text-white">Get started free</Button>
-                </Link>
+                <Link href="/login" onClick={() => setOpen(false)}><Button variant="outline" size="sm" className="w-full border-white/10 text-white">Log in</Button></Link>
+                <Link href="/login?mode=signup" onClick={() => setOpen(false)}><Button size="sm" className="w-full bg-violet-600 hover:bg-violet-500 text-white">Get started free</Button></Link>
               </>
             )}
           </div>
