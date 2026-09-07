@@ -1,50 +1,47 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getSupabaseClient } from '@/lib/supabase/client';
 
 export default function AuthCallback() {
   const router = useRouter();
+  const [message, setMessage] = useState('Completing sign in...');
 
   useEffect(() => {
-    const handleAuth = async () => {
-      const supabase = getSupabaseClient();
-      if (!supabase) {
-        router.push('/login?error=auth_not_configured');
-        return;
-      }
-      
-      const { data: { session }, error } = await supabase.auth.getSession();
-      
-      if (error) {
-        router.push('/login?error=' + encodeURIComponent(error.message));
-        return;
-      }
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      setMessage('Auth error');
+      setTimeout(() => router.replace('/login?error=auth_config'), 2000);
+      return;
+    }
+
+    // Supabase v2 автоматически обменивает ?code= на сессию при инициализации клиента
+    // Просто проверяем сессию каждые 500мс, пока не появится
+    let attempts = 0;
+    const check = setInterval(async () => {
+      attempts++;
+      const { data: { session } } = await supabase.auth.getSession();
       
       if (session) {
-        router.push('/tool');
-      } else {
-        const code = new URLSearchParams(window.location.search).get('code');
-        if (code) {
-          const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
-          if (exchangeError) {
-            router.push('/login?error=' + encodeURIComponent(exchangeError.message));
-            return;
-          }
-          router.push('/tool');
-        } else {
-          router.push('/login');
-        }
+        clearInterval(check);
+        router.replace('/tool');
+        return;
       }
-    };
-    
-    handleAuth();
+      
+      if (attempts >= 10) {
+        clearInterval(check);
+        setMessage('Failed. Redirecting...');
+        setTimeout(() => router.replace('/login?error=timeout'), 1500);
+      }
+    }, 500);
+
+    return () => clearInterval(check);
   }, [router]);
 
   return (
     <div className="min-h-screen flex items-center justify-center text-white">
-      <div className="animate-pulse">Signing you in...</div>
+      <div className="animate-pulse">{message}</div>
     </div>
   );
 }
