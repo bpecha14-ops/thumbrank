@@ -38,7 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = async () => {
     const supabase = getSupabaseClient();
-    if (!supabase) { alert('Auth not configured'); return; }
+    if (!supabase) { alert('Auth not ready'); return; }
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo: `${window.location.origin}/auth/callback` },
