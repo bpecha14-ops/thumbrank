@@ -2,6 +2,7 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { AuthProvider } from '@/lib/auth-context';
+import GlobalBackground from '@/components/global-background';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -57,13 +58,8 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className={`${inter.className} bg-[#1C1428] text-white antialiased overflow-x-hidden`}>
-        {/* === PINK NEBULA BACKGROUND === */}
-        <div className="nebula-blob nebula-1" />
-        <div className="nebula-blob nebula-2" />
-        <div className="nebula-blob nebula-3" />
-        <div className="nebula-blob nebula-4" />
-        <div className="nebula-blob nebula-5" />
+      <body className={`${inter.className} text-white antialiased overflow-x-hidden`}>
+        <GlobalBackground />
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
