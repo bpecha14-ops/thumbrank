@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { SiteNav } from '@/components/site-nav';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/lib/auth-context';
-import { getSupabase } from '@/lib/supabase/client';
+import { getSupabaseClient } from '@/lib/supabase/client';
 import { Loader2, Mail, Lock, ArrowRight, Check } from 'lucide-react';
 
 function LoginForm() {
@@ -14,7 +14,7 @@ function LoginForm() {
   const [mode, setMode] = useState<'login' | 'signup'>('login');
   const [redirectTo, setRedirectTo] = useState('/tool');
 
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, signIn } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
@@ -39,7 +39,8 @@ function LoginForm() {
     setMessage('');
 
     try {
-      const supabase = getSupabase();
+      const supabase = getSupabaseClient();
+      if (!supabase) throw new Error('Auth service not available');
       if (mode === 'signup') {
         const { error } = await supabase.auth.signUp({
           email: email.trim(),
@@ -63,16 +64,13 @@ function LoginForm() {
     }
   }
 
-  async function handleOAuth(provider: 'google') {
+  async function handleOAuth() {
     setStatus('loading');
-    const supabase = getSupabase();
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider,
-      options: { redirectTo: `${window.location.origin}/auth/callback?next=${redirectTo}` },
-    });
-    if (error) {
+    try {
+      await signIn();
+    } catch (err: any) {
       setStatus('error');
-      setMessage(error.message);
+      setMessage(err.message || 'Google sign-in failed');
     }
   }
 
@@ -102,7 +100,7 @@ function LoginForm() {
         </div>
 
         <button
-          onClick={() => handleOAuth('google')}
+          onClick={handleOAuth}
           disabled={status === 'loading'}
           className="w-full flex items-center justify-center gap-3 rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-medium text-white hover:bg-white/10 transition-colors disabled:opacity-50"
         >
