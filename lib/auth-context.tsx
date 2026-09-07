@@ -1,66 +1,23 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { getSupabaseClient } from './supabase/client';
+import { createContext, useContext, useState, ReactNode } from 'react';
 
 interface AuthContextType {
   user: any;
-  loading: boolean;
-  signIn: () => Promise<void>;
-  signOut: () => Promise<void>;
+  signIn: () => void;
+  signOut: () => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
-  loading: true,
-  signIn: async () => {},
-  signOut: async () => {},
+  signIn: () => {},
+  signOut: () => {},
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const supabase = getSupabaseClient();
-    
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    return () => {
-      listener.subscription.unsubscribe();
-    };
-  }, []);
-
-  const signIn = async () => {
-    const supabase = getSupabaseClient();
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-    if (error) {
-      console.error('Google sign in error:', error.message);
-      alert('Sign in failed: ' + error.message);
-    }
-  };
-
-  const signOut = async () => {
-    const supabase = getSupabaseClient();
-    await supabase.auth.signOut();
-    setUser(null);
-  };
-
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, signIn: () => {}, signOut: () => {} }}>
       {children}
     </AuthContext.Provider>
   );
