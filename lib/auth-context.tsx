@@ -45,10 +45,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       provider: 'google',
       options: { 
         redirectTo: 'https://thumbrankpro.com/auth/callback',
-        queryParams: {
-          access_type: 'offline',
-          prompt: 'select_account',
-        }
       },
     });
     if (error) alert('Sign in failed: ' + error.message);
