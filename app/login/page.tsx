@@ -10,7 +10,6 @@ import { Loader2, Mail, Lock, ArrowRight } from 'lucide-react';
 function LoginForm() {
   const router = useRouter();
   const [mode, setMode] = useState<'login' | 'signup'>('login');
-  const [redirectTo, setRedirectTo] = useState('/tool');
   const { user, loading: authLoading, signIn } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -20,14 +19,13 @@ function LoginForm() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     setMode(params.get('mode') === 'signup' ? 'signup' : 'login');
-    setRedirectTo(params.get('redirect') || '/tool');
   }, []);
 
   useEffect(() => {
     if (!authLoading && user) {
-      router.push(redirectTo);
+      router.push('/tool');
     }
-  }, [authLoading, user, router, redirectTo]);
+  }, [authLoading, user, router]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -45,7 +43,6 @@ function LoginForm() {
           options: { emailRedirectTo: `${window.location.origin}/login` },
         });
         if (error) throw error;
-        setStatus('idle');
         setMessage('Check your email for the confirmation link.');
       } else {
         const { error } = await supabase.auth.signInWithPassword({
@@ -53,7 +50,7 @@ function LoginForm() {
           password,
         });
         if (error) throw error;
-        router.push(redirectTo);
+        router.push('/tool');
       }
     } catch (err: any) {
       setStatus('error');
@@ -150,12 +147,6 @@ function LoginForm() {
 
           {status === 'error' && (
             <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
-              {message}
-            </div>
-          )}
-
-          {message && status !== 'error' && (
-            <div className="rounded-lg border border-green-500/30 bg-green-500/10 px-4 py-3 text-sm text-green-400">
               {message}
             </div>
           )}
