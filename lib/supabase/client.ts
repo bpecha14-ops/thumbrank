@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 
 export function getSupabaseClient() {
-  const url = 'https://igdswmsdtbaqvlycucum.supabase.co';
-  const key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlnZHN3bXNkdGJhcXZseWN1Y3VtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjY3MzA2MTQsImV4cCI6MjA0MjMwNjYxNH0.Zk6JrobLHWFCnZYxewE10QDsI';
+  const url = 'https://fpwdoqocxkuwoweaxyqz.supabase.co';
+  const key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZwd2RvcW9jeGt1d293ZWF4eXF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg4NzM0NzYsImV4cCI6MjEwNDQ0OTQ3Nn0.-WxVNppCgH6LJVdT9B7FmXyn0f0aFuaIj_WE15Tfeoc';
   return createClient(url, key);
 }
