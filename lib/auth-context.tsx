@@ -38,7 +38,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const supabase = getSupabaseClient();
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: 'https://thumbrankpro.com/tool' },
+      options: { 
+        redirectTo: 'https://thumbrankpro.com/auth/callback',
+        flowType: 'pkce', // ← добавлено
+      },
     });
     if (error) alert('Sign in failed: ' + error.message);
   };
