@@ -3,21 +3,18 @@
 import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { SiteNav } from '@/components/site-nav';
-import { Button } from '@/components/ui/button';
 import { useAuth } from '@/lib/auth-context';
 import { getSupabaseClient } from '@/lib/supabase/client';
-import { Loader2, Mail, Lock, ArrowRight, Check } from 'lucide-react';
+import { Loader2, Mail, Lock, ArrowRight } from 'lucide-react';
 
 function LoginForm() {
   const router = useRouter();
   const [mode, setMode] = useState<'login' | 'signup'>('login');
   const [redirectTo, setRedirectTo] = useState('/tool');
-
   const { user, loading: authLoading, signIn } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle');
   const [message, setMessage] = useState('');
 
   useEffect(() => {
@@ -48,7 +45,7 @@ function LoginForm() {
           options: { emailRedirectTo: `${window.location.origin}/login` },
         });
         if (error) throw error;
-        setStatus('success');
+        setStatus('idle');
         setMessage('Check your email for the confirmation link.');
       } else {
         const { error } = await supabase.auth.signInWithPassword({
@@ -60,11 +57,11 @@ function LoginForm() {
       }
     } catch (err: any) {
       setStatus('error');
-      setMessage(err.message || 'Something went wrong. Please try again.');
+      setMessage(err.message || 'Something went wrong.');
     }
   }
 
-  async function handleOAuth() {
+  async function handleGoogle() {
     setStatus('loading');
     try {
       await signIn();
@@ -85,22 +82,19 @@ function LoginForm() {
   if (user) return null;
 
   return (
-    <div className="min-h-screen">
-      <SiteNav />
-      <div className="mx-auto max-w-md px-4 sm:px-6 py-16">
+    <div className="min-h-screen flex items-center justify-center px-4">
+      <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-white">
             {mode === 'signup' ? 'Create your account' : 'Welcome back'}
           </h1>
           <p className="mt-2 text-neutral-400">
-            {mode === 'signup'
-              ? 'Start previewing thumbnails for free.'
-              : 'Sign in to continue to ThumbRank.'}
+            {mode === 'signup' ? 'Start previewing thumbnails for free.' : 'Sign in to continue to ThumbRank.'}
           </p>
         </div>
 
         <button
-          onClick={handleOAuth}
+          onClick={handleGoogle}
           disabled={status === 'loading'}
           className="w-full flex items-center justify-center gap-3 rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-medium text-white hover:bg-white/10 transition-colors disabled:opacity-50"
         >
@@ -124,11 +118,10 @@ function LoginForm() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm text-neutral-300 mb-1.5">Email</label>
+            <label className="block text-sm text-neutral-300 mb-1.5">Email</label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500" />
               <input
-                id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -140,11 +133,10 @@ function LoginForm() {
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm text-neutral-300 mb-1.5">Password</label>
+            <label className="block text-sm text-neutral-300 mb-1.5">Password</label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500" />
               <input
-                id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -156,30 +148,31 @@ function LoginForm() {
             </div>
           </div>
 
-          {status === 'success' && (
-            <div className="flex items-center gap-2 rounded-lg border border-green-500/30 bg-green-500/10 px-4 py-3 text-sm text-green-400">
-              <Check className="h-4 w-4 shrink-0" /> {message}
-            </div>
-          )}
           {status === 'error' && (
-            <div className="flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+            <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
               {message}
             </div>
           )}
 
-          <Button
+          {message && status !== 'error' && (
+            <div className="rounded-lg border border-green-500/30 bg-green-500/10 px-4 py-3 text-sm text-green-400">
+              {message}
+            </div>
+          )}
+
+          <button
             type="submit"
             disabled={status === 'loading'}
-            className="w-full bg-pink-600 hover:bg-pink-500 text-white"
+            className="w-full flex items-center justify-center gap-2 rounded-lg bg-pink-600 hover:bg-pink-500 px-4 py-2.5 text-sm font-medium text-white transition-colors disabled:opacity-50"
           >
             {status === 'loading' ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : mode === 'signup' ? (
-              <>Create account <ArrowRight className="ml-2 h-4 w-4" /></>
+              <>Create account <ArrowRight className="h-4 w-4" /></>
             ) : (
-              <>Sign in <ArrowRight className="ml-2 h-4 w-4" /></>
+              <>Sign in <ArrowRight className="h-4 w-4" /></>
             )}
-          </Button>
+          </button>
         </form>
 
         <p className="mt-6 text-center text-sm text-neutral-400">
