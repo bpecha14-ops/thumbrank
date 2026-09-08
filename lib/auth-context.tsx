@@ -43,9 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!supabase) { alert('Auth not ready'); return; }
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { 
-        redirectTo: 'https://thumbrankpro.com/auth/callback',
-      },
+      options: { redirectTo: 'https://thumbrankpro.com/tool' },
     });
     if (error) alert('Sign in failed: ' + error.message);
   };
