@@ -14,32 +14,18 @@ export default function AuthCallback() {
       return;
     }
 
-    // Когда Supabase обменяет ?code= на сессию — придёт SIGNED_IN
-    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' && session) {
-        router.replace('/tool');
-      }
-    });
+    const t = setTimeout(() => {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        router.replace(session ? '/tool' : '/login?error=no_session');
+      });
+    }, 2000);
 
-    // Fallback через 3 секунды
-    const timeout = setTimeout(async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        router.replace('/tool');
-      } else {
-        router.replace('/login?error=no_session');
-      }
-    }, 3000);
-
-    return () => {
-      listener.subscription.unsubscribe();
-      clearTimeout(timeout);
-    };
+    return () => clearTimeout(t);
   }, [router]);
 
   return (
     <div className="min-h-screen flex items-center justify-center text-white">
-      <div className="animate-pulse">Completing sign in...</div>
+      <div className="animate-pulse">Signing in...</div>
     </div>
   );
 }
