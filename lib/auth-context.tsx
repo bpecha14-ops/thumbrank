@@ -36,9 +36,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = async () => {
     const supabase = getSupabaseClient();
+    // БЕЗ redirectTo — Supabase использует Site URL из настроек
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: 'https://thumbrankpro.com/tool' },
     });
     if (error) alert('Sign in failed: ' + error.message);
   };
