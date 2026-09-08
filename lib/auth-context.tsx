@@ -23,24 +23,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const supabase = getSupabaseClient();
-    if (!supabase) { setLoading(false); return; }
-    
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       setLoading(false);
     });
-
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
       setLoading(false);
     });
-
     return () => { listener.subscription.unsubscribe(); };
   }, []);
 
   const signIn = async () => {
     const supabase = getSupabaseClient();
-    if (!supabase) { alert('Auth not ready'); return; }
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo: 'https://thumbrankpro.com/tool' },
@@ -50,7 +45,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     const supabase = getSupabaseClient();
-    if (!supabase) return;
     await supabase.auth.signOut();
     setUser(null);
   };
