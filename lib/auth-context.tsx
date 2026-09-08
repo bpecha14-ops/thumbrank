@@ -23,14 +23,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const supabase = getSupabaseClient();
+    
+    // Supabase v2 автоматически обменяет ?code= или #access_token на сессию
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       setLoading(false);
     });
+
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
       setLoading(false);
     });
+
     return () => { listener.subscription.unsubscribe(); };
   }, []);
 
@@ -38,10 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const supabase = getSupabaseClient();
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { 
-        redirectTo: 'https://thumbrankpro.com/auth/callback',
-        flowType: 'pkce', // ← добавлено
-      },
+      options: { redirectTo: 'https://thumbrankpro.com/tool' },
     });
     if (error) alert('Sign in failed: ' + error.message);
   };
