@@ -40,11 +40,22 @@ export async function POST(req: NextRequest) {
 
   const txn = event.data || {};
   const txnId: string = txn.id || "";
-  const email: string = txn.customer?.email || txn.customer_email || "";
+  const email: string =
+    txn.customer?.email ||
+    txn.customer_email ||
+    txn.custom_data?.email ||
+    "";
 
-  if (!txnId || !email) {
-    console.error("WEBHOOK: missing txn or email", { txnId, email });
-    return NextResponse.json({ error: "missing data" }, { status: 400 });
+  if (!txnId) {
+    console.error("WEBHOOK: missing txn id");
+    return NextResponse.json({ ok: true, logged: "missing-txn" });
+  }
+
+  if (!email) {
+    // Пишем в лог структуру payload, чтобы увидеть, где лежит email.
+    // 200 — чтобы Paddle перестал ретраить это edge-case событие.
+    console.error("WEBHOOK: no email in payload. customer:", JSON.stringify(txn.customer), "customer_id:", txn.customer_id, "custom_data:", JSON.stringify(txn.custom_data));
+    return NextResponse.json({ ok: true, logged: "no-email" });
   }
 
   const supa = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
