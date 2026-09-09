@@ -555,6 +555,7 @@ function PricingSection() {
   const inView = useInView(ref, { once: true, margin: "-80px" });
   const freePrice = usePriceCountUp(0, inView);
   const proPrice = usePriceCountUp(20, inView);
+  const creatorPrice = usePriceCountUp(49, inView);
   return (
     <section id="pricing" className="py-24">
       <div className="section-divider" />
@@ -600,6 +601,33 @@ function PricingSection() {
             </div>
           </TiltCard>
         </div>
+
+        {/* Creator OS — wide card */}
+        <TiltCard className="relative rounded-2xl border border-pink-500/30 bg-gradient-to-b from-pink-500/[0.07] to-transparent p-8 mt-6 max-w-3xl mx-auto transition-all duration-300 hover:shadow-xl hover:shadow-pink-900/20">
+          <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-gradient-to-r from-pink-600 to-rose-600 text-xs font-bold text-white">
+            BEST VALUE
+          </div>
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            <div>
+              <h3 className="text-2xl font-bold text-white mb-2">Creator OS</h3>
+              <div className="flex items-baseline gap-1 mb-3">
+                <span className="text-4xl font-bold text-white">${creatorPrice}</span>
+                <span className="text-white/40">/month</span>
+              </div>
+              <p className="text-sm text-white/50 mb-6">The full growth system: stop reacting to drops — predict and prevent them.</p>
+              <Link href="/upgrade" className="block w-full py-3 rounded-xl bg-gradient-to-r from-pink-600 to-rose-600 text-white font-semibold text-center hover:opacity-90 transition-all shadow-lg shadow-pink-900/20">
+                Upgrade to Creator OS
+              </Link>
+            </div>
+            <ul className="space-y-2.5 text-sm text-white/70">
+              {["Everything in Pro", "CTR Calibration & Prediction Loop", "CTR Drop Alarm (48h alerts)", "Weekly Rescue Scanner", "Packaging Fingerprint + History", "10 Competitor Channels"].map((f, i) => (
+                <li key={i} className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-pink-400 flex-shrink-0" /> {f}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </TiltCard>
       </div>
     </section>
   );
