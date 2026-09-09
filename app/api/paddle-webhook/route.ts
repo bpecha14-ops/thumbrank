@@ -22,6 +22,26 @@ function verifySignature(rawBody: string, header: string | null, secret: string)
   return a.length === b.length && crypto.timingSafeEqual(a, b);
 }
 
+async function getCustomerEmail(customerId: string): Promise<string> {
+  const apiKey = process.env.PADDLE_API_KEY;
+  if (!apiKey || !customerId) return "";
+  try {
+    const res = await fetch(`https://api.paddle.com/customers/${customerId}`, {
+      headers: { Authorization: `Bearer ${apiKey}` },
+      cache: "no-store",
+    });
+    if (!res.ok) {
+      console.error("WEBHOOK: customer lookup failed", res.status);
+      return "";
+    }
+    const json: any = await res.json();
+    return json?.data?.email || "";
+  } catch (err: any) {
+    console.error("WEBHOOK: customer lookup error", err.message);
+    return "";
+  }
+}
+
 export async function POST(req: NextRequest) {
   const rawBody = await req.text();
   const secret = process.env.PADDLE_WEBHOOK_SECRET || "";
@@ -40,11 +60,15 @@ export async function POST(req: NextRequest) {
 
   const txn = event.data || {};
   const txnId: string = txn.id || "";
-  const email: string =
-    txn.customer?.email ||
-    txn.customer_email ||
-    txn.custom_data?.email ||
-    "";
+  const customerId: string = txn.customer_id || "";
+
+  let email: string = txn.customer?.email || txn.customer_email || "";
+
+  // Paddle does not include the customer object in transaction.completed —
+  // resolve the email via the Customers API using customer_id.
+  if (!email && customerId) {
+    email = await getCustomerEmail(customerId);
+  }
 
   if (!txnId) {
     console.error("WEBHOOK: missing txn id");
@@ -52,9 +76,7 @@ export async function POST(req: NextRequest) {
   }
 
   if (!email) {
-    // Пишем в лог структуру payload, чтобы увидеть, где лежит email.
-    // 200 — чтобы Paddle перестал ретраить это edge-case событие.
-    console.error("WEBHOOK: no email in payload. customer:", JSON.stringify(txn.customer), "customer_id:", txn.customer_id, "custom_data:", JSON.stringify(txn.custom_data));
+    console.error("WEBHOOK: could not resolve email for customer", customerId);
     return NextResponse.json({ ok: true, logged: "no-email" });
   }
 
