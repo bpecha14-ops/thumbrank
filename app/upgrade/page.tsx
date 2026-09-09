@@ -7,8 +7,9 @@ import { Sparkles, Check, ArrowLeft } from "lucide-react";
 
 const PADDLE_CLIENT_TOKEN = "live_4d1fad2bccb272396ab44e6f949";
 
-const PRICE_MONTHLY = "pri_01m1288thzjkq2ektkvvblj0gp";
+const PRICE_MONTHLY = "pri_01m23kqhzwq105796n3krxp8h1";
 const PRICE_YEARLY = "pri_01m128f8qzsdwphbxcqg35785e";
+const PRICE_CREATOR_OS = "pri_01m23m3xek84dzjjvrhevywj0r";
 
 // Для TypeScript — чтобы не ругался на window.Paddle
 declare global {
@@ -74,6 +75,13 @@ export default function UpgradePage() {
     };
     document.body.appendChild(script);
   }, []);
+
+  const openCheckout = (priceId: string) => {
+    if (!window.Paddle) return;
+    window.Paddle.Checkout.open({
+      items: [{ priceId, quantity: 1 }]
+    });
+  };
 
   const freeFeatures = [
     "3 previews per day",
@@ -165,13 +173,7 @@ export default function UpgradePage() {
               ))}
             </ul>
             <button
-              onClick={() => {
-                if (!window.Paddle) return;
-                const priceId = billing === "monthly" ? PRICE_MONTHLY : PRICE_YEARLY;
-                window.Paddle.Checkout.open({
-                  items: [{ priceId, quantity: 1 }]
-                });
-              }}
+              onClick={() => openCheckout(billing === "monthly" ? PRICE_MONTHLY : PRICE_YEARLY)}
               disabled={!paddleLoaded}
               className="block w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold text-center hover:opacity-90 transition-all shadow-lg shadow-purple-900/20 disabled:opacity-50 disabled:cursor-not-allowed"
             >
@@ -179,8 +181,9 @@ export default function UpgradePage() {
             </button>
           </div>
         </div>
-                {/* Creator OS */}
-        <div className="relative rounded-2xl border border-purple-500/30 bg-white/[0.03] p-6">
+
+        {/* Creator OS */}
+        <div className="relative rounded-2xl border border-purple-500/30 bg-white/[0.03] p-6 max-w-3xl mx-auto mt-6">
           <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-xs font-bold text-white">
             BEST VALUE
           </div>
@@ -197,7 +200,11 @@ export default function UpgradePage() {
             <li className="flex items-center gap-2"><span className="text-emerald-400">✓</span> Packaging Fingerprint + History</li>
             <li className="flex items-center gap-2"><span className="text-emerald-400">✓</span> 10 Competitor Channels</li>
           </ul>
-          <button className="w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold hover:opacity-90 transition-all">
+          <button
+            onClick={() => openCheckout(PRICE_CREATOR_OS)}
+            disabled={!paddleLoaded}
+            className="w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             Upgrade to Creator OS
           </button>
         </div>
