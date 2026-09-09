@@ -615,8 +615,8 @@ function PricingSection() {
                 <span className="text-white/40">/month</span>
               </div>
               <p className="text-sm text-white/50 mb-6">The full growth system: stop reacting to drops — predict and prevent them.</p>
-              <Link href="/upgrade" className="block w-full py-3 rounded-xl bg-gradient-to-r from-pink-600 to-rose-600 text-white font-semibold text-center hover:opacity-90 transition-all shadow-lg shadow-pink-900/20">
-                Upgrade to Creator OS
+              <Link href="/creator-os" className="block w-full py-3 rounded-xl bg-gradient-to-r from-pink-600 to-rose-600 text-white font-semibold text-center hover:opacity-90 transition-all shadow-lg shadow-pink-900/20">
+                Explore Creator OS
               </Link>
             </div>
             <ul className="space-y-2.5 text-sm text-white/70">
@@ -679,6 +679,7 @@ function FAQSection() {
     { q: "How does the AI Thumbnail Score work?", a: "We analyze your thumbnail directly in your browser using computer vision — measuring contrast, brightness variance, edge clutter, and visual hierarchy. No image ever leaves your device." },
     { q: "Is my thumbnail uploaded to a server?", a: "No. All processing happens locally in your browser using the Canvas API. We literally cannot see your images — zero server-side storage." },
     { q: "What's the difference between Free and Pro?", a: "Free gives you 3 previews per day with basic scoring and watermarked exports. Pro unlocks unlimited previews, full competitor comparison, detailed breakdowns, and clean exports." },
+    { q: "What is Creator OS?", a: "Creator OS ($49/month) is the full growth system: CTR predictions calibrated to your channel, 48-hour drop alarms, a weekly rescue scanner for your whole catalog, packaging history, and 10 competitor channels. It's for creators who publish seriously and want problems flagged before views leak." },
     { q: "Can I compare my thumbnail with competitors?", a: "Yes. Upload up to 2 competitor thumbnails alongside yours, render a realistic YouTube search results page, and see which one wins the scroll." },
     { q: "Does this work on mobile?", a: "The preview tool works best on desktop, but the rendered mockups show exactly how your thumbnail will look on a mobile screen — which is the whole point." },
     { q: "Is the Pro plan really one-time?", a: "No. Pro is $20/month. Cancel anytime. No hidden fees." },
