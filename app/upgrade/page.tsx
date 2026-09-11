@@ -4,41 +4,24 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Sparkles, Check, ArrowLeft } from "lucide-react";
 
-
 const PADDLE_CLIENT_TOKEN = "live_4d1fad2bccb272396ab44e6f949";
 
 const PRICE_MONTHLY = "pri_01m23kqhzwq105796n3krxp8h1";
 const PRICE_YEARLY = "pri_01m128f8qzsdwphbxcqg35785e";
 const PRICE_CREATOR_OS = "pri_01m23m3xek84dzjjvrhevywj0r";
 
-// Для TypeScript — чтобы не ругался на window.Paddle
 declare global {
   interface Window {
     Paddle?: any;
   }
 }
 
-function AuroraBg() {
-  return (
-    <div className="fixed inset-0 -z-10 overflow-hidden bg-[#030305]">
-      <div className="aurora-1 absolute -top-[40%] -left-[20%] w-[140%] h-[140%] rounded-full opacity-50 blur-[140px]" />
-      <div className="aurora-2 absolute top-[20%] -right-[20%] w-[120%] h-[120%] rounded-full opacity-35 blur-[120px]" />
-      <style jsx>{`
-        .aurora-1 { background: radial-gradient(circle, #6d28d9 0%, #4c1d95 30%, transparent 70%); animation: move1 10s ease-in-out infinite alternate; }
-        .aurora-2 { background: radial-gradient(circle, #1e40af 0%, transparent 70%); animation: move2 12s ease-in-out infinite alternate; }
-        @keyframes move1 { from { transform: translate(0,0) scale(1); } to { transform: translate(60px,-40px) scale(1.15); } }
-        @keyframes move2 { from { transform: translate(0,0) scale(1); } to { transform: translate(-50px,30px) scale(1.2); } }
-      `}</style>
-    </div>
-  );
-}
-
 function Navbar() {
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-[#030305]/70 backdrop-blur-xl">
+    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-[#07060F]/70 backdrop-blur-xl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-pink-600 to-blue-600 flex items-center justify-center">
             <Sparkles className="w-4 h-4 text-white" />
           </div>
           <span className="font-bold text-white text-lg tracking-tight">ThumbRank</span>
@@ -99,14 +82,13 @@ export default function UpgradePage() {
   ];
 
   return (
-    <main className="min-h-screen text-white selection:bg-purple-500/30">
-      <AuroraBg />
+    <main className="min-h-screen text-white selection:bg-pink-500/30">
       <Navbar />
 
       <div className="pt-32 pb-20 px-4 sm:px-6 max-w-5xl mx-auto">
         <div className="text-center mb-12">
           <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4">
-            Upgrade to <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">ThumbRank Pro</span>
+            Upgrade to <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-blue-400">ThumbRank Pro</span>
           </h1>
           <p className="text-lg text-white/50 max-w-xl mx-auto">
             Get unlimited thumbnail previews, watermark-free exports, AI Thumbnail analysis, and priority support.
@@ -148,8 +130,8 @@ export default function UpgradePage() {
             </Link>
           </div>
 
-          <div className="relative rounded-2xl border border-purple-500/30 bg-gradient-to-b from-purple-500/10 to-transparent p-8">
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-xs font-semibold text-white">
+          <div className="relative rounded-2xl border border-pink-500/30 bg-gradient-to-b from-pink-500/10 to-transparent p-8">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-gradient-to-r from-pink-600 to-blue-600 text-xs font-semibold text-white">
               Most popular
             </div>
             <h3 className="text-lg font-semibold text-white mb-2">Pro</h3>
@@ -168,14 +150,14 @@ export default function UpgradePage() {
             <ul className="space-y-3 mb-8">
               {proFeatures.map((f, i) => (
                 <li key={i} className="flex items-center gap-2 text-sm text-white/80">
-                  <Check className="w-4 h-4 text-purple-400" /> {f}
+                  <Check className="w-4 h-4 text-pink-400" /> {f}
                 </li>
               ))}
             </ul>
             <button
               onClick={() => openCheckout(billing === "monthly" ? PRICE_MONTHLY : PRICE_YEARLY)}
               disabled={!paddleLoaded}
-              className="block w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold text-center hover:opacity-90 transition-all shadow-lg shadow-purple-900/20 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="block w-full py-3 rounded-xl bg-gradient-to-r from-pink-600 to-blue-600 text-white font-semibold text-center hover:opacity-90 transition-all shadow-lg shadow-pink-900/20 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {billing === "monthly" ? "Get Pro — $20/month" : "Get Pro — $16/month"}
             </button>
@@ -183,8 +165,8 @@ export default function UpgradePage() {
         </div>
 
         {/* Creator OS */}
-        <div className="relative rounded-2xl border border-purple-500/30 bg-white/[0.03] p-6 max-w-3xl mx-auto mt-6">
-          <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-xs font-bold text-white">
+        <div className="relative rounded-2xl border border-pink-500/30 bg-white/[0.03] p-6 max-w-3xl mx-auto mt-6">
+          <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-gradient-to-r from-pink-600 to-blue-600 text-xs font-bold text-white">
             BEST VALUE
           </div>
           <h3 className="text-xl font-bold text-white mb-2">Creator OS</h3>
@@ -203,7 +185,7 @@ export default function UpgradePage() {
           <button
             onClick={() => openCheckout(PRICE_CREATOR_OS)}
             disabled={!paddleLoaded}
-            className="w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-3 rounded-xl bg-gradient-to-r from-pink-600 to-blue-600 text-white font-semibold hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Upgrade to Creator OS
           </button>
