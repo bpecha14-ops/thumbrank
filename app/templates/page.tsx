@@ -13,27 +13,12 @@ declare global {
   }
 }
 
-function AuroraBg() {
-  return (
-    <div className="fixed inset-0 -z-10 overflow-hidden bg-[#030305]">
-      <div className="aurora-1 absolute -top-[40%] -left-[20%] w-[140%] h-[140%] rounded-full opacity-50 blur-[140px]" />
-      <div className="aurora-2 absolute top-[20%] -right-[20%] w-[120%] h-[120%] rounded-full opacity-35 blur-[120px]" />
-      <style jsx>{`
-        .aurora-1 { background: radial-gradient(circle, #be185d 0%, #4c1d95 30%, transparent 70%); animation: move1 10s ease-in-out infinite alternate; }
-        .aurora-2 { background: radial-gradient(circle, #1e40af 0%, transparent 70%); animation: move2 12s ease-in-out infinite alternate; }
-        @keyframes move1 { from { transform: translate(0,0) scale(1); } to { transform: translate(60px,-40px) scale(1.15); } }
-        @keyframes move2 { from { transform: translate(0,0) scale(1); } to { transform: translate(-50px,30px) scale(1.2); } }
-      `}</style>
-    </div>
-  );
-}
-
 function Navbar() {
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-[#030305]/70 backdrop-blur-xl">
+    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-[#07060F]/70 backdrop-blur-xl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-pink-600 to-rose-600 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-pink-600 to-blue-600 flex items-center justify-center">
             <Sparkles className="w-4 h-4 text-white" />
           </div>
           <span className="font-bold text-white text-lg tracking-tight">ThumbRank</span>
@@ -47,7 +32,7 @@ function Navbar() {
 }
 
 const whatsInside = [
-  "20+ battle-tested thumbnail templates (curiosity, listicles, before/after, mistakes, transformations)",
+  "26 battle-tested thumbnail templates (curiosity, listicles, before/after, mistakes, transformations)",
   "New templates added every week — free",
   "High-res PNG, 1280×720 — drop into any editor",
   "README: which template to use for which video type",
@@ -85,7 +70,6 @@ export default function TemplatesPage() {
 
   return (
     <main className="min-h-screen text-white selection:bg-pink-500/30">
-      <AuroraBg />
       <Navbar />
 
       <div className="pt-32 pb-20 px-4 sm:px-6 max-w-4xl mx-auto">
@@ -98,10 +82,10 @@ export default function TemplatesPage() {
           <h1 className="text-4xl sm:text-6xl font-bold text-white mb-6 leading-tight">
             The Thumbnail
             <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-rose-400">System</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-blue-400">System</span>
           </h1>
           <p className="text-lg text-white/50 max-w-2xl mx-auto mb-4">
-            20+ proven YouTube thumbnail templates with a system for using them.
+            26 proven YouTube thumbnail templates with a system for using them.
             Not a random pack — every template is built around a psychological hook that makes people stop scrolling.
           </p>
           <p className="text-sm text-pink-300/80 mb-8">New templates every week. Buy once — every future template is free.</p>
@@ -113,7 +97,7 @@ export default function TemplatesPage() {
                 window.Paddle.Checkout.open({ items: [{ priceId: PRICE_TEMPLATES, quantity: 1 }] });
               }}
               disabled={!paddleLoaded}
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-pink-600 to-rose-600 text-white font-semibold text-lg hover:opacity-90 transition-all shadow-xl shadow-pink-900/20 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-pink-600 to-blue-600 text-white font-semibold text-lg hover:opacity-90 transition-all shadow-xl shadow-pink-900/20 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Download className="w-5 h-5" /> Get it — $47
             </button>
@@ -122,7 +106,7 @@ export default function TemplatesPage() {
         </div>
 
         {/* What's inside */}
-        <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-8 mb-12">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm p-8 mb-12">
           <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
             <Star className="w-5 h-5 text-pink-400" /> What you get
           </h2>
@@ -139,7 +123,7 @@ export default function TemplatesPage() {
         <h2 className="text-2xl font-bold text-white mb-6 text-center">How it works</h2>
         <div className="grid md:grid-cols-3 gap-4 mb-12">
           {steps.map((s) => (
-            <div key={s.n} className="rounded-2xl border border-white/10 bg-white/[0.02] p-6">
+            <div key={s.n} className="rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm p-6">
               <div className="text-3xl font-bold text-pink-500/60 mb-2">{s.n}</div>
               <h3 className="text-lg font-semibold text-white mb-2">{s.t}</h3>
               <p className="text-sm text-white/50 leading-relaxed">{s.d}</p>
@@ -157,7 +141,7 @@ export default function TemplatesPage() {
               window.Paddle.Checkout.open({ items: [{ priceId: PRICE_TEMPLATES, quantity: 1 }] });
             }}
             disabled={!paddleLoaded}
-            className="w-full max-w-md py-3 rounded-xl bg-gradient-to-r from-pink-600 to-rose-600 text-white font-semibold hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full max-w-md py-3 rounded-xl bg-gradient-to-r from-pink-600 to-blue-600 text-white font-semibold hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Download className="w-4 h-4 inline mr-1" /> Get The Thumbnail System
           </button>
