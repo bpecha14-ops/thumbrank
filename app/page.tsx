@@ -33,7 +33,7 @@ function SpotlightCursor() {
       ref={ref}
       className="fixed top-0 left-0 w-[400px] h-[400px] pointer-events-none z-[1] hidden md:block"
       style={{
-        background: "radial-gradient(circle, rgba(236,72,153,0.10) 0%, rgba(168,85,247,0.05) 40%, transparent 70%)",
+        background: "radial-gradient(circle, rgba(236,72,153,0.10) 0%, rgba(59,130,246,0.05) 40%, transparent 70%)",
         filter: "blur(50px)",
         borderRadius: "50%",
         willChange: "transform",
@@ -95,7 +95,7 @@ function HeroSection() {
           transition={{ duration: 0.4 }}
           className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-white/70 mb-6"
         >
-          <Zap className="w-3 h-3 text-purple-400" />
+          <Zap className="w-3 h-3 text-blue-400" />
           Now with AI-powered competitor comparison
         </motion.div>
         <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white leading-[1.05] tracking-tight mb-6">
@@ -106,13 +106,13 @@ function HeroSection() {
               return (
                 <React.Fragment key={i}>
                   {isGuessing ? (
-                    <span className="italic text-purple-400" style={{ fontFamily: '"Instrument Serif", serif' }}>{word}</span>
+                    <span className="italic text-blue-400" style={{ fontFamily: '"Instrument Serif", serif' }}>{word}</span>
                   ) : isRanking ? (
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400">
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-rose-400 to-blue-400">
                       <span className="italic" style={{ fontFamily: '"Instrument Serif", serif' }}>{word}</span>
                     </span>
                   ) : word.startsWith("Start") ? (
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400">{word}</span>
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-rose-400 to-blue-400">{word}</span>
                   ) : (
                     <span>{word}</span>
                   )}{" "}
@@ -129,13 +129,13 @@ function HeroSection() {
                 className="inline-block"
               >
                 {isGuessing ? (
-                  <span className="italic text-purple-400" style={{ fontFamily: '"Instrument Serif", serif' }}>{word}</span>
+                  <span className="italic text-blue-400" style={{ fontFamily: '"Instrument Serif", serif' }}>{word}</span>
                 ) : isRanking ? (
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-rose-400 to-blue-400">
                     <span className="italic" style={{ fontFamily: '"Instrument Serif", serif' }}>{word}</span>
                   </span>
                 ) : word.startsWith("Start") ? (
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400">{word}</span>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-rose-400 to-blue-400">{word}</span>
                 ) : (
                   <span>{word}</span>
                 )}{" "}
@@ -193,9 +193,9 @@ function MagneticCTA() {
       ref={btnRef}
       href="/tool"
       style={{ transform: `translate(${offset.x}px, ${offset.y}px)` }}
-      className="relative inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold hover:opacity-90 transition-all shadow-lg shadow-purple-900/20 group"
+      className="relative inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-pink-600 to-blue-600 text-white font-semibold hover:opacity-90 transition-all shadow-lg shadow-pink-900/20 group"
     >
-      <span className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 opacity-0 group-hover:opacity-60 blur-lg transition-opacity duration-500 animate-cta-pulse" />
+      <span className="absolute inset-0 rounded-xl bg-gradient-to-r from-pink-500 to-blue-500 opacity-0 group-hover:opacity-60 blur-lg transition-opacity duration-500 animate-cta-pulse" />
       <span className="relative btn-shift">Try Free — No signup <ArrowRight className="btn-arrow w-4 h-4 inline" /></span>
     </Link>
   );
@@ -264,7 +264,7 @@ function MockupSection() {
           <div
             className="absolute -inset-4 rounded-3xl pointer-events-none"
             style={{
-              background: "radial-gradient(ellipse at center bottom, rgba(236,72,153,0.25), rgba(236,72,153,0.10) 40%, transparent 70%)",
+              background: "radial-gradient(ellipse at center bottom, rgba(236,72,153,0.22), rgba(59,130,246,0.10) 40%, transparent 70%)",
               filter: "blur(40px)",
             }}
           />
@@ -274,7 +274,7 @@ function MockupSection() {
               style={reduceMotion ? undefined : style}
               onMouseMove={reduceMotion ? undefined : onMove}
               onMouseLeave={reduceMotion ? undefined : onLeave}
-              className="relative rounded-2xl border border-white/10 bg-[#0f0f0f] overflow-hidden shadow-2xl shadow-pink-900/10"
+              className="relative rounded-2xl border border-white/10 bg-[#0A0916]/80 backdrop-blur-md overflow-hidden shadow-2xl shadow-pink-900/10"
             >
               <div className="flex items-center gap-2 px-4 py-3 border-b border-white/5">
                 <div className="w-3 h-3 rounded-full bg-red-500/80" />
@@ -291,7 +291,7 @@ function MockupSection() {
                 <div className="flex-1 flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 text-sm text-white/60">
                   <span className="text-white/30">🔍</span> how to grow on youtube
                 </div>
-                <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center text-xs font-bold text-white">U</div>
+                <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-xs font-bold text-white">U</div>
               </div>
               <div className="flex gap-1 px-4 py-2 border-b border-white/5 text-xs text-white/50">
                 {["All", "Videos", "Shorts", "Channels", "Playlists"].map((t, i) => (
@@ -428,14 +428,14 @@ function FeatureCard({ feature, index }: { feature: { title: string; desc: strin
         <div
           className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
           style={{
-            background: "linear-gradient(135deg, rgba(236,72,153,0.20), rgba(244,114,182,0.12))",
+            background: "linear-gradient(135deg, rgba(236,72,153,0.20), rgba(59,130,246,0.12))",
             mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
             WebkitMaskComposite: "xor" as any,
             maskComposite: "exclude" as any,
             padding: "1px",
           } as React.CSSProperties}
         />
-        <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-pink-500/10 to-rose-500/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+        <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-pink-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
         <div className="relative">
           <motion.div
             whileHover={reduceMotion ? undefined : { scale: 1.15, rotate: -5 }}
@@ -496,7 +496,7 @@ function MakerStory() {
                 animate={inView ? { scaleX: 1 } : {}}
                 transition={{ duration: 0.6, ease: "easeOut", delay: reduceMotion ? 0 : 0.2 }}
                 className="absolute left-0 bottom-0.5 h-[35%] w-full origin-left rounded-sm"
-                style={{ background: "linear-gradient(90deg, rgba(236,72,153,0.35), rgba(244,114,182,0.25))", zIndex: -1 }}
+                style={{ background: "linear-gradient(90deg, rgba(236,72,153,0.35), rgba(59,130,246,0.25))", zIndex: -1 }}
               />
             </span>{" "}
             Not the title. Not the tags. The thumbnail.
@@ -521,7 +521,7 @@ function TestimonialsSection() {
   const Card = ({ t }: { t: typeof items[0] }) => (
     <TiltCard className="inline-block w-[320px] flex-shrink-0 rounded-xl border border-white/10 bg-white/[0.03] p-5 whitespace-normal transition-all duration-300 hover:border-pink-500/30 hover:shadow-[0_0_30px_rgba(236,72,153,0.15)]">
       <div className="flex items-center gap-3 mb-3">
-        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center text-white text-xs font-bold">{t.name[0]}</div>
+        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 to-blue-500 flex items-center justify-center text-white text-xs font-bold">{t.name[0]}</div>
         <div>
           <div className="text-sm font-medium text-white">{t.name}</div>
           <div className="text-xs text-white/40">{t.role}</div>
@@ -537,8 +537,8 @@ function TestimonialsSection() {
         <p className="text-white/50 text-center">Join thousands who preview before they publish.</p>
       </div>
       <div className="relative marquee-container">
-        <div className="absolute left-0 top-0 bottom-0 w-24 z-10 pointer-events-none" style={{ background: "linear-gradient(to right, #1C1428, transparent)" }} />
-        <div className="absolute right-0 top-0 bottom-0 w-24 z-10 pointer-events-none" style={{ background: "linear-gradient(to left, #1C1428, transparent)" }} />
+        <div className="absolute left-0 top-0 bottom-0 w-24 z-10 pointer-events-none" style={{ background: "linear-gradient(to right, #07060F, transparent)" }} />
+        <div className="absolute right-0 top-0 bottom-0 w-24 z-10 pointer-events-none" style={{ background: "linear-gradient(to left, #07060F, transparent)" }} />
         <div className="flex gap-4 animate-marquee-row1 whitespace-nowrap">
           {row1.map((t, i) => <Card key={`r1-${i}`} t={t} />)}
         </div>
@@ -580,9 +580,9 @@ function PricingSection() {
             </Link>
           </TiltCard>
           <TiltCard className="relative scale-[1.02] rounded-2xl overflow-hidden">
-            <div className="absolute inset-[-50%] animate-conic-spin" style={{ background: "conic-gradient(from 0deg, #ec4899, #f472b6, #db2777, #ec4899)" }} />
-            <div className="relative rounded-2xl bg-[#0f0f0f] m-[2px] p-8">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-gradient-to-r from-pink-600 to-rose-600 text-xs font-semibold text-white">
+            <div className="absolute inset-[-50%] animate-conic-spin" style={{ background: "conic-gradient(from 0deg, #ec4899, #3b82f6, #ec4899)" }} />
+            <div className="relative rounded-2xl bg-[#0A0916] m-[2px] p-8">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-gradient-to-r from-pink-600 to-blue-600 text-xs font-semibold text-white">
                 Most popular
               </div>
               <h3 className="text-lg font-semibold text-white mb-2">Pro</h3>
@@ -595,7 +595,7 @@ function PricingSection() {
                   </li>
                 ))}
               </ul>
-              <Link href="/upgrade" className="block w-full py-3 rounded-xl bg-gradient-to-r from-pink-600 to-rose-600 text-white font-semibold text-center hover:opacity-90 transition-all shadow-lg shadow-pink-900/20">
+              <Link href="/upgrade" className="block w-full py-3 rounded-xl bg-gradient-to-r from-pink-600 to-blue-600 text-white font-semibold text-center hover:opacity-90 transition-all shadow-lg shadow-pink-900/20">
                 Upgrade to Pro
               </Link>
             </div>
@@ -604,7 +604,7 @@ function PricingSection() {
 
         {/* Creator OS — wide card */}
         <TiltCard className="relative rounded-2xl border border-pink-500/30 bg-gradient-to-b from-pink-500/[0.07] to-transparent p-8 mt-6 max-w-3xl mx-auto transition-all duration-300 hover:shadow-xl hover:shadow-pink-900/20">
-          <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-gradient-to-r from-pink-600 to-rose-600 text-xs font-bold text-white">
+          <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-gradient-to-r from-pink-600 to-blue-600 text-xs font-bold text-white">
             BEST VALUE
           </div>
           <div className="grid md:grid-cols-2 gap-8 items-center">
@@ -615,7 +615,7 @@ function PricingSection() {
                 <span className="text-white/40">/month</span>
               </div>
               <p className="text-sm text-white/50 mb-6">The full growth system: stop reacting to drops — predict and prevent them.</p>
-              <Link href="/creator-os" className="block w-full py-3 rounded-xl bg-gradient-to-r from-pink-600 to-rose-600 text-white font-semibold text-center hover:opacity-90 transition-all shadow-lg shadow-pink-900/20">
+              <Link href="/creator-os" className="block w-full py-3 rounded-xl bg-gradient-to-r from-pink-600 to-blue-600 text-white font-semibold text-center hover:opacity-90 transition-all shadow-lg shadow-pink-900/20">
                 Explore Creator OS
               </Link>
             </div>
@@ -663,7 +663,7 @@ function EmailCapture() {
               placeholder="your@email.com"
               className="flex-1 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-pink-500 backdrop-blur-sm"
             />
-            <button type="submit" className="px-6 py-3 rounded-xl bg-gradient-to-r from-pink-600 to-rose-600 text-white font-semibold hover:opacity-90 transition-all whitespace-nowrap">
+            <button type="submit" className="px-6 py-3 rounded-xl bg-gradient-to-r from-pink-600 to-blue-600 text-white font-semibold hover:opacity-90 transition-all whitespace-nowrap">
               Subscribe
             </button>
           </form>
@@ -734,9 +734,9 @@ function MagneticCTALarge() {
       ref={btnRef}
       href="/tool"
       style={{ transform: `translate(${offset.x}px, ${offset.y}px)` }}
-      className="relative inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-pink-600 to-rose-600 text-white font-semibold text-lg hover:opacity-90 transition-all shadow-xl shadow-pink-900/20 group"
+      className="relative inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-pink-600 to-blue-600 text-white font-semibold text-lg hover:opacity-90 transition-all shadow-xl shadow-pink-900/20 group"
     >
-      <span className="absolute inset-0 rounded-xl bg-gradient-to-r from-pink-500 to-rose-500 opacity-0 group-hover:opacity-50 blur-lg transition-opacity duration-500" />
+      <span className="absolute inset-0 rounded-xl bg-gradient-to-r from-pink-500 to-blue-500 opacity-0 group-hover:opacity-50 blur-lg transition-opacity duration-500" />
       <span className="relative btn-shift">Try ThumbRank free <ArrowRight className="btn-arrow w-5 h-5 inline" /></span>
     </Link>
   );
@@ -748,7 +748,7 @@ function CTASection() {
       <div
         className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] pointer-events-none"
         style={{
-          background: "radial-gradient(ellipse at center, rgba(236,72,153,0.15), rgba(244,114,182,0.08) 40%, transparent 70%)",
+          background: "radial-gradient(ellipse at center, rgba(236,72,153,0.14), rgba(59,130,246,0.08) 40%, transparent 70%)",
           filter: "blur(60px)",
         }}
       />
@@ -790,9 +790,9 @@ function StickyCTAPill() {
           transition={reduceMotion ? { duration: 0 } : { type: "spring", stiffness: 200, damping: 26 }}
           className="fixed bottom-0 left-0 right-0 sm:bottom-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 z-40"
         >
-          <div className="flex items-center justify-center gap-3 px-4 py-3 sm:py-3 sm:rounded-full bg-[#1C1428]/80 backdrop-blur-xl border-t sm:border border-white/10 sm:shadow-2xl sm:shadow-pink-900/20">
+          <div className="flex items-center justify-center gap-3 px-4 py-3 sm:py-3 sm:rounded-full bg-[#07060F]/80 backdrop-blur-xl border-t sm:border border-white/10 sm:shadow-2xl sm:shadow-pink-900/20">
             <span className="text-sm text-white/70 hidden sm:inline">Stop guessing. Start ranking.</span>
-            <Link href="/tool" className="inline-flex items-center gap-1 px-4 py-2 rounded-full bg-gradient-to-r from-pink-600 to-rose-600 text-white text-sm font-semibold hover:opacity-90 transition-all whitespace-nowrap">
+            <Link href="/tool" className="inline-flex items-center gap-1 px-4 py-2 rounded-full bg-gradient-to-r from-pink-600 to-blue-600 text-white text-sm font-semibold hover:opacity-90 transition-all whitespace-nowrap">
               Try Free <ArrowRight className="btn-arrow w-3 h-3" />
             </Link>
             <button
@@ -815,7 +815,7 @@ function Footer() {
       <div className="section-divider mb-12" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-md bg-gradient-to-br from-pink-600 to-rose-600 flex items-center justify-center">
+          <div className="w-6 h-6 rounded-md bg-gradient-to-br from-pink-600 to-blue-600 flex items-center justify-center">
             <Sparkles className="w-3 h-3 text-white" />
           </div>
           <span className="font-bold text-white text-sm">ThumbRank</span>
@@ -834,14 +834,6 @@ function Footer() {
 export default function HomePage() {
   return (
     <main className="min-h-screen text-white selection:bg-pink-500/30">
-      <div className="nebula-blob nebula-1" />
-      <div className="nebula-blob nebula-2" />
-      <div className="nebula-blob nebula-3" />
-      <div className="nebula-blob nebula-4" />
-      <div className="nebula-blob nebula-5" />
-      <div className="orb orb-1" />
-      <div className="orb orb-2" />
-      <div className="orb orb-3" />
       <SpotlightCursor />
       <Navbar />
       <HeroSection />
