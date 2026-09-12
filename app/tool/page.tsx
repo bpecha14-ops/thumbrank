@@ -222,18 +222,30 @@ export default function ToolPage() {
     if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0], setter);
   };
 
-  const renderPreview = async () => {
-    if (!isPro && previewCount >= 3) return;
-    if (!yourImage) return;
-    if (!isPro) {
-      const newCount = previewCount + 1;
-      setPreviewCount(newCount);
-      localStorage.setItem("tr_preview_count", String(newCount));
-    }
-    setRendered(true);
-    const a = await analyzeThumbnail(yourImage);
-    setAiScore(a.score); setAiRecs(a.recs);
-        try {
+const renderPreview = async () => {
+  try {
+    const { getSupabaseClient } = await import('@/lib/supabase/client');
+    const { data: sData } = await getSupabaseClient().auth.getSession();
+    await fetch('/api/predictions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${sData.session?.access_token || ''}`,
+      },
+      body: JSON.stringify({ title, predictedScore: 50, niche: keyword }),
+    });
+  } catch { /* silent */ }
+  if (!isPro && previewCount >= 3) return;
+  if (!yourImage) return;
+  if (!isPro) {
+    const newCount = previewCount + 1;
+    setPreviewCount(newCount);
+    localStorage.setItem("tr_preview_count", String(newCount));
+  }
+  setRendered(true);
+  const a = await analyzeThumbnail(yourImage);
+  setAiScore(a.score); setAiRecs(a.recs);
+  try {
       const { getSupabaseClient } = await import('@/lib/supabase/client');
       const { data: sData } = await getSupabaseClient().auth.getSession();
       await fetch('/api/predictions', {
