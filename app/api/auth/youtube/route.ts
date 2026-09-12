@@ -30,5 +30,6 @@ export async function GET(req: Request) {
     state: userId,
   });
 
-  return NextResponse.redirect(`https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`);
+  // Return the URL as JSON — the browser must navigate there itself
+  return NextResponse.json({ url: `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}` });
 }
