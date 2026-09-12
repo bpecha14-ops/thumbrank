@@ -2,20 +2,21 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
 export async function GET(req: Request) {
-  // Identify the logged-in user from the Supabase session cookie
+  const authHeader = req.headers.get('authorization') || '';
+  const token = authHeader.replace('Bearer ', '').trim();
+
   let userId = '';
-  const cookieHeader = req.headers.get('cookie') || '';
-  const match = cookieHeader.match(/sb-[a-z0-9]+-auth-token=([^;]+)/);
-  if (match) {
-    try {
-      const session = JSON.parse(decodeURIComponent(match[1]));
-      const supabase = createClient(
-        process.env.SUPABASE_URL!,
-        process.env.SUPABASE_SERVICE_ROLE_KEY!
-      );
-      const { data } = await supabase.auth.getUser(session.access_token);
-      userId = data.user?.id || '';
-    } catch { /* fall through */ }
+  if (token) {
+    const supabase = createClient(
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+    const { data } = await supabase.auth.getUser(token);
+    userId = data.user?.id || '';
+  }
+
+  if (!userId) {
+    return NextResponse.json({ error: 'Not logged in' }, { status: 401 });
   }
 
   const base = process.env.NEXT_PUBLIC_APP_URL || 'https://thumbrankpro.com';
@@ -26,9 +27,8 @@ export async function GET(req: Request) {
     scope: 'https://www.googleapis.com/auth/youtube.readonly https://www.googleapis.com/auth/yt-analytics.readonly',
     access_type: 'offline',
     prompt: 'consent',
+    state: userId,
   });
-  // Pass the real user id through OAuth state
-  if (userId) params.set('state', userId);
 
   return NextResponse.redirect(`https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`);
 }
