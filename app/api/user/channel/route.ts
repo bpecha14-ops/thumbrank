@@ -1,20 +1,33 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@supabase/supabase-js';
 
-const HARDCODED_USER_ID = '00000000-0000-0000-0000-000000000000';
+async function getUserId(req: Request): Promise<string> {
+  const token = (req.headers.get('authorization') || '').replace('Bearer ', '').trim();
+  if (!token) return '';
+  const supabase = createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+  const { data } = await supabase.auth.getUser(token);
+  return data.user?.id || '';
+}
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    const supabase = createClient();
+    const userId = await getUserId(req);
+    if (!userId) return NextResponse.json({ connected: false });
+
+    const supabase = createClient(
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
     const { data, error } = await supabase
       .from('channel_connections')
       .select('channel_id, channel_title')
-      .eq('user_id', HARDCODED_USER_ID)
+      .eq('user_id', userId)
       .single();
 
-    if (error || !data) {
-      return NextResponse.json({ connected: false });
-    }
+    if (error || !data) return NextResponse.json({ connected: false });
 
     return NextResponse.json({
       connected: true,
@@ -26,13 +39,16 @@ export async function GET() {
   }
 }
 
-export async function DELETE() {
+export async function DELETE(req: Request) {
   try {
-    const supabase = createClient();
-    await supabase
-      .from('channel_connections')
-      .delete()
-      .eq('user_id', HARDCODED_USER_ID);
+    const userId = await getUserId(req);
+    if (!userId) return NextResponse.json({ error: 'Not logged in' }, { status: 401 });
+
+    const supabase = createClient(
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+    await supabase.from('channel_connections').delete().eq('user_id', userId);
 
     return NextResponse.json({ ok: true });
   } catch (err: any) {
