@@ -199,7 +199,7 @@ export default function ToolPage() {
     const today = new Date().toDateString();
     if (dateStr !== today) { localStorage.setItem("tr_preview_date", today); localStorage.setItem("tr_preview_count", "0"); setPreviewCount(0); }
     else setPreviewCount(count);
-    setIsPro(localStorage.getItem("tr_pro") === "1");
+   setIsPro(user?.email === 'bpecha14@gmail.com' || localStorage.getItem("tr_pro") === "1");
   }, []);
 
   useEffect(() => {
