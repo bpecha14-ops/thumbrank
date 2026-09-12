@@ -10,6 +10,7 @@ export async function POST(req: Request) {
       process.env.SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
+    
     const { data: userData } = await supabase.auth.getUser(token);
     const userId = userData.user?.id;
     if (!userId) return NextResponse.json({ error: 'Not logged in' }, { status: 401 });
