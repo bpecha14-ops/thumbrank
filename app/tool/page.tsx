@@ -7,6 +7,7 @@ import {
   ChevronDown, GitCompareArrows, Crown, Youtube,
 } from "lucide-react";
 import { SiteNav } from "@/components/site-nav";
+import { getSupabaseClient } from "@/lib/supabase/client";
 
 function useTilt() {
   const ref = useRef<HTMLDivElement>(null);
@@ -30,18 +31,18 @@ function TiltCard({ children, className = "" }: { children: React.ReactNode; cla
 function ExitIntentPopup({ onClose }: { onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={onClose}>
-      <div className="relative max-w-md w-full mx-4 rounded-2xl border border-purple-500/30 bg-[#0f0f0f] p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+      <div className="relative max-w-md w-full mx-4 rounded-2xl border border-pink-500/30 bg-[#0f0f0f] p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
         <button onClick={onClose} className="absolute top-3 right-3 text-white/40 hover:text-white text-xl">×</button>
-        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center mb-4">
+        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-600 to-blue-600 flex items-center justify-center mb-4">
           <Crown className="w-6 h-6 text-white" />
         </div>
         <h3 className="text-xl font-bold text-white mb-2">Wait — unlock unlimited previews</h3>
         <p className="text-sm text-white/50 mb-4">Upgrade to Pro for $20 and get unlimited previews, no watermarks, and full competitor comparison.</p>
-        <Link href="/upgrade" className="block w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold text-center hover:opacity-90 transition-all">
+        <Link href="/upgrade" className="block w-full py-3 rounded-xl bg-gradient-to-r from-pink-600 to-blue-600 text-white font-semibold text-center hover:opacity-90 transition-all">
           Upgrade to Pro — $20
         </Link>
         <button onClick={onClose} className="block w-full mt-2 py-2 text-sm text-white/40 hover:text-white transition-colors">
-          No thanks, I&apos;ll stick with free
+          No thanks, I'll stick with free
         </button>
       </div>
     </div>
@@ -52,7 +53,7 @@ function Navbar() {
   return <SiteNav />;
 }
 
-/* ─── AI Analysis (FIXED) ─── */
+/* ─── AI Analysis ─── */
 function analyzeThumbnail(src: string): Promise<{ score: number; recs: string[] }> {
   return new Promise((resolve) => {
     const img = new Image();
@@ -130,16 +131,16 @@ function ComparisonPanel({
   if (valid.length === 0) return null;
   const winner = valid.reduce((a, b) => (a.score > b.score ? a : b));
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 mt-4">
+    <div className="rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm p-5 mt-4">
       <div className="flex items-center gap-2 mb-4">
-        <GitCompareArrows className="w-5 h-5 text-purple-400" />
+        <GitCompareArrows className="w-5 h-5 text-pink-400" />
         <h3 className="font-semibold text-white">Comparison Analysis</h3>
       </div>
       <div className="grid grid-cols-3 gap-3 mb-4">
         {scores.map((s) => (
-          <div key={s.key} className={`relative rounded-xl border p-3 text-center ${s.key === winner.key && s.score !== null ? "border-purple-500/40 bg-purple-500/10" : "border-white/10 bg-white/[0.02]"}`}>
+          <div key={s.key} className={`relative rounded-xl border p-3 text-center ${s.key === winner.key && s.score !== null ? "border-pink-500/40 bg-pink-500/10" : "border-white/10 bg-white/[0.02]"}`}>
             {s.key === winner.key && s.score !== null && (
-              <div className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-[10px] font-bold text-white">Best Choice</div>
+              <div className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-gradient-to-r from-pink-600 to-blue-600 text-[10px] font-bold text-white">Best Choice</div>
             )}
             <div className="text-xs text-white/50 mb-1">{s.label}</div>
             <div className={`text-2xl font-bold ${s.score === null ? "text-white/20" : s.score >= 70 ? "text-emerald-400" : s.score >= 40 ? "text-amber-400" : "text-rose-400"}`}>{s.score ?? "—"}</div>
@@ -147,7 +148,7 @@ function ComparisonPanel({
         ))}
       </div>
       <div className="rounded-lg bg-white/5 p-3 text-sm text-white/60">
-        <span className="text-purple-400 font-medium">{winner.label} wins</span> with a score of {winner.score}. {winner.recs[0]}
+        <span className="text-pink-400 font-medium">{winner.label} wins</span> with a score of {winner.score}. {winner.recs[0]}
       </div>
     </div>
   );
@@ -184,6 +185,7 @@ export default function ToolPage() {
   const [rendered, setRendered] = useState(false);
   const [previewCount, setPreviewCount] = useState(0);
   const [isPro, setIsPro] = useState(false);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
   const [activateEmail, setActivateEmail] = useState("");
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
   const [showExit, setShowExit] = useState(false);
@@ -194,12 +196,19 @@ export default function ToolPage() {
   const mockupRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Check owner email for lifetime Pro
+    getSupabaseClient().auth.getSession().then(({ data }) => {
+      const email = data.session?.user?.email || null;
+      setUserEmail(email);
+      if (email === 'bpecha14@gmail.com') setIsPro(true);
+    });
+
     const count = parseInt(localStorage.getItem("tr_preview_count") || "0");
     const dateStr = localStorage.getItem("tr_preview_date") || "";
     const today = new Date().toDateString();
     if (dateStr !== today) { localStorage.setItem("tr_preview_date", today); localStorage.setItem("tr_preview_count", "0"); setPreviewCount(0); }
     else setPreviewCount(count);
-   setIsPro(user?.email === 'bpecha14@gmail.com' || localStorage.getItem("tr_pro") === "1");
+    if (localStorage.getItem("tr_pro") === "1") setIsPro(true);
   }, []);
 
   useEffect(() => {
@@ -222,31 +231,8 @@ export default function ToolPage() {
     if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0], setter);
   };
 
-const renderPreview = async () => {
-  try {
-    const { getSupabaseClient } = await import('@/lib/supabase/client');
-    const { data: sData } = await getSupabaseClient().auth.getSession();
-    await fetch('/api/predictions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${sData.session?.access_token || ''}`,
-      },
-      body: JSON.stringify({ title, predictedScore: 50, niche: keyword }),
-    });
-  } catch { /* silent */ }
-  if (!isPro && previewCount >= 3) return;
-  if (!yourImage) return;
-  if (!isPro) {
-    const newCount = previewCount + 1;
-    setPreviewCount(newCount);
-    localStorage.setItem("tr_preview_count", String(newCount));
-  }
-  setRendered(true);
-  const a = await analyzeThumbnail(yourImage);
-  setAiScore(a.score); setAiRecs(a.recs);
-  try {
-      const { getSupabaseClient } = await import('@/lib/supabase/client');
+  const savePrediction = async (score: number) => {
+    try {
       const { data: sData } = await getSupabaseClient().auth.getSession();
       await fetch('/api/predictions', {
         method: 'POST',
@@ -254,9 +240,26 @@ const renderPreview = async () => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${sData.session?.access_token || ''}`,
         },
-        body: JSON.stringify({ title, predictedScore: a.score, niche: keyword }),
+        body: JSON.stringify({ title, predictedScore: score, niche: keyword }),
       });
     } catch { /* silent */ }
+  };
+
+  const renderPreview = async () => {
+    // Save prediction FIRST (before free-plan limit gate) — for F2 calibration
+    await savePrediction(50); // temporary score, will update after analysis
+    if (!isPro && previewCount >= 3) return;
+    if (!yourImage) return;
+    if (!isPro) {
+      const newCount = previewCount + 1;
+      setPreviewCount(newCount);
+      localStorage.setItem("tr_preview_count", String(newCount));
+    }
+    setRendered(true);
+    const a = await analyzeThumbnail(yourImage);
+    setAiScore(a.score); setAiRecs(a.recs);
+    // Update with real score
+    await savePrediction(a.score);
     if (comp1Image) { const c1 = await analyzeThumbnail(comp1Image); setComp1Score(c1.score); setComp1Recs(c1.recs); }
     else { setComp1Score(null); setComp1Recs([]); }
     if (comp2Image) { const c2 = await analyzeThumbnail(comp2Image); setComp2Score(c2.score); setComp2Recs(c2.recs); }
@@ -297,7 +300,7 @@ const renderPreview = async () => {
   const limitReached = !isPro && previewCount >= 3;
 
   return (
-    <main className="min-h-screen text-white selection:bg-purple-500/30">
+    <main className="min-h-screen text-white selection:bg-pink-500/30">
       <Navbar />
       {showExit && <ExitIntentPopup onClose={() => { setShowExit(false); localStorage.setItem("tr_exit_closed", "1"); }} />}
 
@@ -310,10 +313,10 @@ const renderPreview = async () => {
         <div className="grid lg:grid-cols-2 gap-6">
           {/* ─── LEFT COLUMN ─── */}
           <div className="space-y-4">
-            <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+            <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm p-5">
               <h3 className="text-sm font-medium text-white/80 mb-3">Your Thumbnail</h3>
               <div
-                className="relative rounded-xl border-2 border-dashed border-purple-500/30 bg-purple-500/5 p-8 text-center cursor-pointer hover:bg-purple-500/10 transition-colors"
+                className="relative rounded-xl border-2 border-dashed border-pink-500/30 bg-pink-500/5 p-8 text-center cursor-pointer hover:bg-pink-500/10 transition-colors"
                 onClick={() => fileInputRef.current?.click()}
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={(e) => onDrop(e, setYourImage)}
@@ -326,7 +329,7 @@ const renderPreview = async () => {
                   </div>
                 ) : (
                   <>
-                    <Upload className="w-8 h-8 text-purple-400 mx-auto mb-2" />
+                    <Upload className="w-8 h-8 text-pink-400 mx-auto mb-2" />
                     <p className="text-sm text-white/60">Drag & drop your thumbnail here</p>
                     <p className="text-xs text-white/30 mt-1">or click to browse</p>
                   </>
@@ -334,34 +337,34 @@ const renderPreview = async () => {
               </div>
             </TiltCard>
 
-            <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+            <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm p-5">
               <label className="text-sm font-medium text-white/80 mb-2 block">Search keyword</label>
-              <input value={keyword} onChange={(e) => setKeyword(e.target.value)} placeholder="e.g. how to grow on youtube" className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-purple-500" />
+              <input value={keyword} onChange={(e) => setKeyword(e.target.value)} placeholder="e.g. how to grow on youtube" className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-pink-500" />
             </TiltCard>
 
             <div className="grid grid-cols-2 gap-4">
-              <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+              <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm p-5">
                 <label className="text-sm font-medium text-white/80 mb-2 block">Video title</label>
-                <input value={title} onChange={(e) => setTitle(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-purple-500" />
+                <input value={title} onChange={(e) => setTitle(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-pink-500" />
               </TiltCard>
-              <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+              <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm p-5">
                 <label className="text-sm font-medium text-white/80 mb-2 block">Channel name</label>
-                <input value={channel} onChange={(e) => setChannel(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-purple-500" />
+                <input value={channel} onChange={(e) => setChannel(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-pink-500" />
               </TiltCard>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+              <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm p-5">
                 <label className="text-sm font-medium text-white/80 mb-2 block">View count</label>
-                <input value={views} onChange={(e) => setViews(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-purple-500" />
+                <input value={views} onChange={(e) => setViews(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-pink-500" />
               </TiltCard>
-              <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+              <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm p-5">
                 <label className="text-sm font-medium text-white/80 mb-2 block">Upload date</label>
-                <input value={date} onChange={(e) => setDate(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-purple-500" />
+                <input value={date} onChange={(e) => setDate(e.target.value)} className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-pink-500" />
               </TiltCard>
             </div>
 
-            <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+            <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm p-5">
               <h3 className="text-sm font-medium text-white/80 mb-3">Competitor 1</h3>
               <div
                 className="relative rounded-xl border-2 border-dashed border-white/10 bg-white/[0.02] p-6 text-center cursor-pointer hover:bg-white/[0.04] transition-colors mb-3"
@@ -384,14 +387,14 @@ const renderPreview = async () => {
               </div>
               {comp1Score !== null && <div className={`text-sm font-medium mb-2 ${scoreColor(comp1Score)}`}>AI Score: {comp1Score}</div>}
               <div className="grid grid-cols-2 gap-3">
-                <input value={comp1Title} onChange={(e) => setComp1Title(e.target.value)} placeholder="Title" className="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-purple-500" />
-                <input value={comp1Channel} onChange={(e) => setComp1Channel(e.target.value)} placeholder="Channel" className="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-purple-500" />
-                <input value={comp1Views} onChange={(e) => setComp1Views(e.target.value)} placeholder="Views" className="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-purple-500" />
-                <input value={comp1Duration} onChange={(e) => setComp1Duration(e.target.value)} placeholder="Duration" className="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-purple-500" />
+                <input value={comp1Title} onChange={(e) => setComp1Title(e.target.value)} placeholder="Title" className="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-pink-500" />
+                <input value={comp1Channel} onChange={(e) => setComp1Channel(e.target.value)} placeholder="Channel" className="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-pink-500" />
+                <input value={comp1Views} onChange={(e) => setComp1Views(e.target.value)} placeholder="Views" className="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-pink-500" />
+                <input value={comp1Duration} onChange={(e) => setComp1Duration(e.target.value)} placeholder="Duration" className="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-pink-500" />
               </div>
             </TiltCard>
 
-            <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+            <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm p-5">
               <h3 className="text-sm font-medium text-white/80 mb-3">Competitor 2</h3>
               <div
                 className="relative rounded-xl border-2 border-dashed border-white/10 bg-white/[0.02] p-6 text-center cursor-pointer hover:bg-white/[0.04] transition-colors mb-3"
@@ -414,10 +417,10 @@ const renderPreview = async () => {
               </div>
               {comp2Score !== null && <div className={`text-sm font-medium mb-2 ${scoreColor(comp2Score)}`}>AI Score: {comp2Score}</div>}
               <div className="grid grid-cols-2 gap-3">
-                <input value={comp2Title} onChange={(e) => setComp2Title(e.target.value)} placeholder="Title" className="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-purple-500" />
-                <input value={comp2Channel} onChange={(e) => setComp2Channel(e.target.value)} placeholder="Channel" className="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-purple-500" />
-                <input value={comp2Views} onChange={(e) => setComp2Views(e.target.value)} placeholder="Views" className="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-purple-500" />
-                <input value={comp2Duration} onChange={(e) => setComp2Duration(e.target.value)} placeholder="Duration" className="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-purple-500" />
+                <input value={comp2Title} onChange={(e) => setComp2Title(e.target.value)} placeholder="Title" className="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-pink-500" />
+                <input value={comp2Channel} onChange={(e) => setComp2Channel(e.target.value)} placeholder="Channel" className="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-pink-500" />
+                <input value={comp2Views} onChange={(e) => setComp2Views(e.target.value)} placeholder="Views" className="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-pink-500" />
+                <input value={comp2Duration} onChange={(e) => setComp2Duration(e.target.value)} placeholder="Duration" className="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-pink-500" />
               </div>
             </TiltCard>
           </div>
@@ -426,7 +429,7 @@ const renderPreview = async () => {
           <div className="space-y-4">
             <div className="flex gap-3">
               <button onClick={renderPreview} disabled={!yourImage || limitReached}
-                className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium hover:opacity-90 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+                className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-pink-600 to-blue-600 text-white font-medium hover:opacity-90 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
                 <Zap className="w-4 h-4" /> Render preview
               </button>
               <button onClick={handleExport} disabled={!yourImage}
@@ -446,32 +449,32 @@ const renderPreview = async () => {
             {/* LIMIT REACHED BANNER */}
             {limitReached && (
               <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-4 text-center">
-                <p className="text-sm text-red-200 font-medium mb-1">You&apos;ve used all 3 free previews today.</p>
+                <p className="text-sm text-red-200 font-medium mb-1">You've used all 3 free previews today.</p>
                 <p className="text-xs text-red-300/70 mb-3">Upgrade to Pro for unlimited previews and full competitor analysis.</p>
-                <button onClick={() => window.location.href = "/upgrade"} className="px-5 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-semibold hover:opacity-90 transition-all">
+                <button onClick={() => window.location.href = "/upgrade"} className="px-5 py-2 rounded-xl bg-gradient-to-r from-pink-600 to-blue-600 text-white text-sm font-semibold hover:opacity-90 transition-all">
                   Upgrade to Pro — $20
                 </button>
               </div>
             )}
 
             {!isPro && !limitReached && (
-              <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+              <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm p-5">
                 <div className="text-sm font-medium text-white/80 mb-2">Already paid? Activate Pro:</div>
                 <div className="flex gap-2">
                   <input value={activateEmail} onChange={(e) => setActivateEmail(e.target.value)} placeholder="Enter email used for payment"
-                    className="flex-1 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-purple-500" />
-                  <button onClick={activatePro} className="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium hover:opacity-90 transition-all">Activate</button>
+                    className="flex-1 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-pink-500" />
+                  <button onClick={activatePro} className="px-4 py-2 rounded-xl bg-gradient-to-r from-pink-600 to-blue-600 text-white font-medium hover:opacity-90 transition-all">Activate</button>
                 </div>
               </TiltCard>
             )}
 
-            {/* YouTube Mockup — ALWAYS VISIBLE */}
-            <TiltCard className="rounded-2xl border border-white/10 bg-[#0f0f0f] overflow-hidden">
+            {/* YouTube Mockup */}
+            <TiltCard className="rounded-2xl border border-white/10 bg-[#0A0916]/80 backdrop-blur-md overflow-hidden">
               <div ref={mockupRef}>
                 <div className="flex items-center gap-3 px-4 py-3 border-b border-white/5">
                   <div className="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center"><Youtube className="w-4 h-4 text-white" /></div>
                   <div className="flex-1 flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 text-sm text-white/60"><span className="text-white/30">🔍</span> {keyword}</div>
-                  <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center text-xs font-bold text-white">U</div>
+                  <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-xs font-bold text-white">U</div>
                 </div>
                 <div className="flex gap-1 px-4 py-2 border-b border-white/5 text-xs text-white/50">
                   {["All","Videos","Shorts","Channels","Playlists"].map((t,i) => (
@@ -479,10 +482,10 @@ const renderPreview = async () => {
                   ))}
                 </div>
                 <div className="p-4 space-y-3">
-                  <div className="flex gap-3 rounded-xl p-3 border border-purple-500/30 bg-purple-500/5">
+                  <div className="flex gap-3 rounded-xl p-3 border border-pink-500/30 bg-pink-500/5">
                     <div className="w-32 h-20 rounded-lg bg-white/5 flex-shrink-0 overflow-hidden relative">
                       {yourImage ? <img src={yourImage} className="w-full h-full object-cover" alt="" /> : <div className="w-full h-full flex items-center justify-center text-white/20 text-xs">No image</div>}
-                      <div className="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-purple-600 text-[9px] font-bold text-white">Your video</div>
+                      <div className="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-pink-600 text-[9px] font-bold text-white">Your video</div>
                       <div className="absolute bottom-1 right-1 px-1 py-0.5 rounded bg-black/80 text-[9px] text-white">12:45</div>
                     </div>
                     <div className="flex-1 min-w-0">
@@ -491,7 +494,7 @@ const renderPreview = async () => {
                       <div className="flex items-center gap-1 mt-1">
                         <div className="w-4 h-4 rounded-full bg-white/10" />
                         <span className="text-xs text-white/50">{channel}</span>
-                        <span className="text-purple-400 text-xs">✓</span>
+                        <span className="text-pink-400 text-xs">✓</span>
                       </div>
                       <div className="text-xs text-white/30 mt-1 truncate">{title} — watch this video to learn more.</div>
                       {aiScore !== null && (
@@ -512,7 +515,7 @@ const renderPreview = async () => {
                       <div className="flex items-center gap-1 mt-1">
                         <div className="w-4 h-4 rounded-full bg-white/10" />
                         <span className="text-xs text-white/50">{comp1Channel}</span>
-                        <span className="text-purple-400 text-xs">✓</span>
+                        <span className="text-pink-400 text-xs">✓</span>
                       </div>
                       <div className="text-xs text-white/30 mt-1 truncate">{comp1Title} — watch this video to learn more.</div>
                     </div>
@@ -528,7 +531,7 @@ const renderPreview = async () => {
                       <div className="flex items-center gap-1 mt-1">
                         <div className="w-4 h-4 rounded-full bg-white/10" />
                         <span className="text-xs text-white/50">{comp2Channel}</span>
-                        <span className="text-purple-400 text-xs">✓</span>
+                        <span className="text-pink-400 text-xs">✓</span>
                       </div>
                       <div className="text-xs text-white/30 mt-1 truncate">{comp2Title} — watch this video to learn more.</div>
                     </div>
@@ -537,9 +540,9 @@ const renderPreview = async () => {
               </div>
             </TiltCard>
 
-            {/* AI Score — only after render */}
+            {/* AI Score */}
             {rendered && aiScore !== null && (
-              <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+              <TiltCard className="rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm p-5">
                 <div className="flex items-center gap-4">
                   <div className="relative w-16 h-16 flex-shrink-0">
                     <svg className="w-16 h-16 -rotate-90" viewBox="0 0 64 64">
@@ -556,14 +559,14 @@ const renderPreview = async () => {
                 <div className="mt-4 space-y-2">
                   {aiRecs.map((r, i) => (
                     <div key={i} className="flex items-start gap-2 text-sm text-white/60 bg-white/5 rounded-lg p-3">
-                      <span className="text-purple-400 mt-0.5">•</span> {r}
+                      <span className="text-pink-400 mt-0.5">•</span> {r}
                     </div>
                   ))}
                 </div>
               </TiltCard>
             )}
 
-            {/* Comparison — only after render */}
+            {/* Comparison */}
             {rendered && (
               <ComparisonPanel
                 yourScore={aiScore} yourRecs={aiRecs}
@@ -578,7 +581,7 @@ const renderPreview = async () => {
           <h2 className="text-2xl font-bold text-white text-center mb-8">Frequently asked questions</h2>
           <div className="space-y-3">
             {faqs.map((f, i) => (
-              <div key={i} className="rounded-xl border border-white/10 bg-white/[0.02] overflow-hidden">
+              <div key={i} className="rounded-xl border border-white/10 bg-white/[0.02] backdrop-blur-sm overflow-hidden">
                 <button onClick={() => setFaqOpen(faqOpen === i ? null : i)} className="w-full flex items-center justify-between p-4 text-left">
                   <span className="font-medium text-white text-sm">{f.q}</span>
                   <ChevronDown className={`w-4 h-4 text-white/40 transition-transform ${faqOpen === i ? "rotate-180" : ""}`} />
@@ -593,7 +596,7 @@ const renderPreview = async () => {
           <div className="section-divider mb-8" />
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-md bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center">
+              <div className="w-6 h-6 rounded-md bg-gradient-to-br from-pink-600 to-blue-600 flex items-center justify-center">
                 <Sparkles className="w-3 h-3 text-white" />
               </div>
               <span className="font-bold text-white text-sm">ThumbRank</span>
