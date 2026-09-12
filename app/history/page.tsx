@@ -3,6 +3,12 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Sparkles, TrendingUp, Target, Share2 } from "lucide-react";
+import { getSupabaseClient } from "@/lib/supabase/client";
+
+async function authHeaders() {
+  const { data } = await getSupabaseClient().auth.getSession();
+  return { Authorization: `Bearer ${data.session?.access_token || ''}` };
+}
 
 export default function HistoryPage() {
   const [predictions, setPredictions] = useState<any[]>([]);
@@ -10,16 +16,18 @@ export default function HistoryPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([
-      fetch("/api/user/predictions").then((r) => r.json()),
-      fetch("/api/analytics/ctr").then((r) => r.json()),
-    ])
-      .then(([preds, ctr]) => {
+    (async () => {
+      const headers = await authHeaders();
+      try {
+        const [preds, ctr] = await Promise.all([
+          fetch("/api/user/predictions", { headers }).then((r) => r.json()),
+          fetch("/api/analytics/ctr", { headers }).then((r) => r.json()),
+        ]);
         setPredictions(preds.predictions || []);
         setCtrData(ctr.videos || []);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+      } catch { /* ignore */ }
+      setLoading(false);
+    })();
   }, []);
 
   const accuracy = predictions.filter((p: any) => p.was_correct === true).length;
@@ -40,9 +48,9 @@ export default function HistoryPage() {
 
     // Background gradient
     const grad = ctx.createLinearGradient(0, 0, w, h);
-    grad.addColorStop(0, "#0f0f1a");
-    grad.addColorStop(0.5, "#1a0a2e");
-    grad.addColorStop(1, "#0f0f1a");
+    grad.addColorStop(0, "#07060F");
+    grad.addColorStop(0.5, "#170A22");
+    grad.addColorStop(1, "#07060F");
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, w, h);
 
@@ -53,7 +61,7 @@ export default function HistoryPage() {
     }
 
     // Top accent line
-    ctx.fillStyle = "#a855f7";
+    ctx.fillStyle = "#ec4899";
     ctx.fillRect(80, 60, 120, 4);
 
     // Title
@@ -68,15 +76,15 @@ export default function HistoryPage() {
     ctx.fillText(titleText.length > 50 ? titleText.slice(0, 50) + "..." : titleText, 80, 200);
 
     // Prediction box
-    ctx.fillStyle = "rgba(168,85,247,0.15)";
-    ctx.strokeStyle = "rgba(168,85,247,0.5)";
+    ctx.fillStyle = "rgba(236,72,153,0.15)";
+    ctx.strokeStyle = "rgba(236,72,153,0.5)";
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.roundRect(80, 260, 480, 200, 16);
     ctx.fill();
     ctx.stroke();
 
-    ctx.fillStyle = "#a855f7";
+    ctx.fillStyle = "#ec4899";
     ctx.font = "bold 20px sans-serif";
     ctx.fillText("PREDICTION", 110, 310);
 
@@ -128,11 +136,11 @@ export default function HistoryPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#030305] text-white">
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-[#030305]/70 backdrop-blur-xl">
+    <main className="min-h-screen text-white selection:bg-pink-500/30">
+      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-[#07060F]/70 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-pink-600 to-blue-600 flex items-center justify-center">
               <Sparkles className="w-4 h-4 text-white" />
             </div>
             <span className="font-bold text-white text-lg">ThumbRank</span>
@@ -150,15 +158,15 @@ export default function HistoryPage() {
           <>
             {/* Stats */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-              <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
-                <div className="flex items-center gap-2 mb-2 text-purple-400">
+              <div className="rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm p-5">
+                <div className="flex items-center gap-2 mb-2 text-pink-400">
                   <Target className="w-5 h-5" />
                   <span className="text-sm font-medium">Accuracy</span>
                 </div>
                 <div className="text-3xl font-bold text-white">{accuracyPct}%</div>
                 <div className="text-xs text-white/40">{total} calibrated predictions</div>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+              <div className="rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm p-5">
                 <div className="flex items-center gap-2 mb-2 text-emerald-400">
                   <TrendingUp className="w-5 h-5" />
                   <span className="text-sm font-medium">Predictions</span>
@@ -166,8 +174,8 @@ export default function HistoryPage() {
                 <div className="text-3xl font-bold text-white">{predictions.length}</div>
                 <div className="text-xs text-white/40">Total analyzed</div>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
-                <div className="flex items-center gap-2 mb-2 text-amber-400">
+              <div className="rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm p-5">
+                <div className="flex items-center gap-2 mb-2 text-blue-400">
                   <TrendingUp className="w-5 h-5" />
                   <span className="text-sm font-medium">Videos Tracked</span>
                 </div>
@@ -178,14 +186,14 @@ export default function HistoryPage() {
 
             {/* Proof it works */}
             <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-purple-500" />
+              <span className="w-2 h-2 rounded-full bg-pink-500" />
               Proof it works
             </h2>
             <div className="space-y-4 mb-10">
               {predictions.length === 0 && (
-                <div className="rounded-xl border border-white/10 bg-white/[0.02] p-6 text-center text-white/40">
+                <div className="rounded-xl border border-white/10 bg-white/[0.02] backdrop-blur-sm p-6 text-center text-white/40">
                   No predictions yet. Analyze a thumbnail in the{" "}
-                  <Link href="/tool" className="text-purple-400 underline">tool</Link> to start tracking.
+                  <Link href="/tool" className="text-pink-400 underline">tool</Link> to start tracking.
                 </div>
               )}
 
@@ -194,7 +202,7 @@ export default function HistoryPage() {
                 return (
                   <div
                     key={p.id}
-                    className="rounded-xl border border-white/10 bg-white/[0.02] p-5 hover:border-purple-500/30 transition-colors"
+                    className="rounded-xl border border-white/10 bg-white/[0.02] backdrop-blur-sm p-5 hover:border-pink-500/30 transition-colors"
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1 min-w-0">
@@ -243,7 +251,7 @@ export default function HistoryPage() {
                         </span>
                         <button
                           onClick={() => generateSharePNG(p)}
-                          className="p-2 rounded-lg bg-white/5 hover:bg-purple-500/20 text-white/60 hover:text-purple-400 transition-all"
+                          className="p-2 rounded-lg bg-white/5 hover:bg-pink-500/20 text-white/60 hover:text-pink-400 transition-all"
                           title="Share as PNG"
                         >
                           <Share2 className="w-4 h-4" />
@@ -261,7 +269,7 @@ export default function HistoryPage() {
               })}
             </div>
 
-            {/* Hidden canvas for PNG generation */}
+            {/* Hidden canvas for PNG generator */}
             <canvas ref={canvasRef} style={{ display: "none" }} />
           </>
         )}
