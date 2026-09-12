@@ -233,6 +233,18 @@ export default function ToolPage() {
     setRendered(true);
     const a = await analyzeThumbnail(yourImage);
     setAiScore(a.score); setAiRecs(a.recs);
+        try {
+      const { getSupabaseClient } = await import('@/lib/supabase/client');
+      const { data: sData } = await getSupabaseClient().auth.getSession();
+      await fetch('/api/predictions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${sData.session?.access_token || ''}`,
+        },
+        body: JSON.stringify({ title, predictedScore: a.score, niche: keyword }),
+      });
+    } catch { /* silent */ }
     if (comp1Image) { const c1 = await analyzeThumbnail(comp1Image); setComp1Score(c1.score); setComp1Recs(c1.recs); }
     else { setComp1Score(null); setComp1Recs([]); }
     if (comp2Image) { const c2 = await analyzeThumbnail(comp2Image); setComp2Score(c2.score); setComp2Recs(c2.recs); }
