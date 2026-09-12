@@ -10,8 +10,12 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const code = searchParams.get('code');
+    const stateUserId = searchParams.get('state');
     if (!code) {
       return NextResponse.json({ error: 'No code provided' }, { status: 400 });
+    }
+    if (!stateUserId) {
+      return NextResponse.json({ error: 'Missing user context. Open Settings and click Connect while logged in.' }, { status: 400 });
     }
 
     const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL || 'https://thumbrankpro.com'}/api/auth/youtube/callback`;
@@ -44,14 +48,16 @@ export async function GET(req: Request) {
       throw new Error('No YouTube channel found');
     }
 
-    await supabase.from('channel_connections').upsert({
-      user_id: '00000000-0000-0000-0000-000000000000',
+    const { error: dbError } = await supabase.from('channel_connections').upsert({
+      user_id: stateUserId,
       channel_id: channel.id,
       channel_title: channel.snippet?.title,
       access_token: tokens.access_token,
       refresh_token: tokens.refresh_token,
       token_expires_at: new Date(Date.now() + tokens.expires_in * 1000).toISOString(),
     }, { onConflict: 'user_id' });
+
+    if (dbError) throw new Error('DB error: ' + dbError.message);
 
     return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL || 'https://thumbrankpro.com'}/settings?connected=true`);
   } catch (err: any) {
